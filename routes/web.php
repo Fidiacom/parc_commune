@@ -15,13 +15,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-require "service-technique.php";
+//require "service-technique.php";
+
+
+require "admins.php";
+
+
 
 Route::get('/', function () {
-    return view('welcome');
-})->middleware(['auth']);
-
-Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 

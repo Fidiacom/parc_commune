@@ -17,5 +17,10 @@ class RoleSeeder extends Seeder
         $role = new Role;
         $role->label = 'Service Technique';
         $role->save();
+
+
+        $role1 = new Role;
+        $role1->label = 'Admin';
+        $role1->save();
     }
 }

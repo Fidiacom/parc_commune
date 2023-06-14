@@ -3,12 +3,11 @@
 // 
 
 #page-topbar {
+  position: fixed;
   top: 0;
   right: 0;
   left: 0;
-  z-index: 999;
-  background-color: $header-bg;
-  padding: 0 calc(#{$grid-gutter-width} / 2);
+  z-index: 1001;
 }
 
 .navbar-header {
@@ -18,34 +17,35 @@
   align-items: center;
   margin: 0 auto;
   height: $header-height;
+  background-color: $header-bg;
+  padding: 0 20px;
+  box-shadow: 0 1px 1px #e9ecef;
+  margin-left: $sidebar-width;
 
   .dropdown.show {
     .header-item {
-      background-color: rgba($white,0.07);
+      background-color: rgba($dark,0.04);
     }
   }
 }
 
-@include media-breakpoint-up(xl) {
-  .navbar-header {
-    max-width: 85%;
-  }
-}
-
 .navbar-brand-box {
-  padding-left: calc(#{$grid-gutter-width} / 2);
   text-align: center;
 }
 
 .logo {
   line-height: 70px;
-  color: $dark !important;
+  color: $white !important;
   font-size: 20px;
   text-transform: uppercase;
   font-weight: 700;
 
   span {
     vertical-align: middle;
+  }
+
+  i {
+    font-size: 22px;
   }
 
   img {
@@ -66,6 +66,10 @@
   .navbar-brand-box {
     padding-left: 0;
   }
+  
+  .navbar-header {
+    margin-left: 0;
+  }
   .logo {
     padding-right: 15px;
 
@@ -80,7 +84,7 @@
 }
 
 .page-content {
-  padding: $grid-gutter-width calc(#{$grid-gutter-width} / 2) 60px calc(#{$grid-gutter-width} / 2);
+  padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} / 2) $footer-height calc(#{$grid-gutter-width} / 2);
 }
 
 .header-item {

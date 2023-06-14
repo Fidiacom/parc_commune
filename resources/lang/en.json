@@ -1,0 +1,19 @@
+{
+    "add vehicule":"add vehicule",
+    "brand":"brand",
+    "model":"model",
+    "matricule":"matricule",
+    "chassis":"chassis",
+    "seuil KM vidange":"seuil KM vidange",
+    "seuil KM pneu":"seuil KM pneu",
+    "seuil KM chaine de distrubution":"seuil KM chaine de distrubution",
+    "dernier assurance":"dernier assurance",
+    "expiration assurance":"expiration assurance",
+    "dernier visite technique":"dernier visite technique",
+    "expiration visite technique":"expiration visite technique",
+    "Pneu (Avant|Gauche)":"Pneu (Avant|Gauche)",
+    "Pneu (Avant|Droit)":"Pneu (Avant|Droit)",
+    "Pneu (Derriere|Gauche)":"Pneu (Derriere|Gauche)",
+    "Pneu (Derriere|Droit)":"Pneu (Derriere|Droit)",
+    "Km actuel":"Km actuel"
+}

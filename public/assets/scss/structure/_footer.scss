@@ -9,5 +9,11 @@
   position: absolute;
   right: 0;
   color: $gray-600;
-  left: 0;
+  left: $sidebar-width;
+}
+
+@media (max-width: 992px) {
+  .footer {
+    left: 0;
+  }
 }

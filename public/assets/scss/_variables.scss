@@ -3,22 +3,22 @@
 
 // Vertical Sidebar
 $sidebar-light-bg: #ffffff;
-$sidebar-dark-bg: #3d4255; //2c313a
-$sidebar-menu-item-color: #a7b1c2;
+$sidebar-dark-bg: #393f4e;
+$sidebar-menu-item-color: #899dbf;
 $sidebar-menu-item-hover-color: #c4d2e8;
-$sidebar-width: 260px;
+$sidebar-width: 240px;
 
 // Topbar Header
 $header-height: 70px;
-$header-bg: #393f4e;
-$header-bg-light: #f5f7fa;
-$header-item-color: #a3afc5;
+$header-bg: #f5f7fa;
+$header-item-color: #383c40;
 
 // Footer
 $footer-height: 70px;
 
 //Font variables
 $font-family-secondary: 'Baloo Paaji 2', cursive;
+
 
 // Variables
 //
@@ -757,10 +757,10 @@ $navbar-dark-disabled-color:        rgba($white, .25);
 $navbar-dark-toggler-icon-bg:       str-replace(url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='#{$navbar-dark-color}' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"), "#", "%23");
 $navbar-dark-toggler-border-color:  rgba($white, .1);
 
-$navbar-light-color:                $gray-700;
-$navbar-light-hover-color:          $gray-900;
-$navbar-light-active-color:         $primary;
-$navbar-light-disabled-color:       $gray-500;
+$navbar-light-color:                rgba($black, .5);
+$navbar-light-hover-color:          rgba($black, .7);
+$navbar-light-active-color:         rgba($black, .9);
+$navbar-light-disabled-color:       rgba($black, .3);
 $navbar-light-toggler-icon-bg:      str-replace(url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='#{$navbar-light-color}' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"), "#", "%23");
 $navbar-light-toggler-border-color: rgba($black, .1);
 

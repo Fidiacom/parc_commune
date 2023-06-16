@@ -261,11 +261,16 @@
                         </li>
 
                         <li>
-                            <a href="{{ route('admin.vehicule') }}" class="waves-effect"><i
+                            <a href="{{ route('admin.vehicule') }}" class="wwaves-effect"><i
                                     class="bx bx-car"></i>
                                     <span>Vehicule</span>
                             </a>
-
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.drivers') }}" class="wwaves-effect"><i
+                                    class="bx bx-user"></i>
+                                    <span>Driver</span>
+                            </a>
                         </li>
 
                         <li>

@@ -225,10 +225,12 @@
                                 href="javascript:void(0)">
                                 <span>Lock Account</span>
                             </a>
-                            <a class="dropdown-item d-flex align-items-center justify-content-between"
-                                href="javascript:void(0)">
-                                <span>Log Out</span>
-                            </a>
+                            <form action="{{ route('logout') }}" method="post">
+                                @csrf
+
+                                <button type="submit" class="dropdown-item d-flex align-items-center justify-content-between">{{ __('logout') }}</button>
+                            </form>
+
                         </div>
                     </div>
 
@@ -256,6 +258,14 @@
                         <li>
                             <a href="index.html" class="waves-effect"><i class='bx bx-home-smile'></i><span
                                     class="badge badge-pill badge-primary float-right">7</span><span>Dashboard</span></a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('admin.vehicule') }}" class="waves-effect"><i
+                                    class="bx bx-car"></i>
+                                    <span>Vehicule</span>
+                            </a>
+
                         </li>
 
                         <li>
@@ -420,10 +430,31 @@
     <script src="{{ asset('assets/js/waves.js') }}"></script>
     <script src="{{ asset('assets/js/simplebar.min.js') }}"></script>
 
+     <!-- third party js -->
+     <script src="{{ asset('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/dataTables.bootstrap4.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/dataTables.responsive.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/responsive.bootstrap4.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/dataTables.buttons.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/buttons.bootstrap4.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/buttons.html5.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/buttons.flash.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/buttons.print.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/dataTables.keyTable.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/dataTables.select.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/pdfmake.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables/vfs_fonts.js') }}"></script>
+     <!-- third party js ends -->
+
+    <!-- Datatables init -->
+    <script src="{{ asset('assets/pages/datatables-demo.js') }}"></script>
+
+
+
     <!-- Morris Js-->
-    <script src="../plugins/morris-js/morris.min.js"></script>
+    <script src="{{ asset('assets/plugins/morris-js/morris.min.js') }}"></script>
     <!-- Raphael Js-->
-    <script src="../plugins/raphael/raphael.min.js"></script>
+    <script src="{{ asset('assets/plugins/raphael/raphael.min.js') }}"></script>
 
     <!-- Morris Custom Js-->
     <script src="{{ asset('assets/pages/dashboard-demo.j') }}s"></script>

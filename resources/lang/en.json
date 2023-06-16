@@ -11,9 +11,9 @@
     "expiration assurance":"expiration assurance",
     "dernier visite technique":"dernier visite technique",
     "expiration visite technique":"expiration visite technique",
-    "Pneu (Avant|Gauche)":"Pneu (Avant|Gauche)",
-    "Pneu (Avant|Droit)":"Pneu (Avant|Droit)",
-    "Pneu (Derriere|Gauche)":"Pneu (Derriere|Gauche)",
-    "Pneu (Derriere|Droit)":"Pneu (Derriere|Droit)",
+    "seuil KM Pneu (Avant|Gauche)":"seuil KM Pneu (Avant|Gauche)",
+    "seuil KM Pneu (Avant|Droit)":"seuil KM Pneu (Avant|Droit)",
+    "seuil KM Pneu (Derriere|Gauche)":"seuil KM Pneu (Derriere|Gauche)",
+    "seuil KM Pneu (Derriere|Droit)":"seuil KM Pneu (Derriere|Droit)",
     "Km actuel":"Km actuel"
 }

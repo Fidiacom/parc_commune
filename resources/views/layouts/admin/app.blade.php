@@ -16,6 +16,8 @@
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/theme.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -345,10 +347,24 @@
      <script src="{{ asset('assets/plugins/datatables/vfs_fonts.js') }}"></script>
      <!-- third party js ends -->
 
+
+
+     <script src="{{ asset('assets/plugins/autonumeric/autoNumeric-min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/moment/moment.js') }}"></script>
+     <script src="{{ asset('assets/plugins/daterangepicker/daterangepicker.js') }}"></script>
+     <script src="{{ asset('assets/plugins/select2/select2.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/switchery/switchery.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/bootstrap-colorpicker/bootstrap-colorpicker.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js') }}"></script>
+
+     <!-- Custom Js -->
+
+     <script src="{{ asset('assets/pages/advanced-plugins-demo.js') }}"></script>
+
     <!-- Datatables init -->
     <script src="{{ asset('assets/pages/datatables-demo.js') }}"></script>
-
-
 
     <!-- Morris Js-->
     <script src="{{ asset('assets/plugins/morris-js/morris.min.js') }}"></script>
@@ -360,6 +376,8 @@
 
     <!-- App js -->
     <script src="{{ asset('assets/js/theme.js') }}"></script>
+
+    <script src="{{ asset('assets/js/trip/trip.js') }}"></script>
 
 
 

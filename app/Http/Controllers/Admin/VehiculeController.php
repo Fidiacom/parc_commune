@@ -38,5 +38,8 @@ class VehiculeController extends Controller
             'pneu_dd'                       =>  'required',
         ]);
 
+
+        
+
     }
 }

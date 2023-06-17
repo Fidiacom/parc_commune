@@ -20,10 +20,19 @@
                             @csrf
                             <div class="form-group">
 
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="image" id="customFile">
-                                    <label class="custom-file-label" for="customFile">Choose file</label>
-                                </div>
+                                <div class="col-xl-5 mx-auto">
+                                    <div class="card">
+                                        <div class="card-body">
+
+                                            <h4 class="card-title">Car Picture</h4>
+                                            <p class="card-subtitle mb-4">MAX SIZE 5M.</p>
+
+                                            <input type="file" class="dropify" data-max-file-size="5M" accept="image/*"/>
+
+                                        </div> <!-- end card-body-->
+                                    </div> <!-- end card-->
+                                </div> <!-- end col -->
+
 
                                 @error('image')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">

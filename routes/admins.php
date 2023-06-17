@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\TripController;
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->group(function(){
+        
 
         //Vehicules
         Route::get('vehicule', [VehiculeController::class, 'index'])->name('admin.vehicule');

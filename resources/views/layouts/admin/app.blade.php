@@ -18,11 +18,31 @@
     <link href="{{ asset('assets/css/theme.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/plugins/dropify/dropify.min.css') }}" rel="stylesheet" type="text/css" />
 
+    <style>
+        #loading {
+            position: fixed;
+            display: block;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            text-align: center;
+            opacity: 1;
+            background-color: #fff;
+            z-index: 99;
+        }
+    </style>
 </head>
 
 <body>
 
+    <div id="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status"></div>
+        </div>
+    </div>
     <!-- Begin page -->
     <div id="layout-wrapper">
 
@@ -258,7 +278,7 @@
                         <li class="menu-title">Menu</li>
 
                         <li>
-                            <a href="index.html" class="waves-effect"><i class='bx bx-home-smile'></i><span
+                            <a href="{{ route('dashboard') }}" class="waves-effect"><i class='bx bx-home-smile'></i><span
                                     class="badge badge-pill badge-primary float-right">7</span><span>Dashboard</span></a>
                         </li>
 
@@ -379,8 +399,17 @@
 
     <script src="{{ asset('assets/js/trip/trip.js') }}"></script>
 
+    <!--dropify-->
+    <script src="{{ asset('assets/plugins/dropify/dropify.min.js') }}"></script>
 
+    <!-- Init js-->
+    <script src="{{ asset('assets/pages/fileuploads-demo.js') }}"></script>
 
+<script>
+    window.addEventListener('load',() => {
+        document.getElementById("loading").style.display = "none";
+    });
+</script>
 
 </body>
 

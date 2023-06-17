@@ -37,6 +37,7 @@
 </head>
 
 <body>
+    @include('sweetalert::alert')
 
     <div id="loading">
         <div class="d-flex justify-content-center">

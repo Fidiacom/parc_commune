@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Vehicule;
 use App\Models\Vidange;
-use App\Models\pneu;
 use App\Models\TimingChaine;
 
 
@@ -32,7 +31,6 @@ class VehiculeController extends Controller
             'model'                         =>  'required',
             'matricule'                     =>  'required',
             'chassis'                       =>  'required',
-            'carte_grise'                   =>  'required',
             'km_actuel'                     =>  'required',
             'horses'                        =>  'required',
             'fuel_type'                     =>  'required|not_in:0',
@@ -43,9 +41,6 @@ class VehiculeController extends Controller
             'numOfTires'                    =>  'required',
         ]);
 
-        dd($request->all(), isset($request->abs));
-        Alert::success('Congrats', 'You\'ve Successfully Registered');
-        return redirect()->back();
 
         $vehicule                   =   new Vehicule;
         $vehicule->brand            =   $request->brand;
@@ -53,12 +48,14 @@ class VehiculeController extends Controller
         $vehicule->model            =   $request->model;
         $vehicule->matricule        =   $request->matricule;
         $vehicule->num_chassis      =   $request->chassis;
-        $vehicule->num_carte_grise  =   $request->carte_grise;
         $vehicule->total_km         =   $request->km_actuel;
         $vehicule->horses           =   $request->horses;
         $vehicule->fuel_type        =   $request->fuel_type;
         $vehicule->airbag           =   isset($request->airbag) ? 1 : 0;
-        $vehicule->abs              =   isset($request->abs) ? 1 : 0;;
+        $vehicule->abs              =   isset($request->abs) ? 1 : 0;
+        $vehicule->inssurance_expiration              =   $request->inssurance_expiration;
+        $vehicule->technicalvisite_expiration         =   $request->technical_visit_expiration;
+        $vehicule->number_of_tires         =   $request->numOfTires;
         $vehicule->save();
 
 
@@ -69,14 +66,17 @@ class VehiculeController extends Controller
         $vidange->threshold_km      =   $request->threshold_vidange;
         $vidange->save();
 
-        $tire = new pneu;
-        $tire->car_id               =   $vehicule->id;
-        $tire->current_km           =   $request->km_actuel;;
-        $tire->next_km_for_change   =   intval($request->km_actuel) + intval($request->pneu_ag);;
-        $tire->threshold_km         =   $request->pneu_ag;
-        $tire->tire_position        =   'ag';
-        $tire->save();
+
+        $timingChaine = new TimingChaine;
+        $timingChaine->car_id   =   $vehicule->id;
+        $timingChaine->current_km   =   $request->km_actuel;
+        $timingChaine->next_km_for_change   =   intval($request->km_actuel) + intval($request->threshold_timing_chaine);
+        $timingChaine->threshold_km     =   $request->threshold_timing_chaine;
+        $timingChaine->save();
 
 
+
+        Alert::success('Vehicule Saved Successfully', 'Please fill tires field');
+        return redirect(route('admin.tire.create', $vehicule->id));
     }
 }

@@ -18,13 +18,15 @@ return new class extends Migration
             $table->string('model');
             $table->string('matricule');
             $table->string('num_chassis');
-            $table->string('num_carte_grise');
+            //$table->string('num_carte_grise');
             $table->unsignedBigInteger('total_km');
             $table->integer('horses');
-            $table->integer('number_of_tires'); 
+            $table->integer('number_of_tires');
             $table->string('fuel_type');
             $table->boolean('airbag');
             $table->boolean('abs');
+            $table->date('inssurance_expiration');
+            $table->date('technicalvisite_expiration');
             $table->timestamps();
         });
     }

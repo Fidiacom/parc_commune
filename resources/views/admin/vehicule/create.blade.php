@@ -81,15 +81,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('num carte grise') }}</label>
-                                <input type="text" class="form-control  @error('carte_grise') is-invalid @enderror" id="exampleFormControlInput1" name="carte_grise" placeholder="">
-                                @error('carte_grise')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
+
 
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('Km actuel') }}</label>

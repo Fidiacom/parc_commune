@@ -16,4 +16,9 @@ class DriverController extends Controller
     {
         return view('admin.drivers.create');
     }
+
+    public function store(Request $request)
+    {
+        dd($request->all());
+    }
 }

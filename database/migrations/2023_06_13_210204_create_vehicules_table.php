@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('num_carte_grise');
             $table->unsignedBigInteger('total_km');
             $table->integer('horses');
+            $table->integer('number_of_tires'); 
             $table->string('fuel_type');
             $table->boolean('airbag');
             $table->boolean('abs');

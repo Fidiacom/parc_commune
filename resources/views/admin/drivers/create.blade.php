@@ -16,191 +16,144 @@
             <div class="col-xl-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <form action="" method="POST">
+                        <form action="{{ route('admin.driver.store') }}" method="POST">
                             @csrf
                             <div class="form-group">
 
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="image" id="customFile">
-                                    <label class="custom-file-label" for="customFile">Choose file</label>
-                                </div>
+                                <div>
+                                    <div class="col-xl-5 mx-auto">
+                                        <div class="card">
+                                            <div class="card-body">
 
-                                @error('image')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
+                                                <h4 class="card-title">Car Picture</h4>
+                                                <p class="card-subtitle mb-4">MAX SIZE 5M.</p>
 
-                            <div class="form-group">
-                                <label for="simpleinput">{{ __('brand') }}</label>
-                                <input type="text" id="simpleinput" class="form-control @error('brand') is-invalid @enderror" name="brand" placeholder="Dacia/Peugot/...">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
+                                                <input type="file" class="dropify" data-max-file-size="5M" name="image" accept="image/*"/>
 
-                            <div class="form-group">
-                                <label for="example-password">{{ __('Model') }}</label>
-                                <input type="text" id="example-password" class="form-control  @error('brand') is-invalid @enderror" name="model" value="">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('matricule') }}</label>
-                                <input type="text" class="form-control  @error('brand') is-invalid @enderror" id="exampleFormControlInput1" name="matricule" placeholder="">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('chassis') }}</label>
-                                <input type="text" class="form-control  @error('brand') is-invalid @enderror" id="exampleFormControlInput1" name="chassis" placeholder="">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('num carte grise') }}</label>
-                                <input type="text" class="form-control  @error('brand') is-invalid @enderror" id="exampleFormControlInput1" name="carte_grise" placeholder="">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('Km actuel') }}</label>
-                                <input type="number" class="form-control  @error('brand') is-invalid @enderror" id="exampleFormControlInput1" name="km_actuel" placeholder="">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('horses') }}</label>
-                                <input type="number" class="form-control  @error('brand') is-invalid @enderror" id="exampleFormControlInput1" name="horses" placeholder="">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="mt-2">
-                                <div class="custom-control custom-checkbox custom-control-inline">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck5" name="airbag">
-                                    <label class="custom-control-label" for="customCheck5">Airbag</label>
-                                </div>
-                                <div class="custom-control custom-checkbox custom-control-inline">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck6" name="abs">
-                                    <label class="custom-control-label" for="customCheck6">Abs</label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('seuil KM vidange') }}</label>
-                                <input type="number" class="form-control  @error('brand') is-invalid @enderror" id="exampleFormControlInput1" name="threshold_vidange" placeholder="">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
+                                            </div> <!-- end card-body-->
+                                        </div> <!-- end card-->
+                                    </div> <!-- end col -->
 
 
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('seuil KM chaine de distrubution') }}</label>
-                                <input type="number" class="form-control  @error('brand') is-invalid @enderror" id="exampleFormControlInput1" name="threshold_timing_chaine" placeholder="">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-
-                            <div class="form-group">
-                                <label for="inputPassword2" class="">{{ __('expiration assurance') }}</label>
-                                <input type="date" class="form-control  @error('brand') is-invalid @enderror" id="inputPassword2" name="inssurance_expiration">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="inputPassword2" class="">{{ __('expiration visite technique') }}</label>
-                                <input type="date" class="form-control  @error('brand') is-invalid @enderror" id="inputPassword2" name="technical_visit_expiration">
-                                @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-
-                            <div class="form-inline form-group mt-4">
-
-                                <div class="form-group w-50">
-                                    <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Avant|Gauche)') }}</label>
-                                    <input type="number" class="form-control  @error('brand') is-invalid @enderror w-100" id="inputPassword2" name="pneu_ag">
-                                    @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                                </div>
-
-                                <div class="form-group w-50">
-                                    <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Avant|Droit)') }}</label>
-                                    <input type="number" class="form-control  @error('brand') is-invalid @enderror w-100 ml-2" id="inputPassword2" name="pneu_ad">
-                                    @error('brand')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="form-inline form-group mt-4">
-
-                                <div class="form-group w-50">
-                                    <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Derriere|Gauche)') }}</label>
-                                    <input type="number" class="form-control  @error('brand') is-invalid @enderror w-100" id="inputPassword2" name="pneu_dg">
-                                    @error('brand')
+                                    @error('image')
                                     <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                         {{ $message }}
                                     </div>
                                     @enderror
                                 </div>
 
-                                <div class="form-group w-50">
-                                    <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Derriere|Droit)') }}</label>
-                                    <input type="number" class="form-control  @error('brand') is-invalid @enderror w-100 ml-2" id="inputPassword2" name="pneu_dd">
-                                    @error('brand')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="simpleinput">{{ __('full name') }}</label>
+                                <input type="text" id="simpleinput" class="form-control @error('full_name') is-invalid @enderror" name="full_name" placeholder="Name...">
+                                @error('full_name')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
                                 </div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="example-password">{{ __('CIN') }}</label>
+                                <input type="text" id="example-password" class="form-control  @error('cin') is-invalid @enderror" name="cin" value="">
+                                @error('cin')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="exampleFormControlInput1">{{ __('license') }}</label>
+                                <input type="text" class="form-control  @error('license') is-invalid @enderror" id="exampleFormControlInput1" name="license" placeholder="">
+                                @error('license')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="form-group mb-0">
+                                    <label>Multiple Select</label>
+
+                                    <select class="form-control select2-multiple" data-toggle="select2" multiple="multiple" name="permisType[]" data-placeholder="Choose ...">
+                                        <optgroup label="Alaskan/Hawaiian Time Zone">
+                                            <option value="AK">Alaska</option>
+                                            <option value="HI">Hawaii</option>
+                                        </optgroup>
+                                        <optgroup label="Pacific Time Zone">
+                                            <option value="CA">California</option>
+                                            <option value="NV">Nevada</option>
+                                            <option value="OR">Oregon</option>
+                                            <option value="WA">Washington</option>
+                                        </optgroup>
+                                        <optgroup label="Mountain Time Zone">
+                                            <option value="AZ">Arizona</option>
+                                            <option value="CO">Colorado</option>
+                                            <option value="ID">Idaho</option>
+                                            <option value="MT">Montana</option>
+                                            <option value="NE">Nebraska</option>
+                                            <option value="NM">New Mexico</option>
+                                            <option value="ND">North Dakota</option>
+                                            <option value="UT">Utah</option>
+                                            <option value="WY">Wyoming</option>
+                                        </optgroup>
+                                        <optgroup label="Central Time Zone">
+                                            <option value="AL">Alabama</option>
+                                            <option value="AR">Arkansas</option>
+                                            <option value="IL">Illinois</option>
+                                            <option value="IA">Iowa</option>
+                                            <option value="KS">Kansas</option>
+                                            <option value="KY">Kentucky</option>
+                                            <option value="LA">Louisiana</option>
+                                            <option value="MN">Minnesota</option>
+                                            <option value="MS">Mississippi</option>
+                                            <option value="MO">Missouri</option>
+                                            <option value="OK">Oklahoma</option>
+                                            <option value="SD">South Dakota</option>
+                                            <option value="TX">Texas</option>
+                                            <option value="TN">Tennessee</option>
+                                            <option value="WI">Wisconsin</option>
+                                        </optgroup>
+                                        <optgroup label="Eastern Time Zone">
+                                            <option value="CT">Connecticut</option>
+                                            <option value="DE">Delaware</option>
+                                            <option value="FL">Florida</option>
+                                            <option value="GA">Georgia</option>
+                                            <option value="IN">Indiana</option>
+                                            <option value="ME">Maine</option>
+                                            <option value="MD">Maryland</option>
+                                            <option value="MA">Massachusetts</option>
+                                            <option value="MI">Michigan</option>
+                                            <option value="NH">New Hampshire</option>
+                                            <option value="NJ">New Jersey</option>
+                                            <option value="NY">New York</option>
+                                            <option value="NC">North Carolina</option>
+                                            <option value="OH">Ohio</option>
+                                            <option value="PA">Pennsylvania</option>
+                                            <option value="RI">Rhode Island</option>
+                                            <option value="SC">South Carolina</option>
+                                            <option value="VT">Vermont</option>
+                                            <option value="VA">Virginia</option>
+                                            <option value="WV">West Virginia</option>
+                                        </optgroup>
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="exampleFormControlInput1">{{ __('phone') }}</label>
+                                <input type="text" class="form-control  @error('phone') is-invalid @enderror" id="exampleFormControlInput1" name="phone" placeholder="">
+                                @error('phone')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
                             </div>
 
                             <div class="form-group">

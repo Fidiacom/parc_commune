@@ -180,52 +180,16 @@
                                 @enderror
                             </div>
 
-
-                            <div class="form-inline form-group mt-4">
-
-                                <div class="form-group w-50">
-                                    <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Avant|Gauche)') }}</label>
-                                    <input type="number" class="form-control  @error('pneu_ag') is-invalid @enderror w-100" id="inputPassword2" name="pneu_ag">
-                                    @error('pneu_ag')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+                            <div class="form-group">
+                                <label for="inputPassword2" class="">{{ __('Number of tires') }}</label>
+                                <input type="number" class="form-control  @error('numOfTires') is-invalid @enderror" name="numOfTires">
+                                @error('numOfTires')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
                                 </div>
-
-                                <div class="form-group w-50">
-                                    <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Avant|Droit)') }}</label>
-                                    <input type="number" class="form-control  @error('pneu_ad') is-invalid @enderror w-100 ml-2" id="inputPassword2" name="pneu_ad">
-                                    @error('pneu_ad')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
+                                @enderror
                             </div>
 
-                            <div class="form-inline form-group mt-4">
-
-                                <div class="form-group w-50">
-                                    <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Derriere|Gauche)') }}</label>
-                                    <input type="number" class="form-control  @error('pneu_dg') is-invalid @enderror w-100" id="inputPassword2" name="pneu_dg">
-                                    @error('pneu_dg')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-
-                                <div class="form-group w-50">
-                                    <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Derriere|Droit)') }}</label>
-                                    <input type="number" class="form-control  @error('pneu_dd') is-invalid @enderror w-100 ml-2" id="inputPassword2" name="pneu_dd">
-                                    @error('pneu_dd')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>

@@ -2,55 +2,9 @@
     <div class="col-12">
         <div class="container mb-5">
             <form action="">
-                <div class="card-subtitle mb-4">
-                    <div class="form-inline form-group mt-4">
 
-                        <div class="form-group w-50">
-                            <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Avant|Gauche)') }}</label>
-                            <input type="number" class="form-control  @error('brand') is-invalid @enderror w-100" id="inputPassword2" name="pneu_ag">
-                            @error('brand')
-                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                        </div>
-
-                        <div class="form-group w-50">
-                            <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Avant|Droit)') }}</label>
-                            <input type="number" class="form-control  @error('brand') is-invalid @enderror w-100 ml-2" id="inputPassword2" name="pneu_ad">
-                            @error('brand')
-                            <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="form-inline form-group mt-4">
-
-                        <div class="form-group w-50">
-                            <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Derriere|Gauche)') }}</label>
-                            <input type="number" class="form-control  @error('brand') is-invalid @enderror w-100" id="inputPassword2" name="pneu_dg">
-                            @error('brand')
-                            <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group w-50">
-                            <label for="inputPassword2" class="">{{ __('seuil KM Pneu (Derriere|Droit)') }}</label>
-                            <input type="number" class="form-control  @error('brand') is-invalid @enderror w-100 ml-2" id="inputPassword2" name="pneu_dd">
-                            @error('brand')
-                            <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
                 <div class="text-right">
-                    <button type="button" class="btn btn-primary waves-effect waves-light">Submit</button>
+                    <a href="{{ route('admin.drivers.create') }}" type="button" class="btn btn-primary waves-effect waves-light">Add new Driver</a>
                 </div>
             </form>
         </div>

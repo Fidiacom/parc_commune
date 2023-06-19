@@ -21,6 +21,9 @@
     <link href="{{ asset('assets/plugins/dropify/dropify.min.css') }}" rel="stylesheet" type="text/css" />
 
     <style>
+        .select2-selection__choice{
+            color:#34567a!important;
+        }
         #loading {
             position: fixed;
             display: block;

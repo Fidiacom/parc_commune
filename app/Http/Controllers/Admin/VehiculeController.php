@@ -5,6 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Vehicule;
+use App\Models\Vidange;
+use App\Models\pneu;
+use App\Models\TimingChaine;
+
+
 use Alert;
 class VehiculeController extends Controller
 {
@@ -35,15 +40,12 @@ class VehiculeController extends Controller
             'threshold_timing_chaine'       =>  'required',
             'inssurance_expiration'         =>  'required',
             'technical_visit_expiration'    =>  'required',
-            'pneu_ag'                       =>  'required',
-            'pneu_dg'                       =>  'required',
-            'pneu_ad'                       =>  'required',
-            'pneu_dd'                       =>  'required',
+            'numOfTires'                    =>  'required',
         ]);
 
+        dd($request->all(), isset($request->abs));
         Alert::success('Congrats', 'You\'ve Successfully Registered');
         return redirect()->back();
-        dd($request->all(), isset($request->abs));
 
         $vehicule                   =   new Vehicule;
         $vehicule->brand            =   $request->brand;
@@ -58,5 +60,23 @@ class VehiculeController extends Controller
         $vehicule->airbag           =   isset($request->airbag) ? 1 : 0;
         $vehicule->abs              =   isset($request->abs) ? 1 : 0;;
         $vehicule->save();
+
+
+        $vidange =  new Vidange;
+        $vidange->car_id            =   $vehicule->id;
+        $vidange->current_km        =   $request->km_actuel;
+        $vidange->next_km_for_drain =   intval($request->km_actuel) + intval($request->threshold_vidange);
+        $vidange->threshold_km      =   $request->threshold_vidange;
+        $vidange->save();
+
+        $tire = new pneu;
+        $tire->car_id               =   $vehicule->id;
+        $tire->current_km           =   $request->km_actuel;;
+        $tire->next_km_for_change   =   intval($request->km_actuel) + intval($request->pneu_ag);;
+        $tire->threshold_km         =   $request->pneu_ag;
+        $tire->tire_position        =   'ag';
+        $tire->save();
+
+
     }
 }

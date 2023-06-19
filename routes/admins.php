@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\TripController;
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->group(function(){
-        
+
 
         //Vehicules
         Route::get('vehicule', [VehiculeController::class, 'index'])->name('admin.vehicule');
@@ -17,6 +17,7 @@ Route::middleware(['auth'])->group(function () {
         //Drivers
         Route::get('/driver', [DriverController::class, 'index'])->name('admin.drivers');
         Route::get('/driver/create', [DriverController::class, 'create'])->name('admin.drivers.create');
+        Route::post('/driver/store', [DriverController::class, 'store'])->name('admin.driver.store');
 
 
         //Trip (Voyage)

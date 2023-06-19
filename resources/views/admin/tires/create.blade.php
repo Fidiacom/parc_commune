@@ -27,34 +27,24 @@
 
                                 <div class="form-group">
                                     <label for="simpleinput">{{ __('Tire Position') }}</label>
-                                    
+
                                     <input type="text" id="simpleinput" class="form-control @error('positions') is-invalid @enderror" name="positions[]" placeholder="">
-                                    @error('tire_position')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+
                                 </div>
 
                                 <div class="form-group">
                                     <label for="simpleinput">{{ __('threshold km') }}</label>
-                                    <input type="number" id="simpleinput" class="form-control @error('thresholds') is-invalid @enderror" name="thresholds[]" placeholder="">
-                                    @error('threshold_km')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+
+
+                                    <input type="text" placeholder="" class="form-control autonumber @error('thresholds') is-invalid @enderror" name="thresholds[]" data-a-sep="." data-a-dec=",">
+
                                 </div>
 
 
                                 <div class="form-group">
                                     <label for="simpleinput">{{ __('next km for change') }}</label>
-                                    <input type="number" id="simpleinput" class="form-control @error('nextKMs') is-invalid @enderror" name="nextKMs[]" placeholder="">
-                                    @error('next_km_for_change')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+                                    <input type="text" placeholder="" class="form-control autonumber @error('nextKMs') is-invalid @enderror" name="nextKMs[]" data-a-sep="." data-a-dec=",">
+
                                 </div>
 
 

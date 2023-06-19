@@ -14,7 +14,9 @@ class VehiculeController extends Controller
 {
     public function index()
     {
-        return view('admin.vehicule.index');
+        $vehicules = Vehicule::latest()->get();
+
+        return view('admin.vehicule.index', ['vehicules' => $vehicules]);
     }
 
     public function create()
@@ -25,7 +27,7 @@ class VehiculeController extends Controller
 
     public function store(Request $request)
     {
-
+        //dd($request->all(), floatval(intval(str_replace('.','',$request->km_actuel))));
         $validated = $request->validate([
             'brand'                         =>  'required',
             'model'                         =>  'required',
@@ -48,8 +50,8 @@ class VehiculeController extends Controller
         $vehicule->model            =   $request->model;
         $vehicule->matricule        =   $request->matricule;
         $vehicule->num_chassis      =   $request->chassis;
-        $vehicule->total_km         =   $request->km_actuel;
-        $vehicule->horses           =   $request->horses;
+        $vehicule->total_km         =   intval(str_replace('.','',$request->km_actuel));
+        $vehicule->horses           =   intval(str_replace('.','',$request->horses));
         $vehicule->fuel_type        =   $request->fuel_type;
         $vehicule->airbag           =   isset($request->airbag) ? 1 : 0;
         $vehicule->abs              =   isset($request->abs) ? 1 : 0;
@@ -61,17 +63,17 @@ class VehiculeController extends Controller
 
         $vidange =  new Vidange;
         $vidange->car_id            =   $vehicule->id;
-        $vidange->current_km        =   $request->km_actuel;
-        $vidange->next_km_for_drain =   intval($request->km_actuel) + intval($request->threshold_vidange);
-        $vidange->threshold_km      =   $request->threshold_vidange;
+        $vidange->current_km        =   intval(str_replace('.','',$request->km_actuel));
+        $vidange->next_km_for_drain =   intval(str_replace('.','',$request->km_actuel)) + intval($request->threshold_vidange);
+        $vidange->threshold_km      =   intval(str_replace('.','',$request->threshold_vidange));
         $vidange->save();
 
 
         $timingChaine = new TimingChaine;
         $timingChaine->car_id   =   $vehicule->id;
-        $timingChaine->current_km   =   $request->km_actuel;
-        $timingChaine->next_km_for_change   =   intval($request->km_actuel) + intval($request->threshold_timing_chaine);
-        $timingChaine->threshold_km     =   $request->threshold_timing_chaine;
+        $timingChaine->current_km   =   intval(str_replace('.','',$request->km_actuel));
+        $timingChaine->next_km_for_change   =   intval(str_replace('.','',$request->km_actuel)) + intval(str_replace('.','',$request->threshold_timing_chaine));
+        $timingChaine->threshold_km     =   intval(str_replace('.','',$request->threshold_timing_chaine));
         $timingChaine->save();
 
 

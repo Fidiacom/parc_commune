@@ -85,7 +85,7 @@
 
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('Km actuel') }}</label>
-                                <input type="number" class="form-control  @error('km_actuel') is-invalid @enderror" id="exampleFormControlInput1" name="km_actuel" placeholder="">
+                                <input type="text" placeholder="" class="form-control autonumber @error('km_actuel') is-invalid @enderror"  name="km_actuel" data-a-sep="." data-a-dec=",">
                                 @error('km_actuel')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}
@@ -95,7 +95,8 @@
 
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('horses') }}</label>
-                                <input type="number" class="form-control  @error('horses') is-invalid @enderror" id="exampleFormControlInput1" name="horses" placeholder="">
+
+                                <input type="text" placeholder="" class="form-control autonumber @error('horses') is-invalid @enderror"  name="horses" data-a-sep="." data-a-dec=",">
                                 @error('horses')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}
@@ -131,7 +132,9 @@
 
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('seuil KM vidange') }}</label>
-                                <input type="number" class="form-control  @error('threshold_vidange') is-invalid @enderror" id="exampleFormControlInput1" name="threshold_vidange" placeholder="">
+                                <input type="text" placeholder="" class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"  name="threshold_vidange" data-a-sep="." data-a-dec=",">
+
+
                                 @error('threshold_vidange')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}
@@ -143,7 +146,7 @@
 
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('seuil KM chaine de distrubution') }}</label>
-                                <input type="number" class="form-control  @error('threshold_timing_chaine') is-invalid @enderror" id="exampleFormControlInput1" name="threshold_timing_chaine" placeholder="">
+                                <input type="text" placeholder="" class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"  name="threshold_timing_chaine" data-a-sep="." data-a-dec=",">
                                 @error('threshold_timing_chaine')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}

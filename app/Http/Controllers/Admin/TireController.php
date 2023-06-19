@@ -27,9 +27,9 @@ class TireController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'positions.*'     =>  'required',
-            'thresholds.*'    =>  'required|numeric',
-            'nextKMs.*'       =>  'required|numeric',
-            'carId'           =>    'required|numeric'
+            'thresholds.*'    =>  'required',
+            'nextKMs.*'       =>  'required',
+            'carId'           =>    'required'
         ]);
 
         if($validator->fails()){
@@ -46,15 +46,15 @@ class TireController extends Controller
 
                 $pneu = new pneu;
                 $pneu->car_id   =   $vehicule->id;
-                $pneu->current_km   =   $vehicule->total_km;
-                $pneu->next_km_for_change   =   $request->nextKMs[$num];
-                $pneu->threshold_km     =   $request->thresholds[$num];
+                $pneu->current_km   =   intval($vehicule->total_km);
+                $pneu->next_km_for_change   =   intval($request->nextKMs[$num]);
+                $pneu->threshold_km     =   intval($request->thresholds[$num]);
                 $pneu->tire_position    =   $request->positions[$num];
                 $pneu->save();
             }
 
 
-            Alert::error('Saved', 'Saved');
+            Alert::success('Saved', 'Saved');
             return redirect(route('admin.vehicule'));
         } catch (\Throwable $th) {
             dd('Vehicule Not found', $th);

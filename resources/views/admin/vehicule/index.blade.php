@@ -26,7 +26,7 @@
                             @foreach ($vehicules as $vehicule)
                             <tr>
                                 <td>
-                                    <a href="">
+                                    <a href="{{ route('admin.vehicule.edit', $vehicule->id) }}">
                                         {{ $vehicule->brand }}
                                     </a>
                                 </td>

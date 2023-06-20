@@ -27,7 +27,6 @@ class VehiculeController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request->all(), floatval(intval(str_replace('.','',$request->km_actuel))));
         $validated = $request->validate([
             'brand'                         =>  'required',
             'model'                         =>  'required',
@@ -81,4 +80,17 @@ class VehiculeController extends Controller
         Alert::success('Vehicule Saved Successfully', 'Please fill tires field');
         return redirect(route('admin.tire.create', $vehicule->id));
     }
+
+    public function edit($id)
+    {
+        try {
+            $vehicule = Vehicule::with('vidange', 'timing_chaine')->findOrFail($id);
+            
+        } catch (\Throwable $th) {
+            dd('vehicule not found', $th);
+        }
+
+        return view('admin.vehicule.edit', [ 'vehicule' =>  $vehicule]);
+    }
+
 }

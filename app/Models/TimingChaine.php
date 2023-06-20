@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class TimingChaine extends Model
 {
     use HasFactory;
+
+
+
+    public function vehicule()
+    {
+        return $this->belongTo(Vehicule::class);
+    }
 }

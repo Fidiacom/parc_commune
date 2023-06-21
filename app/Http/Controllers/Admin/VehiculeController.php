@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\Vehicule;
 use App\Models\Vidange;
 use App\Models\TimingChaine;
-
-
 use Alert;
+use Crypt;
+
+
+
+
+
 class VehiculeController extends Controller
 {
     public function index()
@@ -90,6 +94,54 @@ class VehiculeController extends Controller
         }
 
         return view('admin.vehicule.edit', [ 'vehicule' =>  $vehicule]);
+    }
+
+
+    public function update(Request $request)
+    {
+        dd($request->all());
+        $validated = $request->validate([
+            'brand'                         =>  'required',
+            'model'                         =>  'required',
+            'matricule'                     =>  'required',
+            'chassis'                       =>  'required',
+            'km_actuel'                     =>  'required',
+            'horses'                        =>  'required',
+            'fuel_type'                     =>  'required|not_in:0',
+            'inssurance_expiration'         =>  'required',
+            'technical_visit_expiration'    =>  'required',
+            'numOfTires'                    =>  'required',
+        ]);
+
+
+        try {
+
+            $id = Crypt::decrypt($request->vehicule_id);
+            $vehicule                   =   Vehicule::findOrFail($id);
+        } catch (\Throwable $th) {
+            return view('admin.vehicule.404');
+        }
+
+
+        $vehicule->brand            =   $request->brand;
+        $vehicule->image            =   isset($request->image) ? uploadFile($request->image, 'vehicules') : $vehicule->image;
+        $vehicule->model            =   $request->model;
+        $vehicule->matricule        =   $request->matricule;
+        $vehicule->num_chassis      =   $request->chassis;
+        $vehicule->total_km         =   intval(str_replace('.','',$request->km_actuel));
+        $vehicule->horses           =   intval(str_replace('.','',$request->horses));
+        $vehicule->fuel_type        =   $request->fuel_type;
+        $vehicule->airbag           =   isset($request->airbag) ? 1 : 0;
+        $vehicule->abs              =   isset($request->abs) ? 1 : 0;
+        $vehicule->inssurance_expiration              =   $request->inssurance_expiration;
+        $vehicule->technicalvisite_expiration         =   $request->technical_visit_expiration;
+        $vehicule->number_of_tires         =   $request->numOfTires;
+        $vehicule->save();
+
+
+
+        
+
     }
 
 }

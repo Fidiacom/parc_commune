@@ -18,6 +18,7 @@
                     <div class="card-body">
                         <form action="{{ route('admin.vehicule.update', $vehicule->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            {{-- Picture --}}
                             <div class="form-group">
 
                                 <div class="col-xl-5 mx-auto">
@@ -41,6 +42,7 @@
                                 @enderror
                             </div>
 
+                            {{-- Brand --}}
                             <div class="form-group">
                                 <label for="simpleinput">{{ __('brand') }}</label>
                                 <input
@@ -58,6 +60,8 @@
                                 @enderror
                             </div>
 
+
+                            {{-- Model --}}
                             <div class="form-group">
                                 <label for="example-password">{{ __('Model') }}</label>
                                 <input
@@ -74,6 +78,8 @@
                                 @enderror
                             </div>
 
+
+                            {{-- mattricule --}}
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('matricule') }}</label>
                                 <input
@@ -91,6 +97,8 @@
                                 @enderror
                             </div>
 
+
+                            {{-- Chassis --}}
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('chassis') }}</label>
                                 <input
@@ -109,7 +117,7 @@
                             </div>
 
 
-
+                            {{-- Km actuel --}}
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('Km actuel') }}</label>
                                 <input type="text"
@@ -126,6 +134,7 @@
                                 @enderror
                             </div>
 
+                            {{-- Horses --}}
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('horses') }}</label>
 
@@ -143,6 +152,7 @@
                                 @enderror
                             </div>
 
+                            {{-- Fuel type --}}
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('Fuel Type') }}</label>
                                 <select name="fuel_type" id="" class="form-control @error('fuel_type') is-invalid @enderror" >
@@ -158,6 +168,9 @@
                                 @enderror
                             </div>
 
+
+
+                            {{-- CHeck boxes --}}
                             <div class="mt-2">
                                 <div class="custom-control custom-checkbox custom-control-inline">
                                     <input
@@ -181,43 +194,8 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
 
-                                <label for="exampleFormControlInput1">{{ __('seuil KM vidange') }}</label>
-                                <input type="text"
-                                    class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"
-                                    name="threshold_vidange"
-                                    value="{{ $vehicule->vidange->last()->threshold_km }}"
-                                    data-a-sep="."
-                                    data-a-dec=","
-                                >
-                                @error('threshold_vidange')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('seuil KM chaine de distrubution') }}</label>
-                                <input
-                                    type="text"
-                                    value="{{ $vehicule->timing_chaine->last()->threshold_km }}"
-                                    class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"
-                                    name="threshold_timing_chaine"
-                                    data-a-sep="."
-                                    data-a-dec=","
-                                >
-                                @error('threshold_timing_chaine')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-
+                            {{-- Inssurance expiration --}}
                             <div class="form-group">
                                 <label for="inputPassword2" class="">{{ __('expiration assurance') }}</label>
                                 <input
@@ -234,6 +212,8 @@
                                 @enderror
                             </div>
 
+
+                            {{-- Visite technique --}}
                             <div class="form-group">
                                 <label for="inputPassword2" class="">{{ __('expiration visite technique') }}</label>
                                 <input
@@ -250,6 +230,7 @@
                                 @enderror
                             </div>
 
+                            {{-- Number Of TIRES --}}
                             <div class="form-group">
                                 <label for="inputPassword2" class="">{{ __('Number of tires') }}</label>
                                 <input
@@ -266,6 +247,8 @@
                             </div>
 
 
+                            <input type="hidden" name="vehicule_id" value="{{ Crypt::encrypt($vehicule->id) }}">
+                            {{-- Submit --}}
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
                             </div>

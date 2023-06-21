@@ -85,9 +85,8 @@ class VehiculeController extends Controller
     {
         try {
             $vehicule = Vehicule::with('vidange', 'timing_chaine')->findOrFail($id);
-            
         } catch (\Throwable $th) {
-            dd('vehicule not found', $th);
+            return view('admin.vehicule.404');
         }
 
         return view('admin.vehicule.edit', [ 'vehicule' =>  $vehicule]);

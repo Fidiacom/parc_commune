@@ -14,6 +14,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('vehicule/create', [VehiculeController::class, 'create'])->name('admin.vehicule.create');
         Route::post('vehicule/store', [VehiculeController::class, 'store'])->name('admin.vehicule.store');
         Route::get('vehicule/{id}', [VehiculeController::class, 'edit'])->name('admin.vehicule.edit');
+        Route::post('vehicule/update/{id}', [VehiculeController::class, 'update'])->name('admin.vehicule.update');
         //tires
         Route::get('vehicule/tires/create/{carId}', [TireController::class, 'create'])->name('admin.tire.create');
         Route::post('vehicule/tires/store', [TireController::class, 'store'])->name('admin.tire.store');

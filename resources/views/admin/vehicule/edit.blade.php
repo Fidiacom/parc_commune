@@ -16,7 +16,7 @@
             <div class="col-xl-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.vehicule.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.vehicule.update', $vehicule->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
 
@@ -160,21 +160,34 @@
 
                             <div class="mt-2">
                                 <div class="custom-control custom-checkbox custom-control-inline">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck5" @checked($vehicule->airbag) name="airbag">
+                                    <input
+                                        type="checkbox"
+                                        class="custom-control-input"
+                                        id="customCheck5"
+                                        @checked($vehicule->airbag)
+                                        name="airbag"
+                                    >
                                     <label class="custom-control-label" for="customCheck5">Airbag</label>
                                 </div>
                                 <div class="custom-control custom-checkbox custom-control-inline">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck6" @checked($vehicule->abs) name="abs">
+                                    <input
+                                        type="checkbox"
+                                        class="custom-control-input"
+                                        id="customCheck6"
+                                        @checked($vehicule->abs)
+                                        name="abs"
+                                    >
                                     <label class="custom-control-label" for="customCheck6">Abs</label>
                                 </div>
                             </div>
 
                             <div class="form-group">
+
                                 <label for="exampleFormControlInput1">{{ __('seuil KM vidange') }}</label>
                                 <input type="text"
-                                    value=""
                                     class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"
                                     name="threshold_vidange"
+                                    value="{{ $vehicule->vidange->last()->threshold_km }}"
                                     data-a-sep="."
                                     data-a-dec=","
                                 >
@@ -189,7 +202,14 @@
 
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('seuil KM chaine de distrubution') }}</label>
-                                <input type="text" placeholder="" class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"  name="threshold_timing_chaine" data-a-sep="." data-a-dec=",">
+                                <input
+                                    type="text"
+                                    value="{{ $vehicule->timing_chaine->last()->threshold_km }}"
+                                    class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"
+                                    name="threshold_timing_chaine"
+                                    data-a-sep="."
+                                    data-a-dec=","
+                                >
                                 @error('threshold_timing_chaine')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}
@@ -200,7 +220,13 @@
 
                             <div class="form-group">
                                 <label for="inputPassword2" class="">{{ __('expiration assurance') }}</label>
-                                <input type="date" class="form-control  @error('inssurance_expiration') is-invalid @enderror" id="inputPassword2" name="inssurance_expiration">
+                                <input
+                                    type="date"
+                                    class="form-control @error('inssurance_expiration') is-invalid @enderror"
+                                    id="inputPassword2"
+                                    name="inssurance_expiration"
+                                    value="{{ $vehicule->inssurance_expiration }}"
+                                >
                                 @error('inssurance_expiration')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}
@@ -210,7 +236,13 @@
 
                             <div class="form-group">
                                 <label for="inputPassword2" class="">{{ __('expiration visite technique') }}</label>
-                                <input type="date" class="form-control  @error('technical_visit_expiration') is-invalid @enderror" id="inputPassword2" name="technical_visit_expiration">
+                                <input
+                                    type="date"
+                                    class="form-control @error('technical_visit_expiration') is-invalid @enderror"
+                                    id="inputPassword2"
+                                    name="technical_visit_expiration"
+                                    value="{{ $vehicule->technicalvisite_expiration }}"
+                                >
                                 @error('technical_visit_expiration')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}
@@ -220,7 +252,12 @@
 
                             <div class="form-group">
                                 <label for="inputPassword2" class="">{{ __('Number of tires') }}</label>
-                                <input type="number" class="form-control  @error('numOfTires') is-invalid @enderror" name="numOfTires">
+                                <input
+                                    type="number"
+                                    class="form-control @error('numOfTires') is-invalid @enderror"
+                                    name="numOfTires"
+                                    value="{{ $vehicule->number_of_tires }}"
+                                >
                                 @error('numOfTires')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}

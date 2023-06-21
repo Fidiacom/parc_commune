@@ -16,8 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('car_id');
             $table->foreign('car_id')->references('id')->on('vehicules')->onDelete('cascade');
 
-            $table->unsignedBigInteger('current_km');
-            $table->unsignedBigInteger('next_km_for_change');
+            
             $table->unsignedBigInteger('threshold_km');
 
             $table->timestamps();

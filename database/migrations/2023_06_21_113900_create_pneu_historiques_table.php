@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vidanges', function (Blueprint $table) {
+        Schema::create('pneu_historiques', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('pneu_id');
+            $table->foreign('pneu_id')->references('id')->on('pneus')->onDelete('cascade');
 
-            $table->unsignedBigInteger('car_id');
-            $table->foreign('car_id')->references('id')->on('vehicules')->onDelete('cascade');
-
-            $table->unsignedBigInteger('threshold_km');
+            $table->unsignedBigInteger('current_km');
+            $table->unsignedBigInteger('next_km_for_change');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vidanges');
+        Schema::dropIfExists('pneu_historiques');
     }
 };

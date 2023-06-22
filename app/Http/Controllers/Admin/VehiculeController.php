@@ -12,6 +12,7 @@ use App\Models\VidangeHistorique;
 use App\Models\TimingChaine;
 use App\Models\TimingChaineHistorique;
 
+use App\Models\CategoriePermi;
 use Alert;
 use Crypt;
 
@@ -30,12 +31,14 @@ class VehiculeController extends Controller
 
     public function create()
     {
-        return view('admin.vehicule.create');
+        $categories = CategoriePermi::all();
+        return view('admin.vehicule.create', ['categories'  =>  $categories]);
     }
 
 
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'brand'                         =>  'required',
             'model'                         =>  'required',
@@ -44,11 +47,13 @@ class VehiculeController extends Controller
             'km_actuel'                     =>  'required',
             'horses'                        =>  'required',
             'fuel_type'                     =>  'required|not_in:0',
+            'category'                      =>  'required|not_in:0',
             'threshold_vidange'             =>  'required',
             'threshold_timing_chaine'       =>  'required',
             'inssurance_expiration'         =>  'required',
             'technical_visit_expiration'    =>  'required',
             'numOfTires'                    =>  'required',
+
         ]);
 
 
@@ -63,6 +68,7 @@ class VehiculeController extends Controller
         $vehicule->fuel_type        =   $request->fuel_type;
         $vehicule->airbag           =   isset($request->airbag) ? 1 : 0;
         $vehicule->abs              =   isset($request->abs) ? 1 : 0;
+        $vehicule->permis_id        =   $request->category;
         $vehicule->inssurance_expiration              =   $request->inssurance_expiration;
         $vehicule->technicalvisite_expiration         =   $request->technical_visit_expiration;
         $vehicule->number_of_tires         =   $request->numOfTires;
@@ -86,7 +92,7 @@ class VehiculeController extends Controller
 
         $timingChaine = new TimingChaine;
         $timingChaine->car_id   =   $vehicule->id;
-        
+
         $timingChaine->threshold_km     =   intval(str_replace('.','',$request->threshold_timing_chaine));
         $timingChaine->save();
 
@@ -117,7 +123,7 @@ class VehiculeController extends Controller
 
     public function update(Request $request)
     {
-        dd($request->all());
+        //dd($request->all());
         $validated = $request->validate([
             'brand'                         =>  'required',
             'model'                         =>  'required',

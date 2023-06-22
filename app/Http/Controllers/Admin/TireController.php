@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Vehicule;
 use App\Models\pneu;
+use App\Models\PneuHistorique;
 use Validator;
 use Alert;
 class TireController extends Controller
@@ -16,7 +17,7 @@ class TireController extends Controller
             $vehicule = Vehicule::findOrFail($carId);
 
         } catch (\Throwable $th) {
-            dd('Vehicule Not found');
+            return view('admin.vehicule.404');
         }
 
 
@@ -29,7 +30,7 @@ class TireController extends Controller
             'positions.*'     =>  'required',
             'thresholds.*'    =>  'required',
             'nextKMs.*'       =>  'required',
-            'carId'           =>    'required'
+            'carId'           =>   'required'
         ]);
 
         if($validator->fails()){
@@ -46,11 +47,16 @@ class TireController extends Controller
 
                 $pneu = new pneu;
                 $pneu->car_id   =   $vehicule->id;
-                $pneu->current_km   =   intval($vehicule->total_km);
-                $pneu->next_km_for_change   =   intval($request->nextKMs[$num]);
                 $pneu->threshold_km     =   intval($request->thresholds[$num]);
                 $pneu->tire_position    =   $request->positions[$num];
                 $pneu->save();
+
+
+                $historique = new PneuHistorique;
+                $historique->pneu_id    =   $pneu->id;
+                $historique->current_km =   intval($vehicule->total_km);
+                $historique->next_km_for_change =   intval($request->nextKMs[$num]);
+                $historique->save();
             }
 
 

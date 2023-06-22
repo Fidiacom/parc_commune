@@ -28,7 +28,7 @@
                                 <div class="form-group">
                                     <label for="simpleinput">{{ __('Tire Position') }}</label>
 
-                                    <input type="text" id="simpleinput" class="form-control @error('positions') is-invalid @enderror" name="positions[]" placeholder="">
+                                    <input type="text" id="simpleinput" class="form-control @error('positions') is-invalid @enderror" name="positions[]" placeholder="" value="{{ $item }}">
 
                                 </div>
 

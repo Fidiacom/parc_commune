@@ -4,33 +4,59 @@
             <form action="">
 
                 <div class="text-right">
-                    <a href="{{ route('admin.drivers.create') }}" type="button" class="btn btn-primary waves-effect waves-light">Add new Driver</a>
+                    <a href="{{ route('admin.drivers.create') }}" type="button"
+                        class="btn btn-primary waves-effect waves-light">Add new Driver</a>
                 </div>
             </form>
         </div>
         <div class="card">
             <div class="card-body">
-
                 <div class="container">
                     <h4 class="card-title">Basic Data Table</h4>
                     <div class="row">
-                        @foreach (range(1,8) as $item)
-                        <div class="col-6 col-md-4">
+                        <div class="col-12">
                             <div class="card">
-                                <div class="card-body text-center">
-                                    <img class="rounded-circle w-50 mb-3" alt="avatar1" src="https://mdbcdn.b-cdn.net/img/new/avatars/9.webp" />
+                                <div class="card-body">
 
-                                    <h4 class="card-title">Special title treatment</h4>
-                                    <p class="card-text">With supporting text below as a natural lead-in to
-                                        additional content.</p>
-                                    <a href="#" class="btn btn-primary waves-effect waves-light">More details</a>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
+                                    <h4 class="card-title">Buttons example</h4>
+
+                                    <table id="datatable-buttons" class="table table-striped nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>Full Name</th>
+                                                <th>C.I.N</th>
+                                                <th>Phone</th>
+                                                <th>Categorie Permis</th>
+                                                <th>Create at</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            @foreach ($drivers as $d)
+
+                                            <tr>
+                                                <td>{{ $d->full_name }}</td>
+                                                <td>{{ $d->cin }}</td>
+                                                <td>{{ $d->phone }}</td>
+                                                <td>
+                                                    @foreach ($d->permis as $permi)
+                                                        {{ $permi->label.' | ' }}
+
+
+                                                    @endforeach
+                                                </td>
+                                                <td>{{ $d->created_at }}</td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+
+                                </div><!-- end card body-->
+                            </div> <!-- end card -->
+                        </div><!-- end col-->
                     </div>
                 </div>
-
             </div> <!-- end card body-->
         </div> <!-- end card -->
     </div><!-- end col-->

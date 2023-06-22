@@ -5,8 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Vehicule;
+
 use App\Models\Vidange;
+use App\Models\VidangeHistorique;
+
 use App\Models\TimingChaine;
+use App\Models\TimingChaineHistorique;
+
 use Alert;
 use Crypt;
 
@@ -66,18 +71,31 @@ class VehiculeController extends Controller
 
         $vidange =  new Vidange;
         $vidange->car_id            =   $vehicule->id;
-        $vidange->current_km        =   intval(str_replace('.','',$request->km_actuel));
-        $vidange->next_km_for_drain =   intval(str_replace('.','',$request->km_actuel)) + intval($request->threshold_vidange);
         $vidange->threshold_km      =   intval(str_replace('.','',$request->threshold_vidange));
         $vidange->save();
+
+        // Historique_Vidange
+        $vidange_histrorique    =   new VidangeHistorique;
+        $vidange_histrorique->vidange_id    =   $vidange->id;
+        $vidange_histrorique->current_km    =   intval(str_replace('.','',$request->km_actuel));
+        $vidange_histrorique->next_km_for_drain =   intval(str_replace('.','',$request->km_actuel)) + intval($request->threshold_vidange);
+        $vidange_histrorique->save();
+
+
 
 
         $timingChaine = new TimingChaine;
         $timingChaine->car_id   =   $vehicule->id;
-        $timingChaine->current_km   =   intval(str_replace('.','',$request->km_actuel));
-        $timingChaine->next_km_for_change   =   intval(str_replace('.','',$request->km_actuel)) + intval(str_replace('.','',$request->threshold_timing_chaine));
+        
         $timingChaine->threshold_km     =   intval(str_replace('.','',$request->threshold_timing_chaine));
         $timingChaine->save();
+
+        // Historique Timing Chaine
+        $timingChaine_historique = new TimingChaineHistorique;
+        $timingChaine_historique->chaine_id     =   $timingChaine->id;
+        $timingChaine_historique->current_km    =   intval(str_replace('.','',$request->km_actuel));
+        $timingChaine_historique->next_km_for_change    =   intval(str_replace('.','',$request->km_actuel)) + intval(str_replace('.','',$request->threshold_timing_chaine));;
+        $timingChaine_historique->save();
 
 
 
@@ -140,7 +158,7 @@ class VehiculeController extends Controller
 
 
 
-        
+
 
     }
 

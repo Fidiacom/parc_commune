@@ -36,14 +36,16 @@
                                             @foreach ($drivers as $d)
 
                                             <tr>
-                                                <td>{{ $d->full_name }}</td>
+                                                <td>
+                                                    <a href="{{ route('admin.driver.edit', Crypt::encrypt($d->id)) }}">
+                                                        {{ $d->full_name }}
+                                                    </a>
+                                                </td>
                                                 <td>{{ $d->cin }}</td>
                                                 <td>{{ $d->phone }}</td>
                                                 <td>
                                                     @foreach ($d->permis as $permi)
                                                         {{ $permi->label.' | ' }}
-
-
                                                     @endforeach
                                                 </td>
                                                 <td>{{ $d->created_at }}</td>

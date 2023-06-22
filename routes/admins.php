@@ -18,10 +18,13 @@ Route::middleware(['auth'])->group(function () {
         //tires
         Route::get('vehicule/tires/create/{carId}', [TireController::class, 'create'])->name('admin.tire.create');
         Route::post('vehicule/tires/store', [TireController::class, 'store'])->name('admin.tire.store');
+
         //Drivers
         Route::get('/driver', [DriverController::class, 'index'])->name('admin.drivers');
         Route::get('/driver/create', [DriverController::class, 'create'])->name('admin.drivers.create');
         Route::post('/driver/store', [DriverController::class, 'store'])->name('admin.driver.store');
+        Route::get('/drive/{id}', [DriverController::class, 'edit'])->name('admin.driver.edit');
+        Route::post('/driver/update/{id}', [DriverController::class, 'update'])->name('admin.driver.update');
 
 
         //Trip (Voyage)

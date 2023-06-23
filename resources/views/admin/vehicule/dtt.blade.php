@@ -24,9 +24,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#settings1" data-toggle="tab" aria-expanded="false" class="nav-link">
+                                <a href="#pneus" data-toggle="tab" aria-expanded="false" class="nav-link">
 
-                                    <span class="d-lg-block">Chaine de distribution</span>
+                                    <span class="d-lg-block">Pneus</span>
                                 </a>
                             </li>
                         </ul>
@@ -74,13 +74,11 @@
                                                 <table id="" class="table nowrap dtt">
                                                     <thead>
                                                         <tr>
-
                                                             <th>Start Km</th>
                                                             <th>Next Km</th>
                                                             <th>Created At</th>
                                                         </tr>
                                                     </thead>
-
 
                                                     <tbody>
                                                         @foreach ($vehicule->vidange->vidange_historique as $vh)
@@ -169,16 +167,67 @@
 
 
 
-                            <div class="tab-pane" id="settings1">
-                                <p>Food truck quinoa dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula
-                                    eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                                    montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,
-                                    pretium quis, sem. Nulla consequat massa quis enim.</p>
-                                <p class="mb-0">Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In
-                                    enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu
-                                    pede mollis pretium. Integer tincidunt.Cras dapibus. Vivamus elementum semper nisi.
-                                    Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae,
-                                    eleifend ac, enim.</p>
+                            <div class="tab-pane" id="pneus">
+                                <div class="row">
+                                    @foreach ($vehicule->pneu as $pneu)
+                                    <div class="col-6">
+                                        <form action="{{ route('admin.pneu.update', Crypt::encrypt($pneu->id)) }}" method="POST" class="form-group">
+                                            @csrf
+                                            <label>
+                                                {{ 'Position: '.$pneu->tire_position }}
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text"
+                                                    class="form-control"
+                                                    name="threshold_km" value="{{ $pneu->threshold_km }}">
+                                                <div class="input-group-append">
+                                                    <button type="submit" class="btn btn-dark waves-effect waves-light"
+                                                        type="button">
+                                                        Change
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    @endforeach
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4 class="card-title">Basic Data Table</h4>
+
+
+                                                <table id="basic-datatable2" class="table nowrap dtt">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th>Pneu Position</th>
+                                                            <th>Start Km</th>
+                                                            <th>Next Km</th>
+                                                            <th>Created At</th>
+                                                        </tr>
+                                                    </thead>
+
+
+                                                    <tbody>
+                                                        @foreach ($historiquePneu as $h)
+                                                        <tr>
+                                                            <td>{{ $h->tire_position }}</td>
+                                                            <td>{{ $h->current_km }}</td>
+                                                            <td>{{ $h->next_km_for_change }}</td>
+                                                            <td>{{ $h->created_at }}</td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+
+                                            </div> <!-- end card body-->
+                                        </div> <!-- end card -->
+                                    </div><!-- end col-->
+                                </div>
                             </div>
                         </div>
 

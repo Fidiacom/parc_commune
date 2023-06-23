@@ -20,5 +20,10 @@ class Vehicule extends Model
         return $this->hasOne(TimingChaine::class, 'car_id');
     }
 
+    public function pneu()
+    {
+        return $this->hasMany(pneu::class, 'car_id');
+    }
+
 
 }

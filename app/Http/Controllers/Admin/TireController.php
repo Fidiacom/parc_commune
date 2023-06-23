@@ -9,6 +9,7 @@ use App\Models\pneu;
 use App\Models\PneuHistorique;
 use Validator;
 use Alert;
+use Crypt;
 class TireController extends Controller
 {
     public function create($carId)
@@ -64,6 +65,31 @@ class TireController extends Controller
             return redirect(route('admin.vehicule'));
         } catch (\Throwable $th) {
             dd('Vehicule Not found', $th);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'threshold_km'  =>  'required'
+        ]);
+
+        if($validator->fails()){
+            Alert::error('Error', 'All field are required');
+            return back();
+        }
+
+        try {
+            $id =   Crypt::decrypt($id);
+
+            $pneu = pneu::findOrFail($id);
+            $pneu->threshold_km =   $request->threshold_km;
+            $pneu->update();
+
+            Alert::success('Saved', 'Saved');
+            return back();
+        } catch (\Throwable $th) {
+            throw $th;
         }
 
 

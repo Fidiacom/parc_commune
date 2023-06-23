@@ -9,6 +9,8 @@ use App\Models\Vehicule;
 use App\Models\Vidange;
 use App\Models\VidangeHistorique;
 
+use App\Models\pneu;
+
 use App\Models\TimingChaine;
 use App\Models\TimingChaineHistorique;
 
@@ -173,11 +175,17 @@ class VehiculeController extends Controller
 
         try {
             $id = Crypt::decrypt($vehicule_id);
-            $vehicule = Vehicule::with('vidange.vidange_historique', 'timing_chaine.timingchaine_historique')->findOrFail($id);
+            $vehicule = Vehicule::with('vidange.vidange_historique', 'timing_chaine.timingchaine_historique', 'pneu.pneu_historique')->findOrFail($id);
         } catch (\Throwable $th) {
             throw $th;
         }
-        //dd($vehicule);
-        return view('admin.vehicule.dtt', ['vehicule' => $vehicule]);
+
+        $historiquePneu = pneu::where('pneus.car_id', '=', $vehicule->id)
+                ->rightJoin('pneu_historiques', 'pneus.id', '=', 'pneu_historiques.pneu_id')
+                ->latest()
+                ->get(['pneus.tire_position', 'pneu_historiques.current_km', 'pneu_historiques.next_km_for_change', 'pneu_historiques.created_at']);
+        //dd($historique);
+
+        return view('admin.vehicule.dtt', ['vehicule' => $vehicule, 'historiquePneu'    =>  $historiquePneu]);
     }
 }

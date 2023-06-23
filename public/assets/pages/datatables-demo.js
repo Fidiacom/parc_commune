@@ -20,6 +20,18 @@ $(document).ready(function() {
         }
     });
 
+    $('.dtt').DataTable({
+        "language": {
+            "paginate": {
+                "previous": "<i class='mdi mdi-chevron-left'>",
+                "next": "<i class='mdi mdi-chevron-right'>"
+            }
+        },
+        "drawCallback": function () {
+            $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+        }
+    });
+
     //Buttons examples
     var table = $('#datatable-buttons').DataTable({
         lengthChange: false,

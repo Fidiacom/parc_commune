@@ -15,4 +15,10 @@ class TimingChaine extends Model
     {
         return $this->belongTo(Vehicule::class);
     }
+
+
+    public function timingchaine_historique()
+    {
+        return $this->HasMany(TimingChaineHistorique::class, 'chaine_id');
+    }
 }

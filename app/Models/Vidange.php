@@ -14,4 +14,10 @@ class Vidange extends Model
     {
         return $this->belongTo(Vehicule::class);
     }
+
+
+    public function vidange_historique()
+    {
+        return $this->HasMany(VidangeHistorique::class);
+    }
 }

@@ -51,6 +51,8 @@ class DriverController extends Controller
             $hasPermis->save();
         }
 
+        //$driver->permis()->attach($request->permisType);
+
         Alert::success('Driver Saved Successfully', 'Please fill tires field');
         return redirect(route('admin.drivers'));
 
@@ -111,4 +113,7 @@ class DriverController extends Controller
         Alert::success('Driver Saved Successfully', 'Please fill tires field');
         return redirect(route('admin.drivers'));
     }
+
+
+    
 }

@@ -18,6 +18,7 @@
                     <div class="card-body">
                         <form action="{{ route('admin.vehicule.update', $vehicule->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
+
                             {{-- Picture --}}
                             <div class="form-group">
 
@@ -40,6 +41,13 @@
                                     {{ $message }}
                                 </div>
                                 @enderror
+                            </div>
+
+                            <div class="form-group">
+
+                                <a href="{{ route('admin.dtt', Crypt::encrypt($vehicule->id)) }}" class="btn btn-primary waves-effect waves-light">
+                                    Pneus/Vidange/Chaine de distribution
+                                </a>
                             </div>
 
                             {{-- Brand --}}

@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class VidangeHistorique extends Model
 {
     use HasFactory;
+
+
+    public function vidange()
+    {
+        $this->hasOne(Vidange::class);
+    }
 }

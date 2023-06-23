@@ -12,7 +12,7 @@ class Vehicule extends Model
 
     public function vidange()
     {
-        return $this->hasMany(Vidange::class, 'car_id');
+        return $this->hasOne(Vidange::class, 'car_id');
     }
 
     public function timing_chaine()
@@ -20,5 +20,5 @@ class Vehicule extends Model
         return $this->hasMany(TimingChaine::class, 'car_id');
     }
 
-    
+
 }

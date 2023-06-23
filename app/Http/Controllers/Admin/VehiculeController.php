@@ -168,4 +168,15 @@ class VehiculeController extends Controller
 
     }
 
+    public function dtt_get($vehicule_id)
+    {
+
+        try {
+            $id = Crypt::decrypt($vehicule_id);
+            $vehicule = Vehicule::with('vidange.vidange_historique')->findOrFail($id);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+        return view('admin.vehicule.dtt', ['vehicule' => $vehicule]);
+    }
 }

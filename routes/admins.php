@@ -19,6 +19,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('vehicule/drain-tire-timing/{vehicule_id}', [VehiculeController::class, 'dtt_get'])->name('admin.dtt');
         Route::post('/vehicule/drain/update/{id}', [VidangeController::class, 'update'])->name('admin.drain.update');
+
+        
         //tires
         Route::get('vehicule/tires/create/{carId}', [TireController::class, 'create'])->name('admin.tire.create');
         Route::post('vehicule/tires/store', [TireController::class, 'store'])->name('admin.tire.store');

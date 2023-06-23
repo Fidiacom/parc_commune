@@ -100,7 +100,7 @@
                             </div>
 
                             <div class="tab-pane show" id="timingChaine">
-                                <form action="{{ route('admin.drain.update', Crypt::encrypt($vehicule->vidange->id)) }}"
+                                <form action="{{ route('admin.timingchaine.update', Crypt::encrypt($vehicule->timing_chaine->id)) }}"
                                     method="post">
                                     @csrf
 

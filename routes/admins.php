@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DriverController;
 use App\Http\Controllers\Admin\TripController;
 use App\Http\Controllers\Admin\TireController;
 use App\Http\Controllers\Admin\VidangeController;
+use App\Http\Controllers\Admin\TiminChaineController;
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->group(function(){
@@ -19,8 +20,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('vehicule/drain-tire-timing/{vehicule_id}', [VehiculeController::class, 'dtt_get'])->name('admin.dtt');
         Route::post('/vehicule/drain/update/{id}', [VidangeController::class, 'update'])->name('admin.drain.update');
+        Route::post('/vehicule/timingchaine/update/{id}', [TiminChaineController::class, 'update'])->name('admin.timingchaine.update');
 
-        
+
         //tires
         Route::get('vehicule/tires/create/{carId}', [TireController::class, 'create'])->name('admin.tire.create');
         Route::post('vehicule/tires/store', [TireController::class, 'store'])->name('admin.tire.store');

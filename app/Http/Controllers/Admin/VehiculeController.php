@@ -173,10 +173,11 @@ class VehiculeController extends Controller
 
         try {
             $id = Crypt::decrypt($vehicule_id);
-            $vehicule = Vehicule::with('vidange.vidange_historique')->findOrFail($id);
+            $vehicule = Vehicule::with('vidange.vidange_historique', 'timing_chaine.timingchaine_historique')->findOrFail($id);
         } catch (\Throwable $th) {
             throw $th;
         }
+        //dd($vehicule);
         return view('admin.vehicule.dtt', ['vehicule' => $vehicule]);
     }
 }

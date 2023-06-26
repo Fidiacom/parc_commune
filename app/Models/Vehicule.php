@@ -25,5 +25,10 @@ class Vehicule extends Model
         return $this->hasMany(pneu::class, 'car_id');
     }
 
+    public function trips()
+    {
+        $this->hasMany('App\Models\Trip');
+    }
+
 
 }

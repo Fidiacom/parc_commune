@@ -14,4 +14,9 @@ class Driver extends Model
     {
         return $this->belongsToMany('App\Models\CategoriePermi', 'driver_has_permis', 'driver_id', 'permi_id');
     }
+
+    public function trips()
+    {
+        $this->hasMany('App\Models\Trip');
+    }
 }

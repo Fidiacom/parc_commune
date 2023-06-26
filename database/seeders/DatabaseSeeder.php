@@ -22,7 +22,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             UserSeeder::class,
-            PermiCategorySeeder::class
+            PermiCategorySeeder::class,
+            VehiculeSeeder::class,
+            DriverSeeder::class
         ]);
     }
 }

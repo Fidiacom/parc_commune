@@ -15,6 +15,7 @@
                         aria-labelledby="myLargeModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
+
                                 <div class="modal-header">
                                     <h5 class="modal-title h4" id="myLargeModalLabel">Large modal</h5>
                                     <button type="button" class="close waves-effect waves-light" data-dismiss="modal"
@@ -23,40 +24,53 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="" method="post">
-                                        <div class="form-group">
-                                            <label for="">Select Driver</label>
-                                            <select class="form-control" data-toggle="select2" style="width: 100%">
-                                                <option>Select</option>
-                                                @foreach (range(1,30) as $item)
-                                                    <option value="{{ $item }}">Test {{ $item }} | {{ rand(4356, 9876) }}</option>
-                                                @endforeach
-                                            </select>
-
-                                        </div>
-
+                                    <form action="{{ route('admin.trip.store') }}" method="post">
+                                        @csrf
                                         <div class="form-group">
                                             <label for="">Select Car</label>
-                                            <select class="form-control" data-toggle="select2" style="width: 100%">
-                                                <option>Select</option>
-                                                @foreach (range(1,30) as $item)
-                                                    <option value="{{ $item }}">Test {{ $item }} | {{ rand(4356, 9876) }}</option>
+                                            <select class="form-control" data-toggle="select2" style="width: 100%" name="vehicule">
+                                                <option value="0">Select</option>
+                                                @foreach ($vehicules as $v)
+                                                    <option value="{{ $v->id }}">
+                                                        {{ $v->brand.' - '.$v->model.' - '.$v->matricule }}
+                                                    </option>
                                                 @endforeach
                                             </select>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="">Select Driver</label>
+                                            <select class="form-control" data-toggle="select2" style="width: 100%" name="driver">
+                                                <option>Select</option>
+                                                @foreach ($drivers as $d)
+                                                    <option value="{{ $d->id }}">{{ $d->full_name. ' | '.$d->cin }}</option>
+                                                @endforeach
+                                            </select>
+
                                         </div>
 
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox custom-control-inline">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck3">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck3" name="trip_type">
                                                 <label class="custom-control-label" for="customCheck3">Le Voyage permanent</label>
                                             </div>
                                         </div>
 
                                         <div class="form-group mb-3">
-                                            <label>Date Range</label>
-                                            <input type="text" class="form-control date" id="singledaterange" data-toggle="daterangepicker" data-cancel-class="btn-warning" id="dateRangeVoyage">
+                                            <label>Date start</label>
+                                            <input type="text" class="form-control date" id="start_date" data-toggle="daterangepicker" data-single-date-picker="true" name="start_date">
                                         </div>
 
+                                        <div class="form-group mb-3">
+                                            <label>Date End</label>
+                                            <input type="text" class="form-control date" id="end_date" data-toggle="daterangepicker" data-single-date-picker="true" name="end_date">
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>

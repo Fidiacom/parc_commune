@@ -159,7 +159,7 @@
                                     <option value="0">{{ __('Select Fuel Type') }}</option>
                                     <option value="Gasoline" @selected(old('Gasoline') == 'Gasoline')>{{ __('Gasoline') }}</option>
                                     <option value="Diesel" @selected(old('Diesel') == 'Diesel')>{{ __('Diesel') }}</option>
-                                    <option value="Eletric" @selected(old('Eletric') == 'Eletric')>{{ __('Eletric') }}</option>
+                                    <option value="Eletric" @selected(old('Electric') == 'Electric')>{{ __('Eletric') }}</option>
                                 </select>
                                 @error('fuel_type')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">

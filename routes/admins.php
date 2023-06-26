@@ -39,5 +39,7 @@ Route::middleware(['auth'])->group(function () {
 
         //Trip (Voyage)
         Route::get('/trip', [TripController::class, 'index'])->name('admin.trip');
+        Route::get('/trip/create', [TripController::class, 'create'])->name('admin.trip.create');
+        Route::post('/trip/store', [TripController::class,'store'])->name('admin.trip.store');
     });
 });

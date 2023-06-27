@@ -96,14 +96,14 @@
                                 <th>{{ __('Car matricule') }}</th>
                                 <th>{{ __('Type') }}</th>
                                 <th>{{ __('From - To') }}</th>
-
+                                <th>{{ __('Done at') }}</th>
                                 <th>{{ __('Created at') }}</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach ($trips as $trip)
-                            <tr>
+                            <tr @if ($trip->done_at != null) @class(['bg-success', 'text-white']) style="--bs-bg-opacity: .5;" @endif>
                                 <td>
                                     <a href="{{ route('admin.trip.edit', Crypt::encrypt($trip->id)) }}">
                                         {{ $trip->driver->full_name }}
@@ -114,6 +114,9 @@
                                 <td>{{ $trip->vehicule->matricule }}</td>
                                 <td>{{ $trip->permanent ? 'permanent' : 'temporaire' }}</td>
                                 <td>{{ $trip->start.' | ' }} {{ $trip->permanent ? '-----' : $trip->end }}</td>
+                                <td>
+                                    {{ $trip->done_at ?? '--------'  }}
+                                </td>
                                 <td>
                                     {{ $trip->created_at }}
                                 </td>

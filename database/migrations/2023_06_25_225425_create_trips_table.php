@@ -23,7 +23,7 @@ return new class extends Migration
             $table->date('start');
             $table->date('end')->nullable();
 
-            $table->boolean('is_done')->default(0);
+            $table->date('done_at')->nullable();
             $table->timestamps();
         });
     }

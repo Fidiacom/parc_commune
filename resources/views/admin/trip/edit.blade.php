@@ -3,6 +3,48 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                    <h4 class="card-title">Return from Trip</h4>
+
+                    <form action="{{ route('admin.trip.return', $trip->id) }}" method="post">
+                        @csrf
+                        <div class="form-group mb-3">
+                            <label>return Date</label>
+                            <input type="date" class="form-control date @error('return_date') is-invalid @enderror" name="return_date">
+                            @error('return_date')
+                            <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label>Actual KM</label>
+                            <input type="number" class="form-control @error('actual_km') is-invalid @enderror" name="actual_km">
+                            @error('actual_km')
+                            <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group d-flex">
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <form action="{{ route('admin.trip.delete', $trip->id) }}" method="post" id="deleteForm">
+                @csrf
+                @method('DELETE')
+
+            </form>
+        </div><!-- end col-->
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
                     <h4 class="card-title">Trips</h4>
 
                     <form action="{{ route('admin.trip.update',Crypt::encrypt($trip->id)) }}" method="post">
@@ -68,12 +110,27 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group d-flex">
                             <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                            <button type="button" class="btn btn-danger waves-effect waves-light ml-2" onclick="deleteTrip()">Delete</button>
                         </div>
                     </form>
                 </div>
             </div>
+            <form action="{{ route('admin.trip.delete', $trip->id) }}" method="post" id="deleteForm">
+                @csrf
+                @method('DELETE')
+
+            </form>
         </div><!-- end col-->
     </div>
+    <script>
+        function deleteTrip()
+        {
+            if(confirm('appuiye Ok pour suprime') == true)
+            {
+                document.getElementById("deleteForm").submit();
+            }
+        }
+    </script>
 </x-admin.app>

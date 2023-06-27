@@ -127,6 +127,34 @@ class TripController extends Controller
         return back();
     }
 
+    public function destroy($id)
+    {
+        $trip = Trip::findOrFail($id);
+        $trip->delete();
+        Alert::success('Success', 'Deleted');
+        return redirect(route('admin.trip'));
+    }
+
+    public function returnFromTrip(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'return_date'    =>  'required',
+            'actual_km'      =>  'required',
+        ]);
+
+        $trip = Trip::findOrFail($id);
+        $trip->done_at = $request->return_date;
+        $trip->update();
+
+
+        $vehicule = Vehicule::findOrFail($trip->vehicule_id);
+        $vehicule->total_km = $request->actual_km;
+        $vehicule->update();
+
+        Alert::success('Success', 'Saved Correctly');
+        return back();
+    }
+
 
 
 

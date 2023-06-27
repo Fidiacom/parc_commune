@@ -43,5 +43,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/trip/store', [TripController::class,'store'])->name('admin.trip.store');
         Route::get('/trip/{id}', [TripController::class,'edit'])->name('admin.trip.edit');
         Route::put('/trip/update/{id}',[TripController::class, 'update'])->name('admin.trip.update');
+        Route::delete('/trip/destroy/{id}',[TripController::class, 'destroy'])->name('admin.trip.delete');
+        Route::post('/trip/return/{id}', [TripController::class, 'returnFromTrip'])->name('admin.trip.return');
     });
 });

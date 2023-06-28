@@ -306,6 +306,15 @@
                             </a>
                         </li>
 
+
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="mdi mdi-package"></i></i><span>Stock</span></a>
+                            <ul class="sub-menu" aria-expanded="true">
+                                <li><a href="{{ route('admin.stock') }}">Stock Management</a></li>
+                                <li><a href="javascript: void(0);">Historique Stock</a></li>
+                            </ul>
+                        </li>
+
                     </ul>
                 </div>
                 <!-- Sidebar -->

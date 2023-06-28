@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\TripController;
 use App\Http\Controllers\Admin\TireController;
 use App\Http\Controllers\Admin\VidangeController;
 use App\Http\Controllers\Admin\TiminChaineController;
+use App\Http\Controllers\Admin\StockController;
 
 
 Route::middleware(['auth'])->group(function () {
@@ -45,5 +46,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/trip/update/{id}',[TripController::class, 'update'])->name('admin.trip.update');
         Route::delete('/trip/destroy/{id}',[TripController::class, 'destroy'])->name('admin.trip.delete');
         Route::post('/trip/return/{id}', [TripController::class, 'returnFromTrip'])->name('admin.trip.return');
+
+
+        //Stock
+        Route::get('/stock', [StockController::class,'index'])->name('admin.stock');
+        Route::post('/stock/store', [StockController::class,'store'])->name('admin.stock.store');
+
     });
 });

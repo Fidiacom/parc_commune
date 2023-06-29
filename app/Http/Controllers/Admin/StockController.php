@@ -8,6 +8,7 @@ use App\Models\Unitie;
 use App\Models\StockHistorique;
 use App\Models\Stock;
 use Alert;
+use Crypt;
 
 class StockController extends Controller
 {
@@ -15,7 +16,7 @@ class StockController extends Controller
     {
         $unities = Unitie::all();
         $stocks = Stock::with('unitie')->latest()->get();
-        
+
         return view('admin.stock.index', [
                 'unities' => $unities,
                 'stocks'  =>  $stocks
@@ -56,4 +57,61 @@ class StockController extends Controller
             dd('erro', $th);
         }
     }
+
+    public function update(Request $request, $id)
+    {
+
+        $validated = $request->validate([
+            'nameUpdate'          =>  'required',
+            'stock_actuelUpdate'   =>  'required',
+            'min_stock_alertUpdate'         =>  'required',
+            'unitieUpdate'        =>  'required|not_in:0|exists:unities,id',
+        ]);
+
+        $isStockChanged = false;
+        try {
+            $id = Crypt::decrypt($id);
+            $stock = Stock::findOrfail($id);
+            $stock->name  = $request->nameUpdate;
+            $stock->min_stock_alert  = $request->min_stock_alertUpdate;
+            $stock->unitie_id  = $request->unitieUpdate;
+            if($stock->stock_actuel != $request->stock_actuelUpdate)
+            {
+                $isStockChanged = true;
+            }
+            $stock->stock_actuel  = $request->stock_actuelUpdate;
+            $stock->update();
+
+            if ($isStockChanged == true){
+                $stockHostorique = new StockHistorique;
+                $stockHostorique->stock_id  =   $stock->id;
+                $stockHostorique->type      =   'modif';
+                $stockHostorique->quantite  =   $request->stock_actuelUpdate;
+                $stockHostorique->save();
+            }
+
+            Alert::success('Saved', 'Saved');
+            return back();
+        } catch (\Throwable $th) {
+            //throw $th;
+            dd('error', $th, $request->all());
+        }
+
+    }
+
+    public function destroy(Request $request)
+    {
+        
+        try {
+            $stock = Stock::findOrFail($request->stockId);
+            $stock->delete();
+
+            Alert::success('Deleted', 'Deleted');
+            return back();
+        } catch (\Throwable $th) {
+            //throw $th;
+            dd('error');
+        }
+    }
+
 }

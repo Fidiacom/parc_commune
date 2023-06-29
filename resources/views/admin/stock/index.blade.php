@@ -103,29 +103,50 @@
                         <tbody>
                             @foreach ($stocks as $s)
                             <tr>
-                                <form action="" method="post">
+                                <form action="{{ route('admin.stock.update', Crypt::encrypt($s->id)) }}" method="post">
+                                    @csrf
+                                    @method('PUT')
                                     <td>
-                                        <input type="text" class="form-control" value="{{ $s->name }}" name="name">
+                                        <input type="text" class="form-control @error('nameUpdate') is-invalid @enderror" value="{{ $s->name }}" name="nameUpdate">
+                                        @error('nameUpdate')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
                                     </td>
                                     <td>
-                                        <input type="number" step="any" class="form-control" value="{{ $s->stock_actuel }}" name="stock_actuel">
+                                        <input type="number" step="any" class="form-control @error('stock_actuelUpdate') is-invalid @enderror" value="{{ $s->stock_actuel }}" name="stock_actuelUpdate">
+                                        @error('stock_actuelUpdate')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
                                     </td>
                                     <td>
-                                        <input type="number" step="any" class="form-control" value="{{ $s->min_stock_alert }}" name="min_stock_alert">
+                                        <input type="number" step="any" class="form-control @error('min_stock_alertUpdate') is-invalid @enderror" value="{{ $s->min_stock_alert }}" name="min_stock_alertUpdate">
+                                        @error('min_stock_alertUpdate')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
                                     </td>
                                     <td>
-                                        <select name="unitie" class="form-control">
+                                        <select name="unitieUpdate" class="form-control @error('unitieUpdate') is-invalid @enderror">
                                             <option value="0">Select</option>
                                             @foreach ($unities as $unitie)
                                             <option value="{{ $unitie->id }}" @selected($unitie->id == $s->unitie->id)>{{ $unitie->name }}</option>
                                             @endforeach
                                         </select>
-
+                                        @error('unitieUpdate')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
                                     </td>
                                     <td>{{ $s->created_at }}</td>
                                     <td class="d-flex">
                                         <button type="submit" class="btn btn-primary waves-effect waves-light">Edit</button>
-                                        <button type="button" class="btn btn-danger waves-effect waves-light ml-2">Delete</button>
+                                        <button type="button" class="btn btn-danger waves-effect waves-light ml-2" onclick="deleteStock({{ $s->id }})">Delete</button>
                                     </td>
                                 </form>
                             </tr>
@@ -136,5 +157,31 @@
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
+        <form action="{{ route('admin.stock.destroy') }}" method="POST" id="deleteForm">
+            @csrf
+            @method('delete')
+            <input type="hidden" id="stockId" name="stockId">
+        </form>
+
+        <script>
+            function deleteStock(id)
+            {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+                }).then(function (result) {
+                    if (result.value) {
+                        document.getElementById("stockId").value = id;
+                        $("#deleteForm").submit();
+                    }
+                });
+
+            }
+        </script>
     </div>
 </x-admin.app>

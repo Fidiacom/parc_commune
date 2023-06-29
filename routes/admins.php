@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
         //Stock
         Route::get('/stock', [StockController::class,'index'])->name('admin.stock');
         Route::post('/stock/store', [StockController::class,'store'])->name('admin.stock.store');
-
+        Route::put('/stock/update/{id}', [StockController::class, 'update'])->name('admin.stock.update');
+        Route::delete('/stock/delete', [StockController::class, 'destroy'])->name('admin.stock.destroy');
     });
 });

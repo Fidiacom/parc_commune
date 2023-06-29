@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class StockHistorique extends Model
 {
     use HasFactory;
+
+    public function stock()
+    {
+        return $this->belongsTo(Stock::class);
+    }
 }

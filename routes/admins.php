@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\TireController;
 use App\Http\Controllers\Admin\VidangeController;
 use App\Http\Controllers\Admin\TiminChaineController;
 use App\Http\Controllers\Admin\StockController;
+use App\Http\Controllers\Admin\HistoriqueStockController;
 
 
 Route::middleware(['auth'])->group(function () {
@@ -53,5 +54,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/stock/store', [StockController::class,'store'])->name('admin.stock.store');
         Route::put('/stock/update/{id}', [StockController::class, 'update'])->name('admin.stock.update');
         Route::delete('/stock/delete', [StockController::class, 'destroy'])->name('admin.stock.destroy');
+
+        //Stock Historie
+        Route::get('/historique_stock',[HistoriqueStockController::class, 'index'])->name('admin.stockHistorie');
     });
 });

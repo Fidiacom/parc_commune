@@ -45,7 +45,7 @@ class StockController extends Controller
 
             $stockHostorique = new StockHistorique;
             $stockHostorique->stock_id  =   $stock->id;
-            $stockHostorique->type      =   'sortie';
+            $stockHostorique->type      =   'entre';
             $stockHostorique->quantite  =   $request->stockActuel;
             $stockHostorique->save();
 
@@ -101,7 +101,7 @@ class StockController extends Controller
 
     public function destroy(Request $request)
     {
-        
+
         try {
             $stock = Stock::findOrFail($request->stockId);
             $stock->delete();

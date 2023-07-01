@@ -128,5 +128,6 @@
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
+        <script src="{{ asset('assets/js/trip/trip.js') }}"></script>
     </div>
 </x-admin.app>

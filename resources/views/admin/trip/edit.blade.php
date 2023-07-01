@@ -123,6 +123,7 @@
 
             </form>
         </div><!-- end col-->
+        <script src="{{ asset('assets/js/trip/trip.js') }}"></script>
     </div>
     <script>
         function deleteTrip()

@@ -337,11 +337,11 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            2020 © Lunoz.
+                            © Fidiacom.
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-right d-none d-sm-block">
-                                Design & Develop by Myra
+                                Design & Develop by Fidiacom
                             </div>
                         </div>
                     </div>
@@ -413,7 +413,7 @@
     <!-- App js -->
     <script src="{{ asset('assets/js/theme.js') }}"></script>
 
-    <script src="{{ asset('assets/js/trip/trip.js') }}"></script>
+    
 
     <!--dropify-->
     <script src="{{ asset('assets/plugins/dropify/dropify.min.js') }}"></script>

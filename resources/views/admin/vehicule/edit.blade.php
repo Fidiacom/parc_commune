@@ -48,6 +48,13 @@
                                 <a href="{{ route('admin.dtt', Crypt::encrypt($vehicule->id)) }}" class="btn btn-primary waves-effect waves-light">
                                     Pneus/Vidange/Chaine de distribution
                                 </a>
+
+                                <a href="{{ route('admin.maintenance.create', Crypt::encrypt($vehicule->id)) }}" class="btn btn-primary waves-effect waves-light">
+                                    <div>
+                                        <i class="fas fa-cogs"></i>
+                                        Maintenance & gasoile
+                                    </div>
+                                </a>
                             </div>
 
                             {{-- Brand --}}

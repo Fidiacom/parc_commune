@@ -164,9 +164,8 @@ class VehiculeController extends Controller
         $vehicule->number_of_tires         =   $request->numOfTires;
         $vehicule->save();
 
-
-
-
+        Alert::success('Vehicule Saved Successfully', 'updated');
+        return back();
 
     }
 

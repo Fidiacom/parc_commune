@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\VidangeController;
 use App\Http\Controllers\Admin\TiminChaineController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\HistoriqueStockController;
+use App\Http\Controllers\Admin\MaintenenceController;
 
 
 Route::middleware(['auth'])->group(function () {
@@ -57,5 +58,10 @@ Route::middleware(['auth'])->group(function () {
 
         //Stock Historie
         Route::get('/historique_stock',[HistoriqueStockController::class, 'index'])->name('admin.stockHistorie');
+
+
+        //maintenance
+        //Route::get('/maintenence', [MaintenenceController::class, 'index'])->name('admin.maintenance');
+        Route::get('/maintenence/create/{id}', [MaintenenceController::class, 'create'])->name('admin.maintenance.create');
     });
 });

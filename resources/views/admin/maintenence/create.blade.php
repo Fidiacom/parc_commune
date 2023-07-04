@@ -16,7 +16,7 @@
             <div class="col-xl-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.driver.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.maintenance.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
 
@@ -27,9 +27,7 @@
 
                                                 <h4 class="card-title">Car Picture</h4>
                                                 <p class="card-subtitle mb-4">MAX SIZE 5M.</p>
-
                                                 <input type="file" class="dropify" disabled data-max-file-size="5M" name="image" accept="image/*" data-default-file="{{ asset($vehicule->image) }}"/>
-
                                             </div> <!-- end card-body-->
                                         </div> <!-- end card-->
                                     </div> <!-- end col -->
@@ -50,12 +48,17 @@
 
                             <div class="form-group">
                                 <label for="stock">Pieces || gasoil</label>
-                                <select class="form-control" data-toggle="select2" name="stock_id" id="stock" onchange="changePiece(this.value)">
+                                <select class="form-control @error('stock') is-invalid @enderror" data-toggle="select2" name="stock" id="stock" onchange="changePiece(this.value)">
                                     <option value="0" >Select</option>
                                     @foreach ($stocks as $stock)
                                     <option value="{{ $stock }}">{{ $stock->name }}</option>
                                     @endforeach
                                 </select>
+                                @error('stock')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
                             </div>
 
                             <div class="form-group">
@@ -71,7 +74,7 @@
                                 @enderror
                             </div>
 
-                            <input type="hidden" name="vehicule_id">
+                            <input type="hidden" name="vehicule_id" value="{{ $vehicule->id }}">
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>

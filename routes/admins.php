@@ -9,12 +9,14 @@ use App\Http\Controllers\Admin\TiminChaineController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\HistoriqueStockController;
 use App\Http\Controllers\Admin\MaintenenceController;
+use App\Http\Controllers\Admin\HomeController;
 
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/', [HomeController::class, 'index'])->name('dashboard');
+
     Route::prefix('admin')->group(function(){
-
-
         //Vehicules
         Route::get('vehicule', [VehiculeController::class, 'index'])->name('admin.vehicule');
         Route::get('vehicule/create', [VehiculeController::class, 'create'])->name('admin.vehicule.create');
@@ -63,5 +65,6 @@ Route::middleware(['auth'])->group(function () {
         //maintenance
         //Route::get('/maintenence', [MaintenenceController::class, 'index'])->name('admin.maintenance');
         Route::get('/maintenence/create/{id}', [MaintenenceController::class, 'create'])->name('admin.maintenance.create');
+        Route::post('/maintenance/store', [MaintenenceController::class, 'store'])->name('admin.maintenance.store');
     });
 });

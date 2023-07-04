@@ -71,7 +71,7 @@
                                                 <h4 class="card-title">Basic Data Table</h4>
 
 
-                                                <table id="" class="table nowrap dtt">
+                                                <table class="table nowrap dtt">
                                                     <thead>
                                                         <tr>
                                                             <th>Start Km</th>
@@ -136,7 +136,7 @@
                                                 <h4 class="card-title">Basic Data Table</h4>
 
 
-                                                <table id="basic-datatable2" class="table nowrap dtt">
+                                                <table class="table nowrap dtt">
                                                     <thead>
                                                         <tr>
 
@@ -163,8 +163,6 @@
                                     </div><!-- end col-->
                                 </div>
                             </div>
-
-
 
 
                             <div class="tab-pane" id="pneus">
@@ -198,9 +196,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <h4 class="card-title">Basic Data Table</h4>
-
-
-                                                <table id="basic-datatable2" class="table nowrap dtt">
+                                                <table class="table nowrap dtt">
                                                     <thead>
                                                         <tr>
 

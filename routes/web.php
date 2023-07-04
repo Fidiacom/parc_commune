@@ -22,10 +22,6 @@ require "admins.php";
 
 
 
-Route::get('/', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 
 
 

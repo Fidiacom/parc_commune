@@ -37,7 +37,9 @@
                                         <div class="card-body">
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="index.html">
-                                                    <span><img src="assets/images/logo-dark.png" alt="" height="26"></span>
+                                                    <span class="h4">
+                                                        Fidiacom
+                                                    </span>
                                                 </a>
                                             </div>
                                             <form action="{{ route('login') }}" method="POST" class="p-2">
@@ -70,11 +72,7 @@
                                     </div>
                                     <!-- end card -->
 
-                                    <div class="row mt-4">
-                                        <div class="col-sm-12 text-center">
-                                            <p class="text-white-50 mb-0">Create an account? <a href="pages-register.html" class="text-white-50 ml-1"><b>Sign Up</b></a></p>
-                                        </div>
-                                    </div>
+                                    
 
                                 </div>
                                 <!-- end col -->

@@ -42,17 +42,17 @@ class VidangeController extends Controller
             $vehicule = Vehicule::with('vidange')->findOrFail($id);
 
             $validated = $request->validate([
-                'km_actuel' =>  'required|numeric|min:'.$vehicule->total_km
+                'km_actuel_vidange' =>  'required|numeric|min:'.$vehicule->total_km
             ]);
 
-            $vehicule->total_km = $request->km_actuel;
+            $vehicule->total_km = $request->km_actuel_vidange;
 
             $vehicule->update();
 
             $historique = new VidangeHistorique;
             $historique->vidange_id         =   $vehicule->vidange->id;
-            $historique->current_km         =   $request->km_actuel;
-            $historique->next_km_for_drain  =   floatval($request->km_actuel) + floatval($vehicule->vidange->threshold_km);
+            $historique->current_km         =   $request->km_actuel_vidange;
+            $historique->next_km_for_drain  =   floatval($request->km_actuel_vidange) + floatval($vehicule->vidange->threshold_km);
             $historique->save();
 
 

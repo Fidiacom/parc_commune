@@ -12,27 +12,28 @@
 
                         <ul class="nav nav-tabs nav-justified mb-3">
                             <li class="nav-item">
-                                <a href="#vidange" data-toggle="tab" aria-expanded="false" class="nav-link active">
+                                <a href="#vidange" data-toggle="tab" aria-expanded="false" class="nav-link  @if (!$errors->any() || $errors->has('km_actuel_vidange')) active @endif)">
 
                                     <span class=" d-lg-block">Vidange</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#timingChaine" data-toggle="tab" aria-expanded="true" class="nav-link">
+                                <a href="#timingChaine" data-toggle="tab" aria-expanded="true" class="nav-link @error('km_actuel_timichaine') active @enderror">
 
                                     <span class=" d-lg-block">Chaine de distribution</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#pneus" data-toggle="tab" aria-expanded="false" class="nav-link">
+                                <a href="#pneus" data-toggle="tab" aria-expanded="false" class="nav-link @error('km_actuel_pneu') active @enderror">
 
                                     <span class="d-lg-block">Pneus</span>
                                 </a>
                             </li>
                         </ul>
 
+
                         <div class="tab-content">
-                            <div class="tab-pane active" id="vidange">
+                            <div class="tab-pane @if (!$errors->any() || $errors->has('km_actuel_vidange')) active @endif)" id="vidange">
                                 <form action="{{ route('admin.drain.update', Crypt::encrypt($vehicule->id)) }}"
                                     method="post">
                                     @csrf
@@ -42,7 +43,7 @@
                                             <span>
                                                 {{ 'minimum: '. $vehicule->total_km }}
                                             </span>
-                                            @error('km_actuel')
+                                            @error('km_actuel_vidange')
                                             <div id="validationServerUsernameFeedback" class="invalid-feedback" style="display: block">
                                                 {{ $message }}
                                             </div>
@@ -53,7 +54,7 @@
                                             <input type="number" step="any"
                                                 min="{{ $vehicule->total_km }}"
                                                 class="form-control @error('km_actuel') is-invalid @enderror"
-                                                name="km_actuel">
+                                                name="km_actuel_vidange">
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-dark waves-effect waves-light"
                                                     type="button">Change</button>
@@ -97,7 +98,7 @@
                                 </div>
                             </div>
 
-                            <div class="tab-pane show" id="timingChaine">
+                            <div class="tab-pane @error('km_actuel_timichaine') active @enderror" id="timingChaine">
                                 <form action="{{ route('admin.timingchaine.update', Crypt::encrypt($vehicule->id)) }}"
                                     method="post">
                                     @csrf
@@ -108,7 +109,7 @@
                                             <span>
                                                 {{ 'minimum: '. $vehicule->total_km }}
                                             </span>
-                                            @error('km_actuel')
+                                            @error('km_actuel_timichaine')
                                             <div id="validationServerUsernameFeedback" class="invalid-feedback" style="display: block">
                                                 {{ $message }}
                                             </div>
@@ -118,9 +119,9 @@
                                         <div class="input-group">
                                             <input type="number" step="any"
                                                 min="{{ $vehicule->total_km }}"
-                                                class="form-control @error('km_actuel') is-invalid @enderror"
-                                                name="km_actuel">
-                                            
+                                                class="form-control @error('km_actuel_timichaine') is-invalid @enderror"
+                                                name="km_actuel_timichaine">
+
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-dark waves-effect waves-light"
                                                     type="button">Change</button>
@@ -165,31 +166,50 @@
                                 </div>
                             </div>
 
-
-                            <div class="tab-pane" id="pneus">
+                            <div class="tab-pane @error('km_actuel_pneu') active @enderror" id="pneus">
                                 <div class="row">
-                                    @foreach ($vehicule->pneu as $pneu)
-                                    <div class="col-6">
-                                        <form action="{{ route('admin.pneu.update', Crypt::encrypt($pneu->id)) }}" method="POST" class="form-group">
+
+                                    <div class="col-12">
+                                        <form action="{{ route('admin.pneu.update', Crypt::encrypt($vehicule->id)) }}" method="POST" class="form-group">
                                             @csrf
-                                            <label>
-                                                {{ 'Position: '.$pneu->tire_position }}
-                                            </label>
-                                            <div class="input-group">
-                                                <input type="text"
-                                                    class="form-control"
-                                                    name="threshold_km" value="{{ $pneu->threshold_km }}">
-                                                <div class="input-group-append">
-                                                    <button type="submit" class="btn btn-dark waves-effect waves-light"
-                                                        type="button">
-                                                        Change
-                                                    </button>
+                                            <div class="form-group mb-0">
+                                                <label>
+                                                    KM Actuel
+                                                    {{ 'minimum: '. $vehicule->total_km }}
+                                                </label>
+                                                <div class="input-group">
+                                                    <input type="number"
+                                                        step="any"
+                                                        class="form-control"
+                                                        name="km_actuel_pneu"
+                                                        min="{{ $vehicule->total_km }}"
+                                                        >
                                                 </div>
+                                            </div>
+
+                                            <div class="form-group mb-0 mt-2">
+                                                <label>Position: </label>
+
+                                                <div>
+                                                    <select class="form-control select2-multiple w-100" name="positions[]" data-toggle="select2" multiple="multiple" style="width:100%" data-placeholder="Choose ...">
+                                                        @foreach ($vehicule->pneu as $pneu)
+                                                            <option value="{{ $pneu->id }}">{{ 'Position: '.$pneu->tire_position }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                @error('km_actuel_pneu')
+                                                <div id="validationServerUsernameFeedback" class="invalid-feedback" style="display: block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <button type="submit" class="btn btn-dark waves-effect waves-light"
+                                                    type="button">Change</button>
                                             </div>
 
                                         </form>
                                     </div>
-                                    @endforeach
                                 </div>
 
                                 <div class="row">
@@ -226,6 +246,7 @@
                                     </div><!-- end col-->
                                 </div>
                             </div>
+
                         </div>
 
                     </div> <!-- end card-body-->

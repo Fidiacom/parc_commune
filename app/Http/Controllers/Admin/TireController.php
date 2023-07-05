@@ -68,30 +68,61 @@ class TireController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+
+    // public function update(Request $request, $id)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'threshold_km'  =>  'required'
+    //     ]);
+
+    //     if($validator->fails()){
+    //         Alert::error('Error', 'All field are required');
+    //         return back();
+    //     }
+
+    //     try {
+    //         $id =   Crypt::decrypt($id);
+
+    //         $pneu = pneu::findOrFail($id);
+    //         $pneu->threshold_km =   $request->threshold_km;
+    //         $pneu->update();
+
+    //         Alert::success('Saved', 'Saved');
+    //         return back();
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //     }
+    // }
+
+
+    public function update(Request $request, $vehicule_id)
     {
-        $validator = Validator::make($request->all(), [
-            'threshold_km'  =>  'required'
-        ]);
-
-        if($validator->fails()){
-            Alert::error('Error', 'All field are required');
-            return back();
-        }
-
         try {
-            $id =   Crypt::decrypt($id);
+            $vehicule_id = Crypt::decrypt($vehicule_id);
 
-            $pneu = pneu::findOrFail($id);
-            $pneu->threshold_km =   $request->threshold_km;
-            $pneu->update();
+            $vehicule = Vehicule::with('pneu')->findOrFail($vehicule_id);
 
-            Alert::success('Saved', 'Saved');
+            $validated = $request->validate([
+                'km_actuel_pneu' =>  'required|numeric|min:'.$vehicule->total_km
+            ]);
+
+            $vehicule->total_km = $request->km_actuel_pneu;
+            $vehicule->update();
+
+
+            foreach ($request->positions as $p) {
+                $historique =  new PneuHistorique;
+                $historique->pneu_id = $p;
+                $historique->current_km =   $request->km_actuel_pneu;
+                $historique->next_km_for_change =   floatval($request->km_actuel_pneu) + floatval($vehicule->pneu->find($p)->threshold_km);
+                $historique->save();
+            }
+
+            Alert::success('Pneu updatedSuccesfully', 'done');
             return back();
+
         } catch (\Throwable $th) {
             throw $th;
         }
-
-
     }
 }

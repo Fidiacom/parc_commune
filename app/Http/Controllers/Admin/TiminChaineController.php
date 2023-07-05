@@ -43,16 +43,16 @@ class TiminChaineController extends Controller
             $vehicule = Vehicule::with('timing_chaine')->findOrFail($id);
 
             $validated = $request->validate([
-                'km_actuel' =>  'required|numeric|min:'.$vehicule->total_km
+                'km_actuel_timichaine' =>  'required|numeric|min:'.$vehicule->total_km
             ]);
 
-            $vehicule->total_km = $request->km_actuel;
+            $vehicule->total_km = $request->km_actuel_timichaine;
             $vehicule->update();
 
             $historique = new TimingChaineHistorique;
             $historique->chaine_id          =   $vehicule->timing_chaine->id;
-            $historique->current_km         =   $request->km_actuel;
-            $historique->next_km_for_change  =   floatval($request->km_actuel) + floatval($vehicule->vidange->threshold_km);
+            $historique->current_km         =   $request->km_actuel_timichaine;
+            $historique->next_km_for_change  =   floatval($request->km_actuel_timichaine) + floatval($vehicule->vidange->threshold_km);
             $historique->save();
 
             Alert::success('Vehicule Saved Successfully', 'Please fill tires field');

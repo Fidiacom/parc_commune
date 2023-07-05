@@ -33,34 +33,34 @@
 
                         <div class="tab-content">
                             <div class="tab-pane active" id="vidange">
-                                <form action="{{ route('admin.drain.update', Crypt::encrypt($vehicule->vidange->id)) }}"
+                                <form action="{{ route('admin.drain.update', Crypt::encrypt($vehicule->id)) }}"
                                     method="post">
                                     @csrf
-
                                     <div class="form-group">
-                                        <label>threshold_km
-                                            @error('threshold_km')
-                                            <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                        <label>
+                                            KM actuel |
+                                            <span>
+                                                {{ 'minimum: '. $vehicule->total_km }}
+                                            </span>
+                                            @error('km_actuel')
+                                            <div id="validationServerUsernameFeedback" class="invalid-feedback" style="display: block">
                                                 {{ $message }}
                                             </div>
                                             @enderror
                                         </label>
+
                                         <div class="input-group">
-                                            <input type="text"
-                                                class="form-control @error('threshold_km') is-invalid @enderror"
-                                                name="threshold_km" value="{{ $vehicule->vidange->threshold_km }}">
+                                            <input type="number" step="any"
+                                                min="{{ $vehicule->total_km }}"
+                                                class="form-control @error('km_actuel') is-invalid @enderror"
+                                                name="km_actuel">
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-dark waves-effect waves-light"
                                                     type="button">Change</button>
                                             </div>
                                         </div>
+                                    </div>
 
-                                    </div>
-                                    @error('threshold_km')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
                                 </form>
 
 
@@ -98,34 +98,35 @@
                             </div>
 
                             <div class="tab-pane show" id="timingChaine">
-                                <form action="{{ route('admin.timingchaine.update', Crypt::encrypt($vehicule->timing_chaine->id)) }}"
+                                <form action="{{ route('admin.timingchaine.update', Crypt::encrypt($vehicule->id)) }}"
                                     method="post">
                                     @csrf
 
                                     <div class="form-group">
-                                        <label>threshold_km
-                                            @error('threshold_km')
-                                            <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                        <label>
+                                            KM actuel |
+                                            <span>
+                                                {{ 'minimum: '. $vehicule->total_km }}
+                                            </span>
+                                            @error('km_actuel')
+                                            <div id="validationServerUsernameFeedback" class="invalid-feedback" style="display: block">
                                                 {{ $message }}
                                             </div>
                                             @enderror
                                         </label>
+
                                         <div class="input-group">
-                                            <input type="text"
-                                                class="form-control @error('threshold_km') is-invalid @enderror"
-                                                name="threshold_km" value="{{ $vehicule->timing_chaine->threshold_km }}">
+                                            <input type="number" step="any"
+                                                min="{{ $vehicule->total_km }}"
+                                                class="form-control @error('km_actuel') is-invalid @enderror"
+                                                name="km_actuel">
+                                            
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-dark waves-effect waves-light"
                                                     type="button">Change</button>
                                             </div>
                                         </div>
-
                                     </div>
-                                    @error('threshold_km')
-                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
                                 </form>
 
 

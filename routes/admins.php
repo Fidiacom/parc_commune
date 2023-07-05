@@ -25,7 +25,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('vehicule/update/{id}', [VehiculeController::class, 'update'])->name('admin.vehicule.update');
 
         Route::get('vehicule/drain-tire-timing/{vehicule_id}', [VehiculeController::class, 'dtt_get'])->name('admin.dtt');
-        Route::post('/vehicule/drain/update/{id}', [VidangeController::class, 'update'])->name('admin.drain.update');
+
+        //Route::post('/vehicule/drain/update/{id}', [VidangeController::class, 'update_seuil'])->name('admin.drain.update_sei');
+        Route::post('/vehicule/drain/{vehicule_id}', [VidangeController::class, 'update'])->name('admin.drain.update');
+
         Route::post('/vehicule/timingchaine/update/{id}', [TiminChaineController::class, 'update'])->name('admin.timingchaine.update');
 
         Route::post('/vehicule/pneu/update/{id}', [TireController::class, 'update'])->name('admin.pneu.update');

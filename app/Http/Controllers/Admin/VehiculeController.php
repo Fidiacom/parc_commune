@@ -166,12 +166,10 @@ class VehiculeController extends Controller
 
         Alert::success('Vehicule Saved Successfully', 'updated');
         return back();
-
     }
 
     public function dtt_get($vehicule_id)
     {
-
         try {
             $id = Crypt::decrypt($vehicule_id);
             $vehicule = Vehicule::with('vidange.vidange_historique', 'timing_chaine.timingchaine_historique', 'pneu.pneu_historique')->findOrFail($id);

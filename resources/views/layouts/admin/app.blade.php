@@ -180,9 +180,7 @@
                             <a class="dropdown-item d-flex align-items-center justify-content-between"
                                 href="{{ route('profile.edit') }}">
                                 <span>Profile</span>
-                                <span>
-                                    <span class="badge badge-pill badge-warning">1</span>
-                                </span>
+                                
                             </a>
                             <form action="{{ route('logout') }}" method="post">
                                 @csrf

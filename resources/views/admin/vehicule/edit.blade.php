@@ -210,6 +210,41 @@
                             </div>
 
 
+
+                            <div class="form-group">
+                                <label for="exampleFormControlInput1">{{ __('seuil KM vidange') }}</label>
+                                <input
+                                    type="text"
+                                    placeholder=""
+                                    class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"
+                                    name="threshold_vidange"
+                                    data-a-sep="." data-a-dec=",">
+
+
+                                @error('threshold_vidange')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+
+
+
+                            <div class="form-group">
+                                <label for="exampleFormControlInput1">{{ __('seuil KM chaine de distrubution') }}</label>
+                                <input
+                                    type="text"
+                                    value="{{ old('threshold_timing_chaine') }}"
+                                    class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"
+                                    name="threshold_timing_chaine"
+                                    data-a-sep="."
+                                    data-a-dec=",">
+                                @error('threshold_timing_chaine')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
                             {{-- Inssurance expiration --}}
                             <div class="form-group">
                                 <label for="inputPassword2" class="">{{ __('expiration assurance') }}</label>

@@ -104,7 +104,9 @@
                             id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true"
                             aria-expanded="false">
                             <i class="mdi mdi-bell"></i>
-                            <span class="badge badge-danger badge-pill">3</span>
+                            <span class="badge badge-danger badge-pill">
+                                {{ $numberOfNotification }}
+                            </span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
                             aria-labelledby="page-header-notifications-dropdown">
@@ -113,58 +115,50 @@
                                     <div class="col">
                                         <h6 class="m-0"> Notifications </h6>
                                     </div>
-                                    <div class="col-auto">
-                                        <a href="#!" class="small"> View All</a>
-                                    </div>
+
                                 </div>
                             </div>
                             <div data-simplebar style="max-height: 230px;">
-                                <a href="" class="text-reset notification-item">
+                                @foreach ($chargeNotification as $notif)
+
+                                <a href="{{ route('admin.vehicule.edit', $notif['vehicule_id']) }}" class="text-reset notification-item">
                                     <div class="media">
-                                        <img src="{{ asset('assets/images/users/avatar-2.jpg') }}"
-                                            class="mr-3 rounded-circle avatar-xs" alt="user-pic">
+
                                         <div class="media-body">
-                                            <h6 class="mt-0 mb-1">Samuel Coverdale</h6>
-                                            <p class="font-size-13 mb-1">You have new follower on Instagram</p>
-                                            <p class="font-size-12 mb-0 text-muted"><i
-                                                    class="mdi mdi-clock-outline"></i> 2 min ago</p>
+                                            <h6 class="mt-0 mb-1">{{ $notif['vehicule'] }}</h6>
+                                            <p class="font-size-13 mb-1">{{ $notif['message'] }}</p>
+
                                         </div>
                                     </div>
                                 </a>
-                                <a href="" class="text-reset notification-item">
+                                @endforeach
+
+                                @foreach ($stockNotification as $stock)
+                                <a href="{{ route('admin.stock') }}" class="text-reset notification-item">
                                     <div class="media">
-                                        <div class="avatar-xs mr-3">
-                                            <span class="avatar-title bg-success rounded-circle">
-                                                <i class="mdi mdi-cloud-download-outline"></i>
-                                            </span>
-                                        </div>
+
                                         <div class="media-body">
-                                            <h6 class="mt-0 mb-1">Download Available !</h6>
-                                            <p class="font-size-13 mb-1">Latest version of admin is now available.
-                                                Please download here.</p>
-                                            <p class="font-size-12 mb-0 text-muted"><i
-                                                    class="mdi mdi-clock-outline"></i> 4 hours ago</p>
+                                            <h6 class="mt-0 mb-1">{{ $stock->name }}</h6>
+                                            <p class="font-size-13 mb-1">{{ $stock->message }}</p>
+
                                         </div>
                                     </div>
                                 </a>
-                                <a href="" class="text-reset notification-item">
+                                @endforeach
+
+                                @foreach ($trips as $trip)
+                                <a href="{{ route('admin.trip.edit', Crypt::encrypt($trip->id)) }}" class="text-reset notification-item">
                                     <div class="media">
-                                        <img src="{{ asset('assets/images/users/avatar-3.jpg') }}"
-                                            class="mr-3 rounded-circle avatar-xs" alt="user-pic">
                                         <div class="media-body">
-                                            <h6 class="mt-0 mb-1">Victoria Mendis</h6>
-                                            <p class="font-size-13 mb-1">Just upgraded to premium account.</p>
-                                            <p class="font-size-12 mb-0 text-muted"><i
-                                                    class="mdi mdi-clock-outline"></i> 1 day ago</p>
+                                            <h6 class="mt-0 mb-1">{{ 'Trip :'. $trip->driver->full_name.' | '.$trip->vehicule->brand.'-'.$trip->vehicule->model }}</h6>
+                                            <p class="font-size-13 mb-1">{{ __('Trip expired') }}</p>
                                         </div>
                                     </div>
                                 </a>
+                                @endforeach
+
                             </div>
-                            <div class="p-2 border-top">
-                                <a class="btn btn-sm btn-light btn-block text-center" href="javascript:void(0)">
-                                    <i class="mdi mdi-arrow-down-circle mr-1"></i> Load More..
-                                </a>
-                            </div>
+
                         </div>
                     </div>
 
@@ -180,7 +174,7 @@
                             <a class="dropdown-item d-flex align-items-center justify-content-between"
                                 href="{{ route('profile.edit') }}">
                                 <span>Profile</span>
-                                
+
                             </a>
                             <form action="{{ route('logout') }}" method="post">
                                 @csrf

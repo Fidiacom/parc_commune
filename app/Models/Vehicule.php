@@ -29,6 +29,4 @@ class Vehicule extends Model
     {
         $this->hasMany('App\Models\Trip');
     }
-
-
 }

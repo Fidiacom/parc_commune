@@ -75,20 +75,9 @@ class StockController extends Controller
             $stock->name  = $request->nameUpdate;
             $stock->min_stock_alert  = $request->min_stock_alertUpdate;
             $stock->unitie_id  = $request->unitieUpdate;
-            if($stock->stock_actuel != $request->stock_actuelUpdate)
-            {
-                $isStockChanged = true;
-            }
-            $stock->stock_actuel  = $request->stock_actuelUpdate;
+
             $stock->update();
 
-            if ($isStockChanged == true){
-                $stockHostorique = new StockHistorique;
-                $stockHostorique->stock_id  =   $stock->id;
-                $stockHostorique->type      =   'modif';
-                $stockHostorique->quantite  =   $request->stock_actuelUpdate;
-                $stockHostorique->save();
-            }
 
             Alert::success('Saved', 'Saved');
             return back();
@@ -97,6 +86,15 @@ class StockController extends Controller
             dd('error', $th, $request->all());
         }
 
+    }
+
+    public function create_stock()
+    {
+        $stockNames = Stock::get(['name', 'id']);
+
+        return view('admin.stock.stock_entry', [
+            'stockNames'    =>  $stockNames
+        ]);
     }
 
     public function destroy(Request $request)

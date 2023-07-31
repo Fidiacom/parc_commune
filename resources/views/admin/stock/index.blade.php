@@ -1,5 +1,21 @@
 <x-admin.app>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -115,12 +131,7 @@
                                         @enderror
                                     </td>
                                     <td>
-                                        <input type="number" step="any" class="form-control @error('stock_actuelUpdate') is-invalid @enderror" value="{{ $s->stock_actuel }}" name="stock_actuelUpdate">
-                                        @error('stock_actuelUpdate')
-                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
+                                        <span>{{ $s->stock_actuel }}</span>
                                     </td>
                                     <td>
                                         <input type="number" step="any" class="form-control @error('min_stock_alertUpdate') is-invalid @enderror" value="{{ $s->min_stock_alert }}" name="min_stock_alertUpdate">

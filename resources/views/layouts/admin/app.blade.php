@@ -207,8 +207,10 @@
                         <li class="menu-title">Menu</li>
 
                         <li>
-                            <a href="{{ route('dashboard') }}" class="waves-effect"><i class='bx bx-home-smile'></i><span
-                                    class="badge badge-pill badge-primary float-right">7</span><span>Dashboard</span></a>
+                            <a href="{{ route('dashboard') }}" class="waves-effect">
+                                <i class='bx bx-home-smile'></i>
+                                <span>Dashboard</span>
+                            </a>
                         </li>
 
                         <li>
@@ -235,6 +237,7 @@
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="mdi mdi-package"></i></i><span>Stock</span></a>
                             <ul class="sub-menu" aria-expanded="true">
+                                <li><a href="{{ route('admin.stock-entry') }}">Stock entry</a></li>
                                 <li><a href="{{ route('admin.stock') }}">Stock Management</a></li>
                                 <li><a href="{{ route('admin.stockHistorie') }}">Historique Stock</a></li>
                             </ul>

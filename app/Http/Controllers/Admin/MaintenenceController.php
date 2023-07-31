@@ -33,7 +33,7 @@ class MaintenenceController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request->all());
+        
         $validated = $request->validate([
             'stock' => 'required|not_in:0',
             'qte'   =>  'required',
@@ -50,10 +50,12 @@ class MaintenenceController extends Controller
 
 
             $stockHostorique = new StockHistorique;
-            $stockHostorique->stock_id  =   $stock->id;
-            $stockHostorique->type      =   'sortie';
-            $stockHostorique->quantite  =   $request->qte;
-            $stockHostorique->vehicule_id  =   $request->vehicule_id;
+            $stockHostorique->stock_id      =   $stock->id;
+            $stockHostorique->type          =   'sortie';
+            $stockHostorique->quantite      =   $request->qte;
+            $stockHostorique->vehicule_id   =   $request->vehicule_id;
+            $stockHostorique->document      =   $request->vignette ? uploadFile($request->vignette, 'vignette') : null;
+            $stockHostorique->suppliername  =   $request->suppliername;
             $stockHostorique->save();
 
         } catch (\Throwable $th) {

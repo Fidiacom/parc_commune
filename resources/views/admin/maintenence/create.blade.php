@@ -16,7 +16,8 @@
             <div class="col-xl-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.maintenance.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.maintenance.store') }}" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
 
@@ -27,7 +28,9 @@
 
                                                 <h4 class="card-title">Car Picture</h4>
                                                 <p class="card-subtitle mb-4">MAX SIZE 5M.</p>
-                                                <input type="file" class="dropify" disabled data-max-file-size="5M" name="image" accept="image/*" data-default-file="{{ asset($vehicule->image) }}"/>
+                                                <input type="file" class="dropify" disabled data-max-file-size="5M"
+                                                    name="image" accept="image/*"
+                                                    data-default-file="{{ asset($vehicule->image) }}" />
                                             </div> <!-- end card-body-->
                                         </div> <!-- end card-->
                                     </div> <!-- end col -->
@@ -38,39 +41,71 @@
 
                             <div class="form-group">
                                 <label for="simpleinput">{{ __('vehicule brand & model') }}</label>
-                                <input type="text" class="form-control" value="{{ $vehicule->brand.' | '.$vehicule->model }}" disabled>
+                                <input type="text" class="form-control"
+                                    value="{{ $vehicule->brand . ' | ' . $vehicule->model }}" disabled>
                             </div>
 
                             <div class="form-group">
                                 <label for="simpleinput">{{ __('vehicule matricule') }}</label>
-                                <input type="text" id="simpleinput" class="form-control" value="{{ $vehicule->matricule }}" disabled>
+                                <input type="text" id="simpleinput" class="form-control"
+                                    value="{{ $vehicule->matricule }}" disabled>
                             </div>
 
                             <div class="form-group">
                                 <label for="stock">Pieces || gasoil</label>
-                                <select class="form-control @error('stock') is-invalid @enderror" data-toggle="select2" name="stock" id="stock" onchange="changePiece(this.value)">
-                                    <option value="0" >Select</option>
+                                <select class="form-control @error('stock') is-invalid @enderror" data-toggle="select2"
+                                    name="stock" id="stock" onchange="changePiece(this.value)">
+                                    <option value="0">Select</option>
                                     @foreach ($stocks as $stock)
-                                    <option value="{{ $stock }}">{{ $stock->name }}</option>
+                                        <option value="{{ $stock }}">{{ $stock->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('stock')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
                                 @enderror
                             </div>
 
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">
-                                    {{ __('Qantite').' | ' }}
+                                    {{ __('Qantite') . ' | ' }}
                                     <label for="" class="text-danger" id="maxLabel"></label>
                                 </label>
-                                <input type="number" step="any" class="form-control  @error('qte') is-invalid @enderror" name="qte" id="qte">
+                                <input type="number" step="any"
+                                    class="form-control  @error('qte') is-invalid @enderror" name="qte"
+                                    id="qte">
                                 @error('qte')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="exampleFormControlInput1">
+                                    {{ __('Supplier name') }}
+                                </label>
+                                <input type="text" class="form-control  @error('suppliername') is-invalid @enderror" name="suppliername"
+                                    id="suppliername">
+                                @error('suppliername')
+                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="exampleFormControlInput1">
+                                    {{ __('vignette') . ' | ' }}
+                                </label>
+                                <input type="file" class="form-control  @error('vignette') is-invalid @enderror"
+                                    name="vignette" id="vignette">
+                                @error('vignette')
+                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
                                 @enderror
                             </div>
 

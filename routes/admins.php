@@ -63,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/stock/delete', [StockController::class, 'destroy'])->name('admin.stock.destroy');
 
         //Stock Historie
+        Route::post('/stock_historique', [HistoriqueStockController::class, 'store'])->name('admin.stock_history.store');
         Route::get('/historique_stock',[HistoriqueStockController::class, 'index'])->name('admin.stockHistorie');
 
 

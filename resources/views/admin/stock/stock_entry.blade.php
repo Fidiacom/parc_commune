@@ -6,13 +6,13 @@
                 <div class="card-body">
                     <h4 class="card-title">Stock</h4>
 
-                    <form action="" method="post">
+                    <form action="{{ route('admin.stock_history.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group">
                             <div class="w-100 mx-2">
                                 <label for="">Equipement </label>
-                                <select class="form-control @error('stock') is-invalid @enderror" data-toggle="select2" style="width: 100%" name="stock">
+                                <select class="form-control @error('stock') is-invalid @enderror" data-toggle="select2" style="width: 100%" name="stock_id">
                                     <option value="0">Select</option>
                                     @foreach ($stockNames as $stock)
                                         <option value="{{ $stock->id }}">{{ $stock->name }}</option>
@@ -31,7 +31,7 @@
                             <div class="w-100 mx-2">
                                 <label for="">Qte Entree</label>
 
-                                <input type="text" class="form-control" name="qte_entree">
+                                <input type="number" step="any" class="form-control" name="qte_entree">
                                 @error('alert')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}
@@ -44,7 +44,7 @@
                             <div class="w-100 mx-2">
                                 <label for="">Supplier name : </label>
 
-                                <input type="text" class="form-control" name="qte_entree">
+                                <input type="text" class="form-control" name="supplier_name">
                                 @error('alert')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}
@@ -55,15 +55,12 @@
 
                         <div class="form-group">
                             <div class="w-100 mx-2">
-                                <label for="">Vignette : </label>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="vignetteFile">
-                                    <label class="custom-file-label" for="customFile">Choose file</label>
+                                <label for="">Document : </label>
+                                <div class="">
+                                    <input type="file" name="document">
                                 </div>
                             </div>
                         </div>
-
-
 
 
 

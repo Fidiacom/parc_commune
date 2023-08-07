@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-8 mx-auto">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0 font-size-18">{{ __('add Drivers') }}</h4>
+                    <h4 class="mb-0 font-size-18">{{ __('Pneu') }}</h4>
                 </div>
             </div>
         </div>
@@ -18,7 +18,7 @@
                     @csrf
                     @foreach (range(1,$tires) as $item)
                     <div class="page-title-box d-flex align-items-center justify-content-between">
-                        <h4 class="mb-0 h6">{{ __('Tire').' '.$item }}</h4>
+                        <h4 class="mb-0 h6">{{ __('Pneu').' '.$item }}</h4>
                     </div>
                     <div class="card">
 
@@ -33,7 +33,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="simpleinput">{{ __('threshold km') }}</label>
+                                    <label for="simpleinput">{{ __('Seuil km') }}</label>
 
 
                                     <input type="text" placeholder="" class="form-control autonumber @error('thresholds') is-invalid @enderror" name="thresholds[]" data-a-sep="." data-a-dec=",">
@@ -54,7 +54,7 @@
                         @endforeach
                         <input type="hidden" value="{{ $carId }}" name="carId">
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Sauvgarder') }}</button>
                         </div>
                 </form>
                 <!-- end card -->

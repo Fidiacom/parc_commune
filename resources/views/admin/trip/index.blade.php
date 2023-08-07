@@ -4,14 +4,14 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Trips</h4>
+                    <h4 class="card-title">{{ __('Orders de mission') }}</h4>
 
                     <form action="{{ route('admin.trip.store') }}" method="post">
                         @csrf
                         <div class="form-group">
-                            <label for="">Select Car</label>
+                            <label for="">{{ __('Select Car') }}</label>
                             <select class="form-control @error('vehicule') is-invalid @enderror" data-toggle="select2" style="width: 100%" name="vehicule">
-                                <option value="0">Select</option>
+                                <option value="0">{{ __('Select') }}</option>
                                 @foreach ($vehicules as $v)
                                     <option value="{{ $v->id }}">
                                         {{ $v->brand.' - '.$v->model.' - '.$v->matricule }}
@@ -27,9 +27,9 @@
 
 
                         <div class="form-group">
-                            <label for="">Select Driver</label>
+                            <label for="">{{ __('Select Driver') }}</label>
                             <select class="form-control @error('driver') is-invalid @enderror" data-toggle="select2" style="width: 100%" name="driver">
-                                <option value="0">Select</option>
+                                <option value="0">{{ __('Select') }}</option>
                                 @foreach ($drivers as $d)
                                     <option value="{{ $d->id }}">{{ $d->full_name. ' | '.$d->cin }}</option>
                                 @endforeach
@@ -45,12 +45,12 @@
                         <div class="form-group">
                             <div class="custom-control custom-checkbox custom-control-inline">
                                 <input type="checkbox" class="custom-control-input" id="customCheck3" name="trip_type">
-                                <label class="custom-control-label" for="customCheck3">Le Voyage permanent</label>
+                                <label class="custom-control-label" for="customCheck3">{{ __('Le Voyage permanent') }}</label>
                             </div>
                         </div>
 
                         <div class="form-group mb-3">
-                            <label>Date start</label>
+                            <label>{{ __('Date start') }}</label>
                             <input type="date" class="form-control date @error('start_date') is-invalid @enderror" name="start_date">
                             @error('start_date')
                             <div id="validationServerUsernameFeedback" class="invalid-feedback">
@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="form-group mb-3">
-                            <label>Date End</label>
+                            <label>{{ __('Date End') }}</label>
                             <input type="date" class="form-control date @error('end_date') is-invalid @enderror" name="end_date" id="end_date">
                             @error('end_date')
                             <div id="validationServerUsernameFeedback" class="invalid-feedback">
@@ -71,7 +71,7 @@
 
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Sauvgarder') }}</button>
                         </div>
                     </form>
                 </div>
@@ -84,7 +84,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    <h4 class="card-title">Trips</h4>
+                    <h4 class="card-title">{{ __('Orders de mission') }}</h4>
 
 
                     <table id="datatable-buttons" class="table table-striped nowrap">
@@ -92,12 +92,12 @@
                             <tr>
                                 <th>{{ __('Driver name') }}</th>
                                 <th>{{ __('Driver CIN') }}</th>
-                                <th>{{ __('Car name') }}</th>
-                                <th>{{ __('Car matricule') }}</th>
+                                <th>{{ __('Car') }}</th>
+                                <th>{{ __('matricule') }}</th>
                                 <th>{{ __('Type') }}</th>
                                 <th>{{ __('From - To') }}</th>
                                 <th>{{ __('Done at') }}</th>
-                                <th>{{ __('Created at') }}</th>
+                                <th>{{ __('Cree le') }}</th>
                             </tr>
                         </thead>
 

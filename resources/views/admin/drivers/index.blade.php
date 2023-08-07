@@ -5,29 +5,27 @@
 
                 <div class="text-right">
                     <a href="{{ route('admin.drivers.create') }}" type="button"
-                        class="btn btn-primary waves-effect waves-light">Add new Driver</a>
+                        class="btn btn-primary waves-effect waves-light">{{ ('Add new Driver') }}</a>
                 </div>
             </form>
         </div>
         <div class="card">
             <div class="card-body">
                 <div class="container">
-                    <h4 class="card-title">Basic Data Table</h4>
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
 
-                                    <h4 class="card-title">Buttons example</h4>
 
                                     <table id="datatable-buttons" class="table table-striped nowrap">
                                         <thead>
                                             <tr>
-                                                <th>Full Name</th>
-                                                <th>C.I.N</th>
-                                                <th>Phone</th>
-                                                <th>Categorie Permis</th>
-                                                <th>Create at</th>
+                                                <th>{{ __('Full Name') }}</th>
+                                                <th>{{ __('cin') }}</th>
+                                                <th>{{ __('telephone') }}</th>
+                                                <th>{{ __('Categorie Permis') }}</th>
+                                                <th>{{ __('Cree le') }}</th>
                                             </tr>
                                         </thead>
 

@@ -26,8 +26,8 @@
                                         <div class="card">
                                             <div class="card-body">
 
-                                                <h4 class="card-title">Car Picture</h4>
-                                                <p class="card-subtitle mb-4">MAX SIZE 5M.</p>
+                                                <h4 class="card-title">{{ __('Image') }}</h4>
+
                                                 <input type="file" class="dropify" disabled data-max-file-size="5M"
                                                     name="image" accept="image/*"
                                                     data-default-file="{{ asset($vehicule->image) }}" />
@@ -52,7 +52,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="stock">Pieces || gasoil</label>
+                                <label for="stock">{{ __('Pieces || gasoil') }}</label>
                                 <select class="form-control @error('stock') is-invalid @enderror" data-toggle="select2"
                                     name="stock" id="stock" onchange="changePiece(this.value)">
                                     <option value="0">Select</option>
@@ -112,7 +112,7 @@
                             <input type="hidden" name="vehicule_id" value="{{ $vehicule->id }}">
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                                <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Image') }}</button>
                             </div>
 
                         </form>

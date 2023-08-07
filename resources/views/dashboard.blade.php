@@ -6,12 +6,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0 font-size-18">Dashboard</h4>
+                    <h4 class="mb-0 font-size-18">{{ __('Tableau de bord') }}</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Lunoz</a></li>
-                            <li class="breadcrumb-item active">Dashboard</li>
+                            <li class="breadcrumb-item active">{{ __('Tableau de bord') }}</li>
                         </ol>
                     </div>
 
@@ -25,7 +24,7 @@
                 <div class="card">
                     <div class="card-body">
                         <i class="bx bx-layer float-right m-0 h2 text-muted"></i>
-                        <h6 class="text-muted text-uppercase mt-0">Vehicules</h6>
+                        <h6 class="text-muted text-uppercase mt-0">{{ __('Vehicules') }}</h6>
                         <h3 class="mb-3" data-plugin="counterup">{{ $vehiculesCount }}</h3>
 
                     </div>
@@ -36,7 +35,7 @@
                 <div class="card">
                     <div class="card-body">
                         <i class="bx bx-dollar-circle float-right m-0 h2 text-muted"></i>
-                        <h6 class="text-muted text-uppercase mt-0">Conducteur</h6>
+                        <h6 class="text-muted text-uppercase mt-0">{{ __('Conducteurs') }}</h6>
                         <h3 class="mb-3"><span data-plugin="counterup">{{ $driverCount }}</span></h3>
                     </div>
                 </div>
@@ -46,7 +45,7 @@
                 <div class="card">
                     <div class="card-body">
                         <i class="bx bx-bx bx-analyse float-right m-0 h2 text-muted"></i>
-                        <h6 class="text-muted text-uppercase mt-0">Trip</h6>
+                        <h6 class="text-muted text-uppercase mt-0">{{ __('Orders de mission') }}</h6>
                         <h3 class="mb-3"><span data-plugin="counterup">{{ $tripCount }}</span></h3>
                     </div>
                 </div>
@@ -56,7 +55,7 @@
                 <div class="card">
                     <div class="card-body">
                         <i class="bx bx-basket float-right m-0 h2 text-muted"></i>
-                        <h6 class="text-muted text-uppercase mt-0">Historique des echanges</h6>
+                        <h6 class="text-muted text-uppercase mt-0">{{ __('Historiques des echanges') }}</h6>
                         <h3 class="mb-3" data-plugin="counterup">{{ $stockHistoriqueCount }}</h3>
                     </div>
                 </div>
@@ -71,17 +70,17 @@
             <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title"> Vehicules </h4>
+                        <h4 class="card-title"> {{ __('Vehicules') }} </h4>
 
                         <table id="basic-datatable" class="table dt-responsive nowrap">
                             <thead>
                                 <tr>
-                                    <th>{{ __('brand') }}</th>
+                                    <th>{{ __('marque') }}</th>
                                     <th>{{ __('model') }}</th>
                                     <th>{{ __('matricule') }}</th>
                                     <th>{{ __('total KM') }}</th>
 
-                                    <th>{{ __('fuel type:  ') }}</th>
+                                    <th>{{ __('fuel type') }}</th>
                                 </tr>
                             </thead>
 
@@ -111,7 +110,7 @@
             <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Historique De stock</h4>
+                        <h4 class="card-title">{{ __('Historique De stock') }}</h4>
 
 
                         <table id="basic-datatable2" class="table dt-responsive nowrap">
@@ -121,7 +120,7 @@
                                     <th>{{ __('Type') }}</th>
                                     <th>{{ __('Quantite') }}</th>
                                     <th>{{ __('Qte actuel') }}</th>
-                                    <th>{{ __('Created At') }}</th>
+                                    <th>{{ __('Cree le') }}</th>
                                 </tr>
                             </thead>
 

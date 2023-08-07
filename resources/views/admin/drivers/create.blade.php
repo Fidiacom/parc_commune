@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-8 mx-auto">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0 font-size-18">{{ __('add Drivers') }}</h4>
+                    <h4 class="mb-0 font-size-18">{{ __('Ajout conducteur') }}</h4>
                 </div>
             </div>
         </div>
@@ -25,8 +25,8 @@
                                         <div class="card">
                                             <div class="card-body">
 
-                                                <h4 class="card-title">Car Picture</h4>
-                                                <p class="card-subtitle mb-4">MAX SIZE 5M.</p>
+                                                <h4 class="card-title">{{ __('Image') }}</h4>
+                                                <p class="card-subtitle mb-4">{{ __('la taile maximum est') }}</p>
 
                                                 <input type="file" class="dropify" data-max-file-size="5M" name="image" accept="image/*"/>
 
@@ -56,7 +56,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="example-password">{{ __('CIN') }}</label>
+                                <label for="example-password">{{ __('cin') }}</label>
                                 <input type="text" id="example-password" class="form-control  @error('cin') is-invalid @enderror" name="cin" value="">
                                 @error('cin')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
@@ -85,7 +85,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('phone') }}</label>
+                                <label for="exampleFormControlInput1">{{ __('telephone') }}</label>
                                 <input type="text" class="form-control  @error('phone') is-invalid @enderror" id="exampleFormControlInput1" name="phone" placeholder="">
                                 @error('phone')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
@@ -95,7 +95,7 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                                <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Sauvgarder') }}</button>
                             </div>
 
                         </form>

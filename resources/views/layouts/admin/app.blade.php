@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Lunoz - Admin & Dashboard Template</title>
+    <title>Gestion de parking</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="MyraStudio" name="author" />
@@ -67,35 +67,18 @@
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="" src="{{ asset('assets/images/flags/us.jpg') }}" alt="Header Language" height="16">
-                            <span class="d-none d-sm-inline-block ml-1">English</span>
+                            <img class="" src="{{ asset('assets/images/flags/french.jpg') }}" alt="Header Language" height="16">
+                            <span class="d-none d-sm-inline-block ml-1">{{ __('Français') }}</span>
                             <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-right">
 
+                        <div class="dropdown-menu dropdown-menu-right">
                             <!-- item-->
                             <a href="javascript:void(0);" class="dropdown-item notify-item">
                                 <img src="{{ asset('assets/images/flags/spain.jpg') }}" alt="user-image" class="mr-1" height="12">
-                                <span class="align-middle">Spanish</span>
+                                <span class="align-middle">{{ __('العربية') }}</span>
                             </a>
 
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <img src="{{ asset('assets/images/flags/germany.jpg') }}" alt="user-image" class="mr-1" height="12">
-                                <span class="align-middle">German</span>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <img src="{{ asset('assets/images/flags/italy.jpg') }}" alt="user-image" class="mr-1" height="12">
-                                <span class="align-middle">Italian</span>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <img src="{{ asset('assets/images/flags/russia.jpg') }}" alt="user-image" class="mr-1" height="12">
-                                <span class="align-middle">Russian</span>
-                            </a>
                         </div>
                     </div>
 
@@ -167,19 +150,19 @@
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img class="rounded-circle header-profile-user" src="{{ asset('assets/images/users/avatar-3.jpg') }}"
                                 alt="Header Avatar">
-                            <span class="d-none d-sm-inline-block ml-1">Jamie D.</span>
+                            <span class="d-none d-sm-inline-block ml-1">{{ auth()->user()->name }}</span>
                             <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item d-flex align-items-center justify-content-between"
                                 href="{{ route('profile.edit') }}">
-                                <span>Profile</span>
+                                <span>{{ __('Profile') }}</span>
 
                             </a>
                             <form action="{{ route('logout') }}" method="post">
                                 @csrf
 
-                                <button type="submit" class="dropdown-item d-flex align-items-center justify-content-between">{{ __('logout') }}</button>
+                                <button type="submit" class="dropdown-item d-flex align-items-center justify-content-between">{{ __('deconnexion') }}</button>
                             </form>
 
                         </div>
@@ -204,42 +187,42 @@
                 <div id="sidebar-menu">
                     <!-- Left Menu Start -->
                     <ul class="metismenu list-unstyled" id="side-menu">
-                        <li class="menu-title">Menu</li>
+                        <li class="menu-title">{{ __('Menu') }}</li>
 
                         <li>
                             <a href="{{ route('dashboard') }}" class="waves-effect">
                                 <i class='bx bx-home-smile'></i>
-                                <span>Dashboard</span>
+                                <span>{{ __('Tableau de bord') }}</span>
                             </a>
                         </li>
 
                         <li>
                             <a href="{{ route('admin.vehicule') }}" class="wwaves-effect"><i
                                     class="bx bx-car"></i>
-                                    <span>Vehicule</span>
+                                    <span>{{ __('Vehicule') }}</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('admin.drivers') }}" class="wwaves-effect"><i
                                     class="bx bx-user"></i>
-                                    <span>Driver</span>
+                                    <span>{{ __('Conducteur') }}</span>
                             </a>
                         </li>
 
                         <li>
                             <a href="{{ route('admin.trip') }}" class="wwaves-effect"><i
                                     class="mdi mdi-road"></i>
-                                    <span>Trip</span>
+                                    <span>{{ __('Ordre de mission') }}</span>
                             </a>
                         </li>
 
 
                         <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="mdi mdi-package"></i></i><span>Stock</span></a>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="mdi mdi-package"></i></i><span>{{ __('Stock') }}</span></a>
                             <ul class="sub-menu" aria-expanded="true">
-                                <li><a href="{{ route('admin.stock-entry') }}">Stock entry</a></li>
-                                <li><a href="{{ route('admin.stock') }}">Stock Management</a></li>
-                                <li><a href="{{ route('admin.stockHistorie') }}">Historique Stock</a></li>
+                                <li><a href="{{ route('admin.stock-entry') }}">{{ __('Entree de stock') }}</a></li>
+                                <li><a href="{{ route('admin.stock') }}">{{ __('Gestion du stock') }}</a></li>
+                                <li><a href="{{ route('admin.stockHistorie') }}">{{ __('Historique Stock') }}</a></li>
                             </ul>
                         </li>
 

@@ -5,14 +5,12 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-
-                    <h4 class="card-title">Buttons example</h4>
-                    <a href="{{ route('admin.vehicule.create') }}" class="btn btn-primary waves-effect waves-light mb-4">Add Car</a>
+                    <a href="{{ route('admin.vehicule.create') }}" class="btn btn-primary waves-effect waves-light mb-4">{{ ('Ajout vehicule') }}</a>
 
                     <table id="datatable-buttons" class="table table-striped dt-responsive nowrap">
                         <thead>
                             <tr>
-                                <th>{{ __('brand') }}</th>
+                                <th>{{ __('marque') }}</th>
                                 <th>{{ __('model') }}</th>
                                 <th>{{ __('matricule') }}</th>
                                 <th>{{ __('total KM') }}</th>

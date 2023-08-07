@@ -5,10 +5,10 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Lunoz - Admin & Dashboard Template</title>
+        <title>Parking management</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
-        <meta content="MyraStudio" name="author" />
+        <meta content="Application de gestion de parking" name="description" />
+        <meta content="Fidiacom" name="author" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
         <!-- App favicon -->
@@ -45,26 +45,20 @@
                                             <form action="{{ route('login') }}" method="POST" class="p-2">
                                                 @csrf
                                                 <div class="form-group">
-                                                    <label for="emailaddress">Email address</label>
+                                                    <label for="emailaddress">{{ __('Email') }}</label>
                                                     <input class="form-control" type="email" id="emailaddress" name="email" required placeholder="john@deo.com">
 
                                                     <x-input-error :messages="$errors->get('email')" class="mt-2 text-danger" />
                                                 </div>
                                                 <div class="form-group">
-                                                    <a href="pages-recoverpw.html" class="text-muted float-right">Forgot your password?</a>
-                                                    <label for="password">Password</label>
-                                                    <input class="form-control" type="password" required="" id="password" name="password" placeholder="Enter your password">
+                                                    {{-- <a href="pages-recoverpw.html" class="text-muted float-right">Forgot your password?</a> --}}
+                                                    <label for="password">{{ __('Mots de passe') }}</label>
+                                                    <input class="form-control" type="password" required="" id="password" name="password" placeholder="{{ __('saisir votre mots de passe') }}">
                                                     <x-input-error :messages="$errors->get('password')" class="mt-2 text-danger" />
                                                 </div>
 
-                                                <div class="form-group mb-4 pb-3">
-                                                    <div class="custom-control custom-checkbox checkbox-primary">
-                                                        <input type="checkbox" class="custom-control-input" id="checkbox-signin">
-                                                        <label class="custom-control-label" for="checkbox-signin">Remember me</label>
-                                                    </div>
-                                                </div>
                                                 <div class="mb-3 text-center">
-                                                    <button class="btn btn-primary btn-block" type="submit"> Sign In </button>
+                                                    <button class="btn btn-primary btn-block" type="submit"> {{ __('Connexion') }} </button>
                                                 </div>
                                             </form>
                                         </div>
@@ -72,7 +66,7 @@
                                     </div>
                                     <!-- end card -->
 
-                                    
+
 
                                 </div>
                                 <!-- end col -->

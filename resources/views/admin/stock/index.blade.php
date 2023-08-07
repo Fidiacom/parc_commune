@@ -1,32 +1,15 @@
 <x-admin.app>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Stock</h4>
+                    <h4 class="card-title">{{ __('Stock') }}</h4>
 
                     <form action="{{ route('admin.stock.store') }}" method="post">
                         @csrf
                         <div class="form-group d-flex w-100">
                             <div class="w-50 mx-2">
-                                <label for="">Piece</label>
+                                <label for="">{{ __('Piece') }}</label>
                                 <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" >
 
                                 @error('name')
@@ -37,7 +20,7 @@
                             </div>
 
                             <div class="w-50 mx-2">
-                                <label for="">Seille alert</label>
+                                <label for="">{{ __('Seille alert') }}</label>
                                 <input
                                     type="number"
                                     step="any"
@@ -54,7 +37,7 @@
 
                         <div class="form-group d-flex w-100">
                             <div class="w-50 mx-2">
-                                <label for="">Stock Actuel</label>
+                                <label for="">{{ __('Stock Actuel') }}</label>
                                 <input
                                     type="number"
                                     step="any"
@@ -69,10 +52,10 @@
                             </div>
 
                             <div class="w-50 mx-2">
-                                <label for="">Unite</label>
+                                <label for="">{{ __('Unite') }}</label>
 
                                 <select name="unitie" class="form-control">
-                                    <option value="0">Select</option>
+                                    <option value="0">{{ __('Select') }}</option>
                                     @foreach ($unities as $unitie)
                                     <option value="{{ $unitie->id }}">{{ $unitie->name }}</option>
                                     @endforeach
@@ -88,7 +71,7 @@
 
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Sauvgarder') }}</button>
                         </div>
                     </form>
                 </div>
@@ -101,7 +84,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    <h4 class="card-title">Stock</h4>
+                    <h4 class="card-title">{{ __('Stock') }}</h4>
 
 
                     <table id="datatable-buttons" class="table table-striped nowrap">
@@ -111,7 +94,7 @@
                                 <th>{{ __('Stock Actuel') }}</th>
                                 <th>{{ __('Seuile alert') }}</th>
                                 <th>{{ __('Unite') }}</th>
-                                <th>{{ __('Created At') }}</th>
+                                <th>{{ __('Cree le') }}</th>
                                 <th>{{ __('Actions') }}</th>
                             </tr>
                         </thead>
@@ -143,7 +126,7 @@
                                     </td>
                                     <td>
                                         <select name="unitieUpdate" class="form-control @error('unitieUpdate') is-invalid @enderror">
-                                            <option value="0">Select</option>
+                                            <option value="0">{{ __('Select') }}</option>
                                             @foreach ($unities as $unitie)
                                             <option value="{{ $unitie->id }}" @selected($unitie->id == $s->unitie->id)>{{ $unitie->name }}</option>
                                             @endforeach
@@ -156,8 +139,8 @@
                                     </td>
                                     <td>{{ $s->created_at }}</td>
                                     <td class="d-flex">
-                                        <button type="submit" class="btn btn-primary waves-effect waves-light">Edit</button>
-                                        <button type="button" class="btn btn-danger waves-effect waves-light ml-2" onclick="deleteStock({{ $s->id }})">Delete</button>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Modifier') }}</button>
+                                        <button type="button" class="btn btn-danger waves-effect waves-light ml-2" onclick="deleteStock({{ $s->id }})">{{ __('Supprimer') }}</button>
                                     </td>
                                 </form>
                             </tr>

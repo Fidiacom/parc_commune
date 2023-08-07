@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-8 mx-auto">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0 font-size-18">{{ __('add vehicule') }}</h4>
+                    <h4 class="mb-0 font-size-18">{{ __('Ajout vehicule') }}</h4>
                 </div>
             </div>
         </div>
@@ -24,8 +24,8 @@
                                     <div class="card">
                                         <div class="card-body">
 
-                                            <h4 class="card-title">Car Picture</h4>
-                                            <p class="card-subtitle mb-4">MAX SIZE 5M.</p>
+                                            <h4 class="card-title">{{ __('Image de vehicule') }}</h4>
+                                            <p class="card-subtitle mb-4">{{ __('la taile maximum est') }} 5M.</p>
 
                                             <input type="file" class="dropify" data-max-file-size="5M" name="image" accept="image/*"/>
 
@@ -42,7 +42,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="simpleinput">{{ __('brand') }}</label>
+                                <label for="simpleinput">{{ __('marque') }}</label>
                                 <input
                                     type="text"
                                     id="simpleinput"
@@ -58,7 +58,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="example-password">{{ __('Model') }}</label>
+                                <label for="example-password">{{ __('model') }}</label>
                                 <input
                                     type="text"
                                     id="example-password"
@@ -122,7 +122,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('horses') }}</label>
+                                <label for="exampleFormControlInput1">{{ __('cheveaux') }}</label>
 
                                 <input
                                     type="text"
@@ -171,11 +171,11 @@
                             <div class="mt-2">
                                 <div class="custom-control custom-checkbox custom-control-inline">
                                     <input type="checkbox" class="custom-control-input" id="customCheck5" @checked(old('airbag') == 'on') name="airbag">
-                                    <label class="custom-control-label" for="customCheck5">Airbag</label>
+                                    <label class="custom-control-label" for="customCheck5">{{ __('Airbag') }}</label>
                                 </div>
                                 <div class="custom-control custom-checkbox custom-control-inline">
                                     <input type="checkbox" class="custom-control-input" id="customCheck6" @checked(old('abs') == 'on') name="abs">
-                                    <label class="custom-control-label" for="customCheck6">Abs</label>
+                                    <label class="custom-control-label" for="customCheck6">{{ __('Abs') }}</label>
                                 </div>
                             </div>
 
@@ -187,7 +187,6 @@
                                     class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"
                                     name="threshold_vidange"
                                     data-a-sep="." data-a-dec=",">
-
 
                                 @error('threshold_vidange')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
@@ -259,7 +258,7 @@
 
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                                <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Sauvgarder') }}</button>
                             </div>
 
                         </form>

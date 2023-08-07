@@ -4,7 +4,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    <h4 class="card-title">Stock</h4>
+                    <h4 class="card-title">{{ __('Stock') }}</h4>
 
 
                     <table id="datatable-buttons" class="table table-striped nowrap">
@@ -16,7 +16,7 @@
                                 <th>{{ __('Supplier name') }}</th>
                                 <th>{{ __('Document') }}</th>
                                 <th>{{ __('Qte actuel') }}</th>
-                                <th>{{ __('Created At') }}</th>
+                                <th>{{ __('Cree le') }}</th>
                             </tr>
                         </thead>
 

@@ -7,14 +7,15 @@
                 <div class="card">
                     <div class="card-body">
 
-                        <h4 class="card-title">Tabs Justified</h4>
-                        <p class="card-subtitle mb-4">Example of justified tabs.</p>
+                        <h4 class="card-title">
+                            {{ __('Pneus/Vidange/Chaine de distribution') }}
+                        </h4>
 
                         <ul class="nav nav-tabs nav-justified mb-3">
                             <li class="nav-item">
                                 <a href="#vidange" data-toggle="tab" aria-expanded="false" class="nav-link  @if (!$errors->any() || $errors->has('km_actuel_vidange')) active @endif)">
 
-                                    <span class=" d-lg-block">Vidange</span>
+                                    <span class=" d-lg-block">{{ __('Vidange') }}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -39,7 +40,7 @@
                                     @csrf
                                     <div class="form-group">
                                         <label>
-                                            KM actuel |
+                                            {{ __('KM actuel |') }}
                                             <span>
                                                 {{ 'minimum: '. $vehicule->total_km }}
                                             </span>
@@ -57,7 +58,7 @@
                                                 name="km_actuel_vidange">
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-dark waves-effect waves-light"
-                                                    type="button">Change</button>
+                                                    type="button">{{ __('Change') }}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -69,15 +70,14 @@
                                     <div class="col-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h4 class="card-title">Basic Data Table</h4>
 
 
                                                 <table class="table nowrap dtt">
                                                     <thead>
                                                         <tr>
-                                                            <th>Start Km</th>
-                                                            <th>Next Km</th>
-                                                            <th>Created At</th>
+                                                            <th>{{ __('Start Km') }}</th>
+                                                            <th>{{ __('Next Km') }}</th>
+                                                            <th>{{ __('Cree le') }}</th>
                                                         </tr>
                                                     </thead>
 
@@ -105,7 +105,7 @@
 
                                     <div class="form-group">
                                         <label>
-                                            KM actuel |
+                                            {{ __('KM actuel |') }}
                                             <span>
                                                 {{ 'minimum: '. $vehicule->total_km }}
                                             </span>
@@ -124,7 +124,7 @@
 
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-dark waves-effect waves-light"
-                                                    type="button">Change</button>
+                                                    type="button">{{ __('Change') }}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -135,16 +135,14 @@
                                     <div class="col-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h4 class="card-title">Basic Data Table</h4>
-
 
                                                 <table class="table nowrap dtt">
                                                     <thead>
                                                         <tr>
 
-                                                            <th>Start Km</th>
-                                                            <th>Next Km</th>
-                                                            <th>Created At</th>
+                                                            <th>{{ __('Start Km') }}</th>
+                                                            <th>{{ __('Next Km') }}</th>
+                                                            <th>{{ __('Cree le') }}</th>
                                                         </tr>
                                                     </thead>
 
@@ -174,7 +172,7 @@
                                             @csrf
                                             <div class="form-group mb-0">
                                                 <label>
-                                                    KM Actuel
+                                                    {{ __('KM Actuel') }}
                                                     {{ 'minimum: '. $vehicule->total_km }}
                                                 </label>
                                                 <div class="input-group">
@@ -188,7 +186,7 @@
                                             </div>
 
                                             <div class="form-group mb-0 mt-2">
-                                                <label>Position: </label>
+                                                <label>{{ __('Position') }}</label>
 
                                                 <div>
                                                     <select class="form-control select2-multiple w-100" name="positions[]" data-toggle="select2" multiple="multiple" style="width:100%" data-placeholder="Choose ...">
@@ -205,7 +203,7 @@
                                             </div>
                                             <div class="form-group mt-2">
                                                 <button type="submit" class="btn btn-dark waves-effect waves-light"
-                                                    type="button">Change</button>
+                                                    type="button">{{ __('Change') }}</button>
                                             </div>
 
                                         </form>
@@ -221,10 +219,10 @@
                                                     <thead>
                                                         <tr>
 
-                                                            <th>Pneu Position</th>
-                                                            <th>Start Km</th>
-                                                            <th>Next Km</th>
-                                                            <th>Created At</th>
+                                                            <th>{{ __('Pneu Position') }}</th>
+                                                            <th>{{ __('Start Km') }}</th>
+                                                            <th>{{ __('Next Km') }}</th>
+                                                            <th>{{ __('Cree le') }}</th>
                                                         </tr>
                                                     </thead>
 

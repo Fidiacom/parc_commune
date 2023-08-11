@@ -65,21 +65,37 @@
 
 
                     <div class="dropdown d-inline-block">
+
+                        @if(app()->getLocale() == 'ar')
+                        <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="" src="{{ asset('assets/images/flags/morocco.png') }}" alt="Header Language" height="16">
+                            <span class="d-none d-sm-inline-block ml-1">{{ __('العربية') }}</span>
+                            <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
+                        </button>
+                        @else
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img class="" src="{{ asset('assets/images/flags/french.jpg') }}" alt="Header Language" height="16">
                             <span class="d-none d-sm-inline-block ml-1">{{ __('Français') }}</span>
                             <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
                         </button>
+                        @endif
 
                         <div class="dropdown-menu dropdown-menu-right">
                             <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <img src="{{ asset('assets/images/flags/spain.jpg') }}" alt="user-image" class="mr-1" height="12">
+                            <a href="{{ route('changelang', 'ar') }}" class="dropdown-item notify-item">
+                                <img src="{{ asset('assets/images/flags/morocco.png') }}" alt="user-image" class="mr-1" style="width: 1.25rem; height: auto;" >
                                 <span class="align-middle">{{ __('العربية') }}</span>
                             </a>
 
+                            <a href="{{ route('changelang', 'fr') }}" class="dropdown-item notify-item">
+                                <img src="{{ asset('assets/images/flags/french.jpg') }}" alt="user-image" class="mr-1" height="12">
+                                <span class="align-middle">{{ __('Français') }}</span>
+                            </a>
+
                         </div>
+                        
                     </div>
 
                     <div class="dropdown d-inline-block">

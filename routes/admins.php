@@ -10,9 +10,11 @@ use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\HistoriqueStockController;
 use App\Http\Controllers\Admin\MaintenenceController;
 use App\Http\Controllers\Admin\HomeController;
-
+use App\Http\Controllers\LanguageController;
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('lang/{lang}', [LanguageController::class, 'switchLang'])->name('changelang');
 
     Route::get('/', [HomeController::class, 'index'])->name('dashboard');
 

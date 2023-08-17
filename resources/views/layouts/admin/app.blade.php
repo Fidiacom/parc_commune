@@ -37,6 +37,22 @@
             background-color: #fff;
             z-index: 99;
         }
+        .logo img {
+            width: 6rem !important;
+            margin: 2rem !important;
+            height: auto !important;
+        }
+
+        .btn-primary{
+            background-color: #397D3C !important;
+            border-color: #397D3C !important;
+
+        }
+
+        .page-item.active .page-link{
+            background-color: #397D3C !important;
+            border-color: #397D3C !important;
+        }
     </style>
 </head>
 
@@ -95,7 +111,7 @@
                             </a>
 
                         </div>
-                        
+
                     </div>
 
                     <div class="dropdown d-inline-block">
@@ -194,8 +210,8 @@
             <div data-simplebar class="h-100">
 
                 <div class="navbar-brand-box">
-                    <a href="index.html" class="logo">
-                        Fidiacom
+                    <a href="{{ route('dashboard') }}" class="logo">
+                        <img src="{{ asset('assets/images/logo.png') }}" alt="">
                     </a>
                 </div>
 

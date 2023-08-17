@@ -19,11 +19,14 @@
         <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/theme.min.css" rel="stylesheet" type="text/css" />
         <style>
-
+            .btn-primary{
+                background-color: #397D3C !important;
+                border-color: #397D3C !important;
+            }
         </style>
     </head>
 
-<body class="bg-primary">
+<body class="" style="background-color: #e9e9e9;">
 
     <div>
         <div class="container">
@@ -38,7 +41,7 @@
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="index.html">
                                                     <span class="h4">
-                                                        Fidiacom
+                                                        <img src="{{ asset('assets/images/logo.png') }}" style="width: 8rem" alt="">
                                                     </span>
                                                 </a>
                                             </div>

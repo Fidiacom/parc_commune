@@ -34,7 +34,7 @@ class SettingController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        dd($request->all());
+        // dd($request->all());
         $validated = $request->validate([
             'commune_name_fr' => 'required|string|max:255',
             'commune_name_ar' => 'required|string|max:255',

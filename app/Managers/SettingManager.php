@@ -44,7 +44,7 @@ class SettingManager
             return asset($setting->getLogo());
         }
         
-        return asset('assets/images/logo-light.png');
+        return asset('assets/images/logo.png');
     }
 
     /**

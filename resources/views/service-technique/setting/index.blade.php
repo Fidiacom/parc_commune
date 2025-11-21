@@ -59,12 +59,11 @@
                         <div class="mb-3">
                             @if($setting->getLogo())
                                 <div class="mb-2">
-                                    <img src="{{ asset($setting->getLogo()) }}" alt="Logo" style="max-height: 100px; max-width: 200px;">
+                                    <img src="{{ asset($setting->getLogo()) }}" alt="Logo" style="max-height: 100px; max-width: 200px; border-radius: 1rem;">
                                 </div>
                             @else
                                 <div class="mb-2">
-                                    <img src="{{ asset('assets/images/logo-light.png') }}" alt="Placeholder Logo" style="max-height: 100px; max-width: 200px;">
-                                    <small class="text-muted d-block">{{ __('Current placeholder logo') }}</small>
+                                    No logo found
                                 </div>
                             @endif
                         </div>

@@ -2,18 +2,21 @@
 
 namespace App\View\Components\Admin;
 
+use App\Services\SettingService;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class app extends Component
 {
+    public string $logoUrl;
+
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct(SettingService $settingService)
     {
-        //
+        $this->logoUrl = $settingService->getLogoUrl();
     }
 
     /**

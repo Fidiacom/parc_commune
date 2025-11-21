@@ -211,7 +211,10 @@
 
                 <div class="navbar-brand-box">
                     <a href="{{ route('dashboard') }}" class="logo">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="">
+                        @php
+                            $placeholderLogo = asset('assets/images/logo.png');
+                        @endphp
+                        <img src="{{ $logoUrl }}" alt="" onerror="this.onerror=null;this.src='{{ $placeholderLogo }}';">
                     </a>
                 </div>
 

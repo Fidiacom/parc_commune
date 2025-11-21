@@ -102,5 +102,15 @@
     "Driver CIN":"رقم البطاقة الوطنية للسائق",
     "Car":"العربة",
     "From - To":"من - إلى",
-    "Done at":"الانتهاء في"
+    "Done at":"الانتهاء في",
+    "Settings":"الإعدادات",
+    "Manage logo and commune name settings":"إدارة الشعار واسم البلدية",
+    "Commune Name":"اسم البلدية",
+    "Enter commune name in French":"أدخل اسم البلدية بالفرنسية",
+    "Enter commune name in Arabic":"أدخل اسم البلدية بالعربية",
+    "Logo":"الشعار",
+    "Current placeholder logo":"الشعار الافتراضي الحالي",
+    "Upload a new logo (Max: 2MB, Formats: jpeg, png, jpg, gif, svg)":"رفع شعار جديد (الحد الأقصى: 2MB، الصيغ: jpeg، png، jpg، gif، svg)",
+    "Update Settings":"تحديث الإعدادات",
+    "Settings updated successfully.":"تم تحديث الإعدادات بنجاح."
 }

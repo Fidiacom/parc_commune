@@ -102,5 +102,15 @@
     "Driver CIN":"CIN du Conducteur",
     "Car":"Véhicule",
     "From - To":"De - À",
-    "Done at":"Fin le"
+    "Done at":"Fin le",
+    "Settings":"Paramètres",
+    "Manage logo and commune name settings":"Gérer le logo et le nom de la commune",
+    "Commune Name":"Nom de la commune",
+    "Enter commune name in French":"Entrez le nom de la commune en français",
+    "Enter commune name in Arabic":"Entrez le nom de la commune en arabe",
+    "Logo":"Logo",
+    "Current placeholder logo":"Logo par défaut actuel",
+    "Upload a new logo (Max: 2MB, Formats: jpeg, png, jpg, gif, svg)":"Télécharger un nouveau logo (Max: 2MB, Formats: jpeg, png, jpg, gif, svg)",
+    "Update Settings":"Mettre à jour les paramètres",
+    "Settings updated successfully.":"Paramètres mis à jour avec succès."
 }

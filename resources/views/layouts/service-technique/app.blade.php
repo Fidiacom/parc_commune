@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Parc Management</title>
+        <title>{{ $communeName ?: 'Parc Management' }}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
         <meta content="MyraStudio" name="author" />
@@ -30,8 +30,8 @@
                     <div class="navbar-header">
                         <!-- LOGO -->
                         <div class="navbar-brand-box d-flex align-items-left">
-                            <a href="index.html" class="logo">
-                                <img src="{{ asset('assets/images/logo-light.png') }}"/>
+                            <a href="{{ route('serviceTechnique.setting') }}" class="logo">
+                                <img src="{{ $logoUrl }}" alt="{{ $communeName ?: 'Logo' }}" onerror="this.src='{{ asset('assets/images/logo-light.png') }}'"/>
                             </a>
 
                             <button type="button" class="btn btn-sm mr-2 font-size-16 d-lg-none header-item waves-effect waves-light" data-toggle="collapse" data-target="#topnav-menu-content">
@@ -180,8 +180,14 @@
                             <div class="collapse navbar-collapse" id="topnav-menu-content">
                                 <ul class="navbar-nav">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="index.html">
+                                        <a class="nav-link" href="{{ route('serviceTechnique.setting') }}">
                                             <i class="bx bx-home-smile"></i>Dashboard
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('serviceTechnique.setting') }}">
+                                            <i class="bx bx-cog"></i>{{ __('Settings') }}
                                         </a>
                                     </li>
 

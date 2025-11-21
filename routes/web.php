@@ -15,12 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-//require "service-technique.php";
+require "service-technique.php";
 
 
 require "admins.php";
-
-
 
 
 

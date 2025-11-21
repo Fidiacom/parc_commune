@@ -2,12 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\Models\Stock;
-use App\Models\pneu;
-use App\Models\Vehicule;
 use App\Models\Trip;
+use App\Models\Vehicule;
+use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
 
 class NotificationMiddleware
@@ -38,47 +39,65 @@ class NotificationMiddleware
         {
 
             // Vidange Notification
-            if($vehicule->total_km >= $vehicule->vidange->vidange_historique->last()->next_km_for_drain)
+            $vidangeHistorique = optional($vehicule->vidange)->vidange_historique;
+            if($vidangeHistorique instanceof Collection && $vidangeHistorique->isNotEmpty())
             {
-                $notification->push([
-                    'vehicule_id'   => $vehicule->id,
-                    'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
-                    'notif'         => 'vidange',
-                    'message'       => 'need a drain',
-                ]);
-
-            }
-
-            // Timing Chaine Notification
-
-            if($vehicule->total_km >= $vehicule->timing_chaine->timingchaine_historique->last()->next_km_for_change)
-            {
-                $notification->push([
-                    'vehicule_id'   => $vehicule->id,
-                    'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
-                    'notif'         => 'Timing Chaine',
-                    'message'       => 'Need to change Timing Chaine',
-                ]);
-            }
-
-            // Pneu Notification
-            foreach ($vehicule->pneu as $pneu)
-            {
-
-                if($vehicule->total_km >= $pneu->pneu_historique->last()->next_km_for_change)
+                $nextDrain = $vidangeHistorique->last()->next_km_for_drain ?? null;
+                if(!is_null($nextDrain) && $vehicule->total_km >= $nextDrain)
                 {
                     $notification->push([
                         'vehicule_id'   => $vehicule->id,
                         'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
-                        'notif'         => 'Pneu',
-                        'message'       => 'Need to change Pneu | Position:'.$pneu->tire_position,
+                        'notif'         => 'vidange',
+                        'message'       => 'need a drain',
                     ]);
-
                 }
             }
 
-            return $notification;
+            // Timing Chaine Notification
+
+            $timingHistorique = optional($vehicule->timing_chaine)->timingchaine_historique;
+            if($timingHistorique instanceof Collection && $timingHistorique->isNotEmpty())
+            {
+                $nextTimingChange = $timingHistorique->last()->next_km_for_change ?? null;
+                if(!is_null($nextTimingChange) && $vehicule->total_km >= $nextTimingChange)
+                {
+                    $notification->push([
+                        'vehicule_id'   => $vehicule->id,
+                        'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
+                        'notif'         => 'Timing Chaine',
+                        'message'       => 'Need to change Timing Chaine',
+                    ]);
+                }
+            }
+
+            // Pneu Notification
+            $pneus = $vehicule->pneu;
+            if(!($pneus instanceof Collection))
+            {
+                continue;
+            }
+
+            foreach ($pneus as $pneu)
+            {
+                $pneuHistorique = optional($pneu->pneu_historique);
+                if($pneuHistorique instanceof Collection && $pneuHistorique->isNotEmpty())
+                {
+                    $nextPneuChange = $pneuHistorique->last()->next_km_for_change ?? null;
+                    if(!is_null($nextPneuChange) && $vehicule->total_km >= $nextPneuChange)
+                    {
+                        $notification->push([
+                            'vehicule_id'   => $vehicule->id,
+                            'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
+                            'notif'         => 'Pneu',
+                            'message'       => 'Need to change Pneu | Position:'.$pneu->tire_position,
+                        ]);
+                    }
+                }
+            }
         }
+
+        return $notification;
     }
 
 
@@ -99,14 +118,18 @@ class NotificationMiddleware
     public function handle(Request $request, Closure $next): Response
     {
 
+        
+        $stockNotifications = $this->stock();
+        $chargeNotifications = $this->chargeNotifications();
+        $tripNotifications = $this->trip();
 
-        $numberOfNotification = $this->stock()->count() + $this->chargeNotifications()->count() + $this->trip()->count();
+        $numberOfNotification = $stockNotifications->count() + $chargeNotifications->count() + $tripNotifications->count();
 
-        \View::share([
-            'chargeNotification'    =>  $this->chargeNotifications(),
-            'stockNotification'     =>  $this->stock(),
+        View::share([
+            'chargeNotification'    =>  $chargeNotifications,
+            'stockNotification'     =>  $stockNotifications,
             'numberOfNotification'  =>  $numberOfNotification,
-            'trips'                 =>  $this->trip()
+            'trips'                 =>  $tripNotifications
         ]);
         return $next($request);
     }

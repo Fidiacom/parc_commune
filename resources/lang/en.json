@@ -15,5 +15,6 @@
     "seuil KM Pneu (Avant|Droit)":"seuil KM Pneu (Avant|Droit)",
     "seuil KM Pneu (Derriere|Gauche)":"seuil KM Pneu (Derriere|Gauche)",
     "seuil KM Pneu (Derriere|Droit)":"seuil KM Pneu (Derriere|Droit)",
-    "Km actuel":"Km actuel"
+    "Km actuel":"Km actuel",
+    "Email ou nom d'utilisateur":"Email or username"
 }

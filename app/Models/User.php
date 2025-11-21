@@ -12,6 +12,16 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const TABLE = 'users';
+    public const ID_COLUMN = 'id';
+    public const NAME_COLUMN = 'name';
+    public const USERNAME_COLUMN = 'username';
+    public const EMAIL_COLUMN = 'email';
+    public const PASSWORD_COLUMN = 'password';
+    public const ROLE_ID_COLUMN = 'role_id';
+
+    protected $table = self::TABLE;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -19,8 +29,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -42,4 +54,29 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function getId(): int
+    {
+        return $this->getAttribute(self::ID_COLUMN);
+    }
+
+    public function getName(): string
+    {
+        return $this->getAttribute(self::NAME_COLUMN);
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->getAttribute(self::USERNAME_COLUMN);
+    }
+
+    public function getEmail(): string
+    {
+        return $this->getAttribute(self::EMAIL_COLUMN);
+    }
+
+    public function getRoleId(): ?int
+    {
+        return $this->getAttribute(self::ROLE_ID_COLUMN);
+    }
 }

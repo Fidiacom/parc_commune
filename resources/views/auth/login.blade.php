@@ -48,10 +48,10 @@
                                             <form action="{{ route('login') }}" method="POST" class="p-2">
                                                 @csrf
                                                 <div class="form-group">
-                                                    <label for="emailaddress">{{ __('Email') }}</label>
-                                                    <input class="form-control" type="email" id="emailaddress" name="email" required placeholder="john@deo.com">
+                                                    <label for="login">{{ __('Email ou nom d\'utilisateur') }}</label>
+                                                    <input class="form-control" type="text" id="login" name="login" required placeholder="{{ __('Email ou nom d\'utilisateur') }}" value="{{ old('login') }}">
 
-                                                    <x-input-error :messages="$errors->get('email')" class="mt-2 text-danger" />
+                                                    <x-input-error :messages="$errors->get('login')" class="mt-2 text-danger" />
                                                 </div>
                                                 <div class="form-group">
                                                     {{-- <a href="pages-recoverpw.html" class="text-muted float-right">Forgot your password?</a> --}}

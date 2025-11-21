@@ -17,8 +17,12 @@ class User extends Authenticatable
     public const NAME_COLUMN = 'name';
     public const USERNAME_COLUMN = 'username';
     public const EMAIL_COLUMN = 'email';
+    public const EMAIL_VERIFIED_AT_COLUMN = 'email_verified_at';
     public const PASSWORD_COLUMN = 'password';
+    public const REMEMBER_TOKEN_COLUMN = 'remember_token';
     public const ROLE_ID_COLUMN = 'role_id';
+    public const CREATED_AT_COLUMN = 'created_at';
+    public const UPDATED_AT_COLUMN = 'updated_at';
 
     protected $table = self::TABLE;
 
@@ -73,6 +77,11 @@ class User extends Authenticatable
     public function getEmail(): string
     {
         return $this->getAttribute(self::EMAIL_COLUMN);
+    }
+
+    public function getEmailVerifiedAt(): ?string
+    {
+        return $this->getAttribute(self::EMAIL_VERIFIED_AT_COLUMN);
     }
 
     public function getRoleId(): ?int

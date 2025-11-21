@@ -15,6 +15,8 @@ class Setting extends Model
     public const COMMUNE_NAME_COLUMN = 'commune_name';
     public const COMMUNE_NAME_FR_COLUMN = 'commune_name_fr';
     public const COMMUNE_NAME_AR_COLUMN = 'commune_name_ar';
+    public const CREATED_AT_COLUMN = 'created_at';
+    public const UPDATED_AT_COLUMN = 'updated_at';
 
     protected $table = self::TABLE;
 

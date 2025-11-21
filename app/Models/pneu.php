@@ -9,14 +9,43 @@ class pneu extends Model
 {
     use HasFactory;
 
-    public function vehicule()
+    public const TABLE = 'pneus';
+    public const ID_COLUMN = 'id';
+    public const CAR_ID_COLUMN = 'car_id';
+    public const THRESHOLD_KM_COLUMN = 'threshold_km';
+    public const TIRE_POSITION_COLUMN = 'tire_position';
+    public const CREATED_AT_COLUMN = 'created_at';
+    public const UPDATED_AT_COLUMN = 'updated_at';
+
+    protected $table = self::TABLE;
+
+    public function getId(): int
     {
-        return $this->belongTo(Vehicule::class);
+        return $this->getAttribute(self::ID_COLUMN);
     }
 
+    public function getCarId(): int
+    {
+        return $this->getAttribute(self::CAR_ID_COLUMN);
+    }
+
+    public function getThresholdKm(): int
+    {
+        return $this->getAttribute(self::THRESHOLD_KM_COLUMN);
+    }
+
+    public function getTirePosition(): string
+    {
+        return $this->getAttribute(self::TIRE_POSITION_COLUMN);
+    }
+
+    public function vehicule()
+    {
+        return $this->belongsTo(Vehicule::class, 'car_id');
+    }
 
     public function pneu_historique()
     {
-        return $this->HasMany(PneuHistorique::class, 'pneu_id');
+        return $this->hasMany(PneuHistorique::class, 'pneu_id');
     }
 }

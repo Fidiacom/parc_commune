@@ -48,7 +48,7 @@
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="index.html">
                                                     <span class="h4">
-                                                        <img src="{{ asset('assets/images/logo.png') }}" style="width: 8rem" alt="">
+                                                        <img src="{{ asset('assets/images/base-logo.png') }}" style="width: 8rem" alt="">
                                                     </span>
                                                 </a>
                                             </div>

@@ -19,22 +19,27 @@
                         <form action="{{ route('admin.vehicule.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
-
-                                <div class="col-xl-5 mx-auto">
+                                <label class="mb-2">{{ __('Images de vehicule') }}</label>
+                                <div class="col-xl-8 mx-auto">
                                     <div class="card">
                                         <div class="card-body">
+                                            <h4 class="card-title">{{ __('Images de vehicule') }}</h4>
+                                            <p class="card-subtitle mb-4">{{ __('Vous pouvez sélectionner plusieurs images. Taille maximum: 5M par image.') }}</p>
 
-                                            <h4 class="card-title">{{ __('Image de vehicule') }}</h4>
-                                            <p class="card-subtitle mb-4">{{ __('la taile maximum est') }} 5M.</p>
-
-                                            <input type="file" class="dropify" data-max-file-size="5M" name="image" accept="image/*"/>
-
+                                            <input type="file" class="form-control-file" name="images[]" id="vehicleImages" multiple accept="image/*"/>
+                                            <small class="form-text text-muted">{{ __('Sélectionnez une ou plusieurs images du véhicule') }}</small>
+                                            
+                                            <div id="imagePreview" class="mt-3" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
                                         </div> <!-- end card-body-->
                                     </div> <!-- end card-->
                                 </div> <!-- end col -->
 
-
-                                @error('image')
+                                @error('images')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                                @error('images.*')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}
                                 </div>
@@ -268,6 +273,37 @@
                                 @enderror
                             </div>
 
+                            {{-- Tire Size --}}
+                            <div class="form-group">
+                                <label for="tireSize">{{ __('Tire Size') }}</label>
+                                <input
+                                    type="text"
+                                    class="form-control @error('tire_size') is-invalid @enderror"
+                                    id="tireSize"
+                                    name="tire_size"
+                                    placeholder=""
+                                    value="{{ old('tire_size') }}">
+                                @error('tire_size')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+
+                            {{-- Vehicle Attachments Section --}}
+                            <div class="form-group mt-4">
+                                <label class="mb-3">{{ __('Vehicle Documents & Files') }}</label>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ __('Upload Files') }}</h5>
+                                        <p class="text-muted">{{ __('You can upload multiple files (images, PDFs, documents) during vehicle creation. Max size: 10MB per file.') }}</p>
+                                        <div class="form-group">
+                                            <input type="file" class="form-control-file" name="files[]" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx">
+                                            <small class="form-text text-muted">{{ __('Select multiple files to upload') }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Sauvgarder') }}</button>
@@ -287,4 +323,47 @@
         <!-- end row-->
 
     </div> <!-- container-fluid -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('vehicleImages');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.innerHTML = '';
+                    
+                    if (this.files && this.files.length > 0) {
+                        Array.from(this.files).forEach((file) => {
+                            if (file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const div = document.createElement('div');
+                                    div.style.cssText = 'position: relative; display: inline-block; margin: 5px;';
+                                    
+                                    const img = document.createElement('img');
+                                    img.src = e.target.result;
+                                    img.className = 'img-thumbnail';
+                                    img.style.cssText = 'max-width: 150px; max-height: 150px; object-fit: cover;';
+                                    
+                                    const removeBtn = document.createElement('button');
+                                    removeBtn.type = 'button';
+                                    removeBtn.className = 'btn btn-sm btn-danger';
+                                    removeBtn.style.cssText = 'position: absolute; top: 5px; right: 5px; padding: 2px 6px; font-size: 10px;';
+                                    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                                    removeBtn.onclick = function() {
+                                        div.remove();
+                                    };
+                                    
+                                    div.appendChild(img);
+                                    div.appendChild(removeBtn);
+                                    preview.appendChild(div);
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    </script>
 </x-admin.app>

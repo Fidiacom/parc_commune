@@ -20,6 +20,7 @@ class Vehicule extends Model
     public const TOTAL_KM_COLUMN = 'total_km';
     public const HORSES_COLUMN = 'horses';
     public const NUMBER_OF_TIRES_COLUMN = 'number_of_tires';
+    public const TIRE_SIZE_COLUMN = 'tire_size';
     public const FUEL_TYPE_COLUMN = 'fuel_type';
     public const AIRBAG_COLUMN = 'airbag';
     public const ABS_COLUMN = 'abs';
@@ -81,6 +82,11 @@ class Vehicule extends Model
         return $this->getAttribute(self::NUMBER_OF_TIRES_COLUMN);
     }
 
+    public function getTireSize(): ?string
+    {
+        return $this->getAttribute(self::TIRE_SIZE_COLUMN);
+    }
+
     public function getFuelType(): string
     {
         return $this->getAttribute(self::FUEL_TYPE_COLUMN);
@@ -101,7 +107,7 @@ class Vehicule extends Model
         return $this->getAttribute(self::INSSURANCE_EXPIRATION_COLUMN);
     }
 
-    public function getTechnicalvisiteExpiration(): string
+    public function getTechnicalvisiteExpiration(): ?string
     {
         return $this->getAttribute(self::TECHNICALVISITE_EXPIRATION_COLUMN);
     }
@@ -129,5 +135,10 @@ class Vehicule extends Model
     public function trips()
     {
         return $this->hasMany(Trip::class, 'vehicule_id');
+    }
+
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 }

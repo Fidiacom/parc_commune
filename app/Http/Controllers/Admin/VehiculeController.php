@@ -15,8 +15,10 @@ use App\Models\TimingChaine;
 use App\Models\TimingChaineHistorique;
 
 use App\Models\CategoriePermi;
-use Alert;
-use Crypt;
+use App\Models\Attachment;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -26,7 +28,7 @@ class VehiculeController extends Controller
 {
     public function index()
     {
-        $vehicules = Vehicule::latest()->get();
+        $vehicules = Vehicule::withCount('attachments')->latest()->get();
 
         return view('admin.vehicule.index', ['vehicules' => $vehicules]);
     }
@@ -53,16 +55,25 @@ class VehiculeController extends Controller
             'threshold_vidange'             =>  'required',
             'threshold_timing_chaine'       =>  'required',
             'inssurance_expiration'         =>  'required',
-            'technical_visit_expiration'    =>  'required',
+            'technical_visit_expiration'    =>  'nullable|date',
             'numOfTires'                    =>  'required',
             'circulation_date'              =>  'nullable|date',
+            'images.*'                      =>  'nullable|image|max:5120', // 5MB max per image
+            'files.*'                       =>  'nullable|file|max:10240', // 10MB max per file
 
         ]);
 
 
         $vehicule                   =   new Vehicule;
         $vehicule->brand            =   $request->brand;
-        $vehicule->image            =   isset($request->image) ? uploadFile($request->image, 'vehicules') : null;
+        
+        // Handle multiple images - store first one as main image
+        if ($request->hasFile('images') && count($request->file('images')) > 0) {
+            $firstImage = $request->file('images')[0];
+            $vehicule->image = uploadFile($firstImage, 'vehicules');
+        } else {
+            $vehicule->image = null;
+        }
         $vehicule->model            =   $request->model;
         $vehicule->matricule        =   $request->matricule;
         $vehicule->num_chassis      =   $request->chassis;
@@ -74,10 +85,32 @@ class VehiculeController extends Controller
         $vehicule->abs              =   isset($request->abs) ? 1 : 0;
         $vehicule->permis_id        =   $request->category;
         $vehicule->inssurance_expiration              =   $request->inssurance_expiration;
-        $vehicule->technicalvisite_expiration         =   $request->technical_visit_expiration;
+        $vehicule->technicalvisite_expiration         =   $request->technical_visit_expiration ?? null;
         $vehicule->number_of_tires         =   $request->numOfTires;
+        $vehicule->tire_size               =   $request->tire_size;
         $vehicule->save();
 
+        // Handle multiple images - store all as attachments
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $filePath = uploadFile($image, 'vehicules/attachments');
+                
+                $attachment = new Attachment();
+                $attachment->file_path = $filePath;
+                $vehicule->attachments()->save($attachment);
+            }
+        }
+
+        // Handle other file uploads
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $filePath = uploadFile($file, 'vehicules/attachments');
+                
+                $attachment = new Attachment();
+                $attachment->file_path = $filePath;
+                $vehicule->attachments()->save($attachment);
+            }
+        }
 
         $vidange =  new Vidange;
         $vidange->car_id            =   $vehicule->id;
@@ -116,7 +149,7 @@ class VehiculeController extends Controller
     public function edit($id)
     {
         try {
-            $vehicule = Vehicule::with('vidange', 'timing_chaine')->findOrFail($id);
+            $vehicule = Vehicule::with('vidange', 'timing_chaine', 'attachments')->findOrFail($id);
         } catch (\Throwable $th) {
             return view('admin.vehicule.404');
         }
@@ -137,9 +170,10 @@ class VehiculeController extends Controller
             'horses'                        =>  'required',
             'fuel_type'                     =>  'required|not_in:0',
             'inssurance_expiration'         =>  'required',
-            'technical_visit_expiration'    =>  'required',
+            'technical_visit_expiration'    =>  'nullable|date',
             'numOfTires'                    =>  'required',
             'circulation_date'              =>  'nullable|date',
+            'images.*'                      =>  'nullable|image|max:5120', // 5MB max per image
         ]);
 
 
@@ -153,7 +187,13 @@ class VehiculeController extends Controller
 
 
         $vehicule->brand            =   $request->brand;
-        $vehicule->image            =   isset($request->image) ? uploadFile($request->image, 'vehicules') : $vehicule->image;
+        
+        // Handle multiple images - update main image if new images are uploaded
+        if ($request->hasFile('images') && count($request->file('images')) > 0) {
+            $firstImage = $request->file('images')[0];
+            $vehicule->image = uploadFile($firstImage, 'vehicules');
+        }
+        // Keep existing image if no new images uploaded
         $vehicule->model            =   $request->model;
         $vehicule->matricule        =   $request->matricule;
         $vehicule->num_chassis      =   $request->chassis;
@@ -164,9 +204,21 @@ class VehiculeController extends Controller
         $vehicule->airbag           =   isset($request->airbag) ? 1 : 0;
         $vehicule->abs              =   isset($request->abs) ? 1 : 0;
         $vehicule->inssurance_expiration              =   $request->inssurance_expiration;
-        $vehicule->technicalvisite_expiration         =   $request->technical_visit_expiration;
+        $vehicule->technicalvisite_expiration         =   $request->technical_visit_expiration ?? null;
         $vehicule->number_of_tires         =   $request->numOfTires;
+        $vehicule->tire_size               =   $request->tire_size;
         $vehicule->save();
+
+        // Handle multiple images - store all as attachments
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $filePath = uploadFile($image, 'vehicules/attachments');
+                
+                $attachment = new Attachment();
+                $attachment->file_path = $filePath;
+                $vehicule->attachments()->save($attachment);
+            }
+        }
 
         Alert::success('Vehicule Saved Successfully', 'updated');
         return back();
@@ -188,5 +240,56 @@ class VehiculeController extends Controller
         //dd($historique);
 
         return view('admin.vehicule.dtt', ['vehicule' => $vehicule, 'historiquePneu'    =>  $historiquePneu]);
+    }
+
+    public function uploadFiles(Request $request)
+    {
+        $validated = $request->validate([
+            'vehicule_id' => 'required',
+            'files.*' => 'required|file|max:10240', // 10MB max per file
+        ]);
+
+        try {
+            $id = Crypt::decrypt($request->vehicule_id);
+            $vehicule = Vehicule::findOrFail($id);
+        } catch (\Throwable $th) {
+            Alert::error('Error', 'Invalid vehicle ID');
+            return back();
+        }
+
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $filePath = uploadFile($file, 'vehicules/attachments');
+                
+                $attachment = new Attachment();
+                $attachment->file_path = $filePath;
+                $vehicule->attachments()->save($attachment);
+            }
+        }
+
+        Alert::success('Success', 'Files uploaded successfully');
+        return back();
+    }
+
+    public function deleteFile($id)
+    {
+        try {
+            $attachmentId = Crypt::decrypt($id);
+            $attachment = Attachment::findOrFail($attachmentId);
+            
+            // Delete physical file
+            $filePath = str_replace('storage/', 'public/', $attachment->getFilePath());
+            if (Storage::exists($filePath)) {
+                Storage::delete($filePath);
+            }
+            
+            $attachment->delete();
+            
+            Alert::success('Success', 'File deleted successfully');
+        } catch (\Throwable $th) {
+            Alert::error('Error', 'Failed to delete file');
+        }
+        
+        return back();
     }
 }

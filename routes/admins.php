@@ -25,6 +25,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('vehicule/store', [VehiculeController::class, 'store'])->name('admin.vehicule.store');
         Route::get('vehicule/{id}', [VehiculeController::class, 'edit'])->name('admin.vehicule.edit');
         Route::post('vehicule/update/{id}', [VehiculeController::class, 'update'])->name('admin.vehicule.update');
+        Route::post('vehicule/files/upload', [VehiculeController::class, 'uploadFiles'])->name('admin.vehicule.files.upload');
+        Route::post('vehicule/files/delete/{id}', [VehiculeController::class, 'deleteFile'])->name('admin.vehicule.files.delete');
 
         Route::get('vehicule/drain-tire-timing/{vehicule_id}', [VehiculeController::class, 'dtt_get'])->name('admin.dtt');
 

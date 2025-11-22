@@ -14,8 +14,9 @@
                                 <th>{{ __('model') }}</th>
                                 <th>{{ __('matricule') }}</th>
                                 <th>{{ __('total KM') }}</th>
-
-                                <th>{{ __('fuel type:  ') }}</th>
+                                <th>{{ __('fuel type') }}</th>
+                                <th>{{ __('Tire Size') }}</th>
+                                <th>{{ __('Files') }}</th>
                             </tr>
                         </thead>
 
@@ -31,8 +32,14 @@
                                 <td>{{ $vehicule->getModel() }}</td>
                                 <td>{{ $vehicule->getMatricule() }}</td>
                                 <td>{{ $vehicule->getTotalKm() }}</td>
-
                                 <td>{{ $vehicule->getFuelType() }}</td>
+                                <td>{{ $vehicule->getTireSize() ?? '-' }}</td>
+                                <td>
+                                    <span class="badge badge-{{ $vehicule->attachments_count > 0 ? 'success' : 'secondary' }}">
+                                        <i class="fas fa-{{ $vehicule->attachments_count > 0 ? 'file-alt' : 'file' }}"></i>
+                                        {{ $vehicule->attachments_count ?? 0 }} {{ __('files') }}
+                                    </span>
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>

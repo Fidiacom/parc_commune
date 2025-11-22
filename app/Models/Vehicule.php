@@ -16,6 +16,7 @@ class Vehicule extends Model
     public const MODEL_COLUMN = 'model';
     public const MATRICULE_COLUMN = 'matricule';
     public const NUM_CHASSIS_COLUMN = 'num_chassis';
+    public const CIRCULATION_DATE_COLUMN = 'circulation_date';
     public const TOTAL_KM_COLUMN = 'total_km';
     public const HORSES_COLUMN = 'horses';
     public const NUMBER_OF_TIRES_COLUMN = 'number_of_tires';
@@ -58,6 +59,11 @@ class Vehicule extends Model
     public function getNumChassis(): string
     {
         return $this->getAttribute(self::NUM_CHASSIS_COLUMN);
+    }
+
+    public function getCirculationDate(): ?string
+    {
+        return $this->getAttribute(self::CIRCULATION_DATE_COLUMN);
     }
 
     public function getTotalKm(): int

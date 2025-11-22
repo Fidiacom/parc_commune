@@ -35,14 +35,14 @@
 
                         <div class="tab-content">
                             <div class="tab-pane @if (!$errors->any() || $errors->has('km_actuel_vidange')) active @endif)" id="vidange">
-                                <form action="{{ route('admin.drain.update', Crypt::encrypt($vehicule->id)) }}"
+                                <form action="{{ route('admin.drain.update', Crypt::encrypt($vehicule->getId())) }}"
                                     method="post">
                                     @csrf
                                     <div class="form-group">
                                         <label>
                                             {{ __('KM actuel |') }}
                                             <span>
-                                                {{ 'minimum: '. $vehicule->total_km }}
+                                                {{ 'minimum: '. $vehicule->getTotalKm() }}
                                             </span>
                                             @error('km_actuel_vidange')
                                             <div id="validationServerUsernameFeedback" class="invalid-feedback" style="display: block">
@@ -53,7 +53,7 @@
 
                                         <div class="input-group">
                                             <input type="number" step="any"
-                                                min="{{ $vehicule->total_km }}"
+                                                min="{{ $vehicule->getTotalKm() }}"
                                                 class="form-control @error('km_actuel') is-invalid @enderror"
                                                 name="km_actuel_vidange">
                                             <div class="input-group-append">
@@ -99,7 +99,7 @@
                             </div>
 
                             <div class="tab-pane @error('km_actuel_timichaine') active @enderror" id="timingChaine">
-                                <form action="{{ route('admin.timingchaine.update', Crypt::encrypt($vehicule->id)) }}"
+                                <form action="{{ route('admin.timingchaine.update', Crypt::encrypt($vehicule->getId())) }}"
                                     method="post">
                                     @csrf
 
@@ -107,7 +107,7 @@
                                         <label>
                                             {{ __('KM actuel |') }}
                                             <span>
-                                                {{ 'minimum: '. $vehicule->total_km }}
+                                                {{ 'minimum: '. $vehicule->getTotalKm() }}
                                             </span>
                                             @error('km_actuel_timichaine')
                                             <div id="validationServerUsernameFeedback" class="invalid-feedback" style="display: block">
@@ -118,7 +118,7 @@
 
                                         <div class="input-group">
                                             <input type="number" step="any"
-                                                min="{{ $vehicule->total_km }}"
+                                                min="{{ $vehicule->getTotalKm() }}"
                                                 class="form-control @error('km_actuel_timichaine') is-invalid @enderror"
                                                 name="km_actuel_timichaine">
 
@@ -168,19 +168,19 @@
                                 <div class="row">
 
                                     <div class="col-12">
-                                        <form action="{{ route('admin.pneu.update', Crypt::encrypt($vehicule->id)) }}" method="POST" class="form-group">
+                                        <form action="{{ route('admin.pneu.update', Crypt::encrypt($vehicule->getId())) }}" method="POST" class="form-group">
                                             @csrf
                                             <div class="form-group mb-0">
                                                 <label>
                                                     {{ __('KM Actuel') }}
-                                                    {{ 'minimum: '. $vehicule->total_km }}
+                                                    {{ 'minimum: '. $vehicule->getTotalKm() }}
                                                 </label>
                                                 <div class="input-group">
                                                     <input type="number"
                                                         step="any"
                                                         class="form-control"
                                                         name="km_actuel_pneu"
-                                                        min="{{ $vehicule->total_km }}"
+                                                        min="{{ $vehicule->getTotalKm() }}"
                                                         >
                                                 </div>
                                             </div>

@@ -55,8 +55,8 @@
                             <select class="form-control @error('vehicule') is-invalid @enderror" data-toggle="select2" style="width: 100%" name="vehicule">
                                 <option value="0">{{ __('Select') }}</option>
                                 @foreach ($vehicules as $v)
-                                    <option value="{{ $v->id }}" @selected($v->id == $trip->vehicule_id)>
-                                        {{ $v->brand.' - '.$v->model.' - '.$v->matricule }}
+                                    <option value="{{ $v->getId() }}" @selected($v->getId() == $trip->vehicule_id)>
+                                        {{ $v->getBrand().' - '.$v->getModel().' - '.$v->getMatricule() }}
                                     </option>
                                 @endforeach
                             </select>

@@ -55,6 +55,7 @@ class VehiculeController extends Controller
             'inssurance_expiration'         =>  'required',
             'technical_visit_expiration'    =>  'required',
             'numOfTires'                    =>  'required',
+            'circulation_date'              =>  'nullable|date',
 
         ]);
 
@@ -65,6 +66,7 @@ class VehiculeController extends Controller
         $vehicule->model            =   $request->model;
         $vehicule->matricule        =   $request->matricule;
         $vehicule->num_chassis      =   $request->chassis;
+        $vehicule->circulation_date =   $request->circulation_date;
         $vehicule->total_km         =   intval(str_replace('.','',$request->km_actuel));
         $vehicule->horses           =   intval(str_replace('.','',$request->horses));
         $vehicule->fuel_type        =   $request->fuel_type;
@@ -137,6 +139,7 @@ class VehiculeController extends Controller
             'inssurance_expiration'         =>  'required',
             'technical_visit_expiration'    =>  'required',
             'numOfTires'                    =>  'required',
+            'circulation_date'              =>  'nullable|date',
         ]);
 
 
@@ -154,6 +157,7 @@ class VehiculeController extends Controller
         $vehicule->model            =   $request->model;
         $vehicule->matricule        =   $request->matricule;
         $vehicule->num_chassis      =   $request->chassis;
+        $vehicule->circulation_date =   $request->circulation_date;
         $vehicule->total_km         =   intval(str_replace('.','',$request->km_actuel));
         $vehicule->horses           =   intval(str_replace('.','',$request->horses));
         $vehicule->fuel_type        =   $request->fuel_type;
@@ -177,7 +181,7 @@ class VehiculeController extends Controller
             throw $th;
         }
 
-        $historiquePneu = pneu::where('pneus.car_id', '=', $vehicule->id)
+        $historiquePneu = pneu::where('pneus.car_id', '=', $vehicule->getId())
                 ->rightJoin('pneu_historiques', 'pneus.id', '=', 'pneu_historiques.pneu_id')
                 ->latest()
                 ->get(['pneus.tire_position', 'pneu_historiques.current_km', 'pneu_historiques.next_km_for_change', 'pneu_historiques.created_at']);

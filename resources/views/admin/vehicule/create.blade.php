@@ -103,7 +103,19 @@
                                 @enderror
                             </div>
 
-
+                            <div class="form-group">
+                                <label for="inputPassword2" class="">{{ __('circulation date') }}</label>
+                                <input
+                                    type="date"
+                                    value="{{ old('circulation_date') }}"
+                                    class="form-control  @error('circulation_date') is-invalid @enderror"
+                                    name="circulation_date">
+                                @error('circulation_date')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('Km actuel') }}</label>

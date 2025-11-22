@@ -89,15 +89,15 @@
                                 @foreach ($vehicules as $vehicule)
                                 <tr>
                                     <td>
-                                        <a href="{{ route('admin.vehicule.edit', $vehicule->id) }}">
-                                            {{ $vehicule->brand }}
+                                        <a href="{{ route('admin.vehicule.edit', $vehicule->getId()) }}">
+                                            {{ $vehicule->getBrand() }}
                                         </a>
                                     </td>
-                                    <td>{{ $vehicule->model }}</td>
-                                    <td>{{ $vehicule->matricule }}</td>
-                                    <td>{{ $vehicule->total_km }}</td>
+                                    <td>{{ $vehicule->getModel() }}</td>
+                                    <td>{{ $vehicule->getMatricule() }}</td>
+                                    <td>{{ $vehicule->getTotalKm() }}</td>
 
-                                    <td>{{ $vehicule->fuel_type }}</td>
+                                    <td>{{ $vehicule->getFuelType() }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

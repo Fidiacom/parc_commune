@@ -30,7 +30,7 @@
 
                                                 <input type="file" class="dropify" disabled data-max-file-size="5M"
                                                     name="image" accept="image/*"
-                                                    data-default-file="{{ asset($vehicule->image) }}" />
+                                                    data-default-file="{{ asset($vehicule->getImage()) }}" />
                                             </div> <!-- end card-body-->
                                         </div> <!-- end card-->
                                     </div> <!-- end col -->
@@ -42,13 +42,13 @@
                             <div class="form-group">
                                 <label for="simpleinput">{{ __('vehicule brand & model') }}</label>
                                 <input type="text" class="form-control"
-                                    value="{{ $vehicule->brand . ' | ' . $vehicule->model }}" disabled>
+                                    value="{{ $vehicule->getBrand() . ' | ' . $vehicule->getModel() }}" disabled>
                             </div>
 
                             <div class="form-group">
                                 <label for="simpleinput">{{ __('vehicule matricule') }}</label>
                                 <input type="text" id="simpleinput" class="form-control"
-                                    value="{{ $vehicule->matricule }}" disabled>
+                                    value="{{ $vehicule->getMatricule() }}" disabled>
                             </div>
 
                             <div class="form-group">
@@ -109,7 +109,7 @@
                                 @enderror
                             </div>
 
-                            <input type="hidden" name="vehicule_id" value="{{ $vehicule->id }}">
+                            <input type="hidden" name="vehicule_id" value="{{ $vehicule->getId() }}">
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Image') }}</button>

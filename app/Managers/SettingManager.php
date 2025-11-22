@@ -76,5 +76,25 @@ class SettingManager
         
         return $setting ? ($setting->getCommuneNameAr() ?? '') : '';
     }
+
+    /**
+     * Get the main color or return default.
+     */
+    public function getMainColor(?string $default = '#397D3C'): string
+    {
+        $setting = $this->repository->getFirst();
+        
+        return $setting && $setting->getMainColor() ? $setting->getMainColor() : $default;
+    }
+
+    /**
+     * Get the second color or return default.
+     */
+    public function getSecondColor(?string $default = null): ?string
+    {
+        $setting = $this->repository->getFirst();
+        
+        return $setting && $setting->getSecondColor() ? $setting->getSecondColor() : $default;
+    }
 }
 

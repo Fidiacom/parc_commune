@@ -16,6 +16,8 @@ class SettingRepository
             'commune_name' => '',
             'commune_name_fr' => null,
             'commune_name_ar' => null,
+            'main_color' => null,
+            'second_color' => null,
         ]);
     }
 

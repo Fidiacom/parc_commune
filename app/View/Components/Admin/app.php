@@ -10,6 +10,8 @@ use Illuminate\View\Component;
 class app extends Component
 {
     public string $logoUrl;
+    public string $mainColor;
+    public ?string $secondColor;
 
     /**
      * Create a new component instance.
@@ -17,6 +19,8 @@ class app extends Component
     public function __construct(SettingService $settingService)
     {
         $this->logoUrl = $settingService->getLogoUrl();
+        $this->mainColor = $settingService->getMainColor();
+        $this->secondColor = $settingService->getSecondColor();
     }
 
     /**

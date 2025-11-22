@@ -43,6 +43,14 @@ class SettingService
             $updateData['commune_name'] = $data['commune_name'];
         }
 
+        if (isset($data['main_color'])) {
+            $updateData['main_color'] = $data['main_color'];
+        }
+
+        if (isset($data['second_color'])) {
+            $updateData['second_color'] = $data['second_color'];
+        }
+
         if ($logoFile) {
             $updateData['logo'] = uploadFile($logoFile, 'settings');
         }
@@ -80,5 +88,21 @@ class SettingService
     public function getCommuneNameAr(): string
     {
         return $this->manager->getCommuneNameAr();
+    }
+
+    /**
+     * Get the main color or return default.
+     */
+    public function getMainColor(?string $default = '#397D3C'): string
+    {
+        return $this->manager->getMainColor($default);
+    }
+
+    /**
+     * Get the second color or return default.
+     */
+    public function getSecondColor(?string $default = null): ?string
+    {
+        return $this->manager->getSecondColor($default);
     }
 }

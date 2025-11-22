@@ -11,6 +11,8 @@ class app extends Component
 {
     public string $logoUrl;
     public string $communeName;
+    public string $mainColor;
+    public ?string $secondColor;
 
     /**
      * Create a new component instance.
@@ -19,6 +21,8 @@ class app extends Component
     {
         $this->logoUrl = $settingService->getLogoUrl();
         $this->communeName = $settingService->getCommuneName();
+        $this->mainColor = $settingService->getMainColor();
+        $this->secondColor = $settingService->getSecondColor();
     }
 
     /**

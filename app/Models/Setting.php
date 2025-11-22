@@ -15,6 +15,8 @@ class Setting extends Model
     public const COMMUNE_NAME_COLUMN = 'commune_name';
     public const COMMUNE_NAME_FR_COLUMN = 'commune_name_fr';
     public const COMMUNE_NAME_AR_COLUMN = 'commune_name_ar';
+    public const MAIN_COLOR_COLUMN = 'main_color';
+    public const SECOND_COLOR_COLUMN = 'second_color';
     public const CREATED_AT_COLUMN = 'created_at';
     public const UPDATED_AT_COLUMN = 'updated_at';
 
@@ -30,6 +32,8 @@ class Setting extends Model
         'commune_name',
         'commune_name_fr',
         'commune_name_ar',
+        'main_color',
+        'second_color',
     ];
 
     /**
@@ -84,6 +88,22 @@ class Setting extends Model
             'fr' => $this->getCommuneNameFr() ?: $this->getCommuneNameAr() ?: $this->getCommuneName(),
             default => $this->getCommuneNameFr() ?: $this->getCommuneNameAr() ?: $this->getCommuneName(),
         };
+    }
+
+    /**
+     * Get the main color.
+     */
+    public function getMainColor(): ?string
+    {
+        return $this->getAttribute(self::MAIN_COLOR_COLUMN);
+    }
+
+    /**
+     * Get the second color.
+     */
+    public function getSecondColor(): ?string
+    {
+        return $this->getAttribute(self::SECOND_COLOR_COLUMN);
     }
 }
 

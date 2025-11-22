@@ -44,15 +44,22 @@
         }
 
         .btn-primary{
-            background-color: #397D3C !important;
-            border-color: #397D3C !important;
+            background-color: {{ $mainColor }} !important;
+            border-color: {{ $mainColor }} !important;
 
         }
 
         .page-item.active .page-link{
-            background-color: #397D3C !important;
-            border-color: #397D3C !important;
+            background-color: {{ $mainColor }} !important;
+            border-color: {{ $mainColor }} !important;
         }
+        @if($secondColor)
+        .btn-secondary,
+        .badge-secondary{
+            background-color: {{ $secondColor }} !important;
+            border-color: {{ $secondColor }} !important;
+        }
+        @endif
     </style>
 </head>
 

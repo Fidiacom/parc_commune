@@ -15,7 +15,20 @@
         <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/css/theme.min.css') }}" rel="stylesheet" type="text/css" />
-
+        <link href="{{ asset('assets/plugins/bootstrap-colorpicker/bootstrap-colorpicker.min.css') }}" rel="stylesheet" type="text/css" />
+        <style>
+            .btn-primary{
+                background-color: {{ $mainColor }} !important;
+                border-color: {{ $mainColor }} !important;
+            }
+            @if($secondColor)
+            .btn-secondary,
+            .badge-secondary{
+                background-color: {{ $secondColor }} !important;
+                border-color: {{ $secondColor }} !important;
+            }
+            @endif
+        </style>
     </head>
 
     <body>
@@ -122,6 +135,7 @@
         <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('assets/js/waves.js') }}"></script>
         <script src="{{ asset('assets/js/simplebar.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/bootstrap-colorpicker/bootstrap-colorpicker.min.js') }}"></script>
 
         <!-- App js -->
         <script src="{{ asset('assets/js/theme.js') }}"></script>

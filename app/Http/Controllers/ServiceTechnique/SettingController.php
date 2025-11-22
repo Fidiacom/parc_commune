@@ -39,6 +39,8 @@ class SettingController extends Controller
             'commune_name_fr' => 'required|string|max:255',
             'commune_name_ar' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'main_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'second_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
         ]);
 
         $this->settingService->updateSettings(

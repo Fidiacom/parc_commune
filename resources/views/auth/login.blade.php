@@ -20,9 +20,16 @@
         <link href="assets/css/theme.min.css" rel="stylesheet" type="text/css" />
         <style>
             .btn-primary{
-                background-color: #397D3C !important;
-                border-color: #397D3C !important;
+                background-color: {{ $mainColor ?? '#397D3C' }} !important;
+                border-color: {{ $mainColor ?? '#397D3C' }} !important;
             }
+            @if(isset($secondColor) && $secondColor)
+            .btn-secondary,
+            .badge-secondary{
+                background-color: {{ $secondColor }} !important;
+                border-color: {{ $secondColor }} !important;
+            }
+            @endif
         </style>
     </head>
 

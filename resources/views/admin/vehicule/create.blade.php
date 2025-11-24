@@ -4,9 +4,17 @@
 
         <!-- start page title -->
         <div class="row">
-            <div class="col-8 mx-auto">
+            <div class="col-12">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0 font-size-18">{{ __('Ajout vehicule') }}</h4>
+                    <div>
+                        <h4 class="mb-1 font-size-18">
+                            <i class="fas fa-car mr-2 text-primary"></i>{{ __('Ajout d\'un nouveau véhicule') }}
+                        </h4>
+                        <p class="text-muted mb-0">{{ __('Remplissez les informations ci-dessous pour ajouter un nouveau véhicule au parc') }}</p>
+                    </div>
+                    <a href="{{ route('admin.vehicule') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i>{{ __('Retour') }}
+                    </a>
                 </div>
             </div>
         </div>
@@ -17,20 +25,34 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Step Indicators -->
-                        <ul class="nav nav-pills bg-nav-pills nav-justified mb-3" id="stepTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link active" id="step1-tab" data-toggle="tab" href="#step1" role="tab" aria-controls="step1" aria-selected="true">
-                                    <span class="d-block d-sm-none"><i class="mdi mdi-car"></i></span>
-                                    <span class="d-none d-sm-block">{{ __('Étape 1: Informations du véhicule') }}</span>
-                                </a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="step2-tab" data-toggle="tab" href="#step2" role="tab" aria-controls="step2" aria-selected="false">
-                                    <span class="d-block d-sm-none"><i class="mdi mdi-circle-multiple"></i></span>
-                                    <span class="d-none d-sm-block">{{ __('Étape 2: Informations des pneus') }}</span>
-                                </a>
-                            </li>
-                        </ul>
+                        <div class="wizard mb-4">
+                            <div class="wizard-steps">
+                                <div class="wizard-step active" id="step-indicator-1">
+                                    <div class="wizard-step-icon">
+                                        <i class="fas fa-car"></i>
+                                    </div>
+                                    <div class="wizard-step-label">
+                                        <h6 class="mb-0">{{ __('Informations véhicule') }}</h6>
+                                        <small class="text-muted">{{ __('Données principales') }}</small>
+                                    </div>
+                                </div>
+                                <div class="wizard-step-line"></div>
+                                <div class="wizard-step" id="step-indicator-2">
+                                    <div class="wizard-step-icon">
+                                        <i class="fas fa-circle-notch"></i>
+                                    </div>
+                                    <div class="wizard-step-label">
+                                        <h6 class="mb-0">{{ __('Informations pneus') }}</h6>
+                                        <small class="text-muted">{{ __('Configuration pneus') }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="progress mb-4" style="height: 4px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%" id="progressBar"></div>
+                        </div>
 
                         <form action="{{ route('admin.vehicule.store') }}" method="POST" enctype="multipart/form-data" id="vehiculeForm">
                             @csrf
@@ -59,20 +81,27 @@
                             <div class="tab-content" id="stepTabsContent">
                                 <!-- Step 1: Vehicle Information -->
                                 <div class="tab-pane fade show active" id="step1" role="tabpanel" aria-labelledby="step1-tab">
-                            <div class="form-group">
-                                <label class="mb-2">{{ __('Images de vehicule') }}</label>
-                                <div class="col-xl-8 mx-auto">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 class="card-title">{{ __('Images de vehicule') }}</h4>
-                                            <p class="card-subtitle mb-4">{{ __('Vous pouvez sélectionner plusieurs images. Taille maximum: 50M par image.') }}</p>
-
-                                            <input type="file" class="form-control-file" name="images[]" id="vehicleImages" multiple accept="image/*"/>
-                                            <small class="form-text text-muted">{{ __('Sélectionnez une ou plusieurs images du véhicule') }}</small>
-                                            
-                                            <div id="imagePreview" class="mt-3" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+                            
+                            <!-- Section: Images -->
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-images text-primary mr-2"></i>{{ __('Images du véhicule') }}
+                                    </h5>
                                                 </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-0">
+                                        <label class="mb-2 font-weight-semibold">{{ __('Télécharger des images') }}</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="images[]" id="vehicleImages" multiple accept="image/*"/>
+                                            <label class="custom-file-label" for="vehicleImages">
+                                                <i class="fas fa-cloud-upload-alt mr-2"></i>{{ __('Choisir des images (max 50MB par image)') }}
+                                            </label>
                                             </div>
+                                        <small class="form-text text-muted mt-2">
+                                            <i class="fas fa-info-circle mr-1"></i>{{ __('Vous pouvez sélectionner plusieurs images. La première image sera utilisée comme image principale.') }}
+                                        </small>
+                                        <div id="imagePreview" class="mt-3" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
                                         </div>
 
                                 @error('images')
@@ -87,84 +116,155 @@
                                 @enderror
                             </div>
 
+                                </div>
+                            </div>
+
+                            <!-- Section: Informations générales -->
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-info-circle text-primary mr-2"></i>{{ __('Informations générales') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="simpleinput">{{ __('marque') }}</label>
+                                                <label for="simpleinput">
+                                                    <i class="fas fa-tag mr-1 text-muted"></i>{{ __('Marque') }} <span class="text-danger">*</span>
+                                                </label>
                                 <input
                                     type="text"
                                     id="simpleinput"
                                     class="form-control @error('brand') is-invalid @enderror"
                                     name="brand"
-                                    placeholder="Dacia/Peugot/..."
-                                    value="{{ old('brand') }}">
+                                                    placeholder="Ex: Dacia, Peugeot, Renault..."
+                                                    value="{{ old('brand') }}"
+                                                    required>
                                 @error('brand')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                                <div class="invalid-feedback d-block">
                                     {{ $message }}
                                 </div>
                                 @enderror
                             </div>
-
+                                        </div>
+                                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="example-password">{{ __('model') }}</label>
+                                                <label for="example-password">
+                                                    <i class="fas fa-car-side mr-1 text-muted"></i>{{ __('Modèle') }} <span class="text-danger">*</span>
+                                                </label>
                                 <input
                                     type="text"
                                     id="example-password"
-                                    class="form-control  @error('model') is-invalid @enderror"
+                                                    class="form-control @error('model') is-invalid @enderror"
                                     name="model"
-                                    value="{{ old('model') }}">
+                                                    placeholder="Ex: Logan, 208, Clio..."
+                                                    value="{{ old('model') }}"
+                                                    required>
                                 @error('model')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                                <div class="invalid-feedback d-block">
                                     {{ $message }}
                                 </div>
                                 @enderror
                             </div>
-
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('matricule') }}</label>
+                                                <label for="exampleFormControlInput1">
+                                                    <i class="fas fa-id-card mr-1 text-muted"></i>{{ __('Matricule') }} <span class="text-danger">*</span>
+                                                </label>
                                 <input
                                     type="text"
-                                    class="form-control  @error('matricule') is-invalid @enderror"
+                                                    class="form-control @error('matricule') is-invalid @enderror"
                                     id="exampleFormControlInput1"
                                     name="matricule"
-                                    placeholder=""
-                                    value="{{ old('matricule') }}">
+                                                    placeholder="Ex: 12345-A-67"
+                                                    value="{{ old('matricule') }}"
+                                                    required>
                                 @error('matricule')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                                <div class="invalid-feedback d-block">
                                     {{ $message }}
                                 </div>
                                 @enderror
                             </div>
-
+                                        </div>
+                                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('chassis') }}</label>
+                                                <label for="chassis">
+                                                    <i class="fas fa-barcode mr-1 text-muted"></i>{{ __('Numéro de châssis') }}
+                                                </label>
                                 <input
                                     type="text"
-                                    class="form-control  @error('chassis') is-invalid @enderror"
-                                    id="exampleFormControlInput1"
+                                                    class="form-control @error('chassis') is-invalid @enderror"
+                                                    id="chassis"
                                     name="chassis"
-                                    value="{{ old('chassis') }}">
+                                                    placeholder="Numéro VIN (optionnel)"
+                                                    value="{{ old('chassis') }}">
                                 @error('chassis')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                                <div class="invalid-feedback d-block">
                                     {{ $message }}
                                 </div>
                                 @enderror
                             </div>
-
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="inputPassword2" class="">{{ __('circulation date') }}</label>
+                                                <label for="inputPassword2">
+                                                    <i class="fas fa-calendar-alt mr-1 text-muted"></i>{{ __('Date de mise en circulation') }}
+                                                </label>
                                 <input
                                     type="date"
                                     value="{{ old('circulation_date') }}"
-                                    class="form-control  @error('circulation_date') is-invalid @enderror"
+                                                    class="form-control @error('circulation_date') is-invalid @enderror"
+                                                    id="inputPassword2"
                                     name="circulation_date">
                                 @error('circulation_date')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                                <div class="invalid-feedback d-block">
                                     {{ $message }}
                                 </div>
                                 @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="category">
+                                                    <i class="fas fa-id-badge mr-1 text-muted"></i>{{ __('Catégorie de permis') }} <span class="text-danger">*</span>
+                                                </label>
+                                                <select name="category" class="form-control @error('category') is-invalid @enderror" required>
+                                                    <option value="0">{{ __('Sélectionner une catégorie') }}</option>
+                                                    @foreach ($categories as $c)
+                                                    <option value="{{ $c->id }}" @selected($c->id == old('category'))>{{ $c->label }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('category')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
+                            <!-- Section: Kilométrage et performances -->
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-tachometer-alt text-primary mr-2"></i>{{ __('Kilométrage et performances') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
                             <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('Km actuel') }}</label>
+                                                <label for="km_actuel">
+                                                    <i class="fas fa-road mr-1 text-muted"></i>{{ __('Kilométrage actuel') }} <span class="text-danger">*</span>
+                                                </label>
                                 <input
                                     type="text"
                                     value="{{ old('km_actuel') }}"
@@ -172,250 +272,394 @@
                                     name="km_actuel"
                                             id="km_actuel"
                                     data-a-sep="."
-                                    data-a-dec=",">
+                                                    data-a-dec=","
+                                                    required>
                                 @error('km_actuel')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                                <div class="invalid-feedback d-block">
                                     {{ $message }}
                                 </div>
                                 @enderror
                             </div>
-
+                                        </div>
+                                        <div class="col-md-4">
                             <div class="form-group">
-                                <label for="total_hours">{{ __('Heures totales') }}</label>
-                                <input
-                                    type="text"
-                                    value="{{ old('total_hours') }}"
-                                    class="form-control autonumber @error('total_hours') is-invalid @enderror"
-                                    name="total_hours"
-                                    id="total_hours"
-                                    placeholder="{{ __('Optionnel: pour les véhicules fonctionnant aux heures') }}"
-                                    data-a-sep="."
-                                    data-a-dec=",">
-                                <small class="form-text text-muted">{{ __('Optionnel: Nombre d\'heures de fonctionnement (pour véhicules fonctionnant aux heures plutôt qu\'aux kilomètres)') }}</small>
-                                @error('total_hours')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('cheveaux') }}</label>
+                                                <label for="total_hours">
+                                                    <i class="fas fa-clock mr-1 text-muted"></i>{{ __('Heures totales') }}
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value="{{ old('total_hours') }}"
+                                                    class="form-control autonumber @error('total_hours') is-invalid @enderror"
+                                                    name="total_hours"
+                                                    id="total_hours"
+                                                    placeholder="{{ __('Optionnel') }}"
+                                                    data-a-sep="."
+                                                    data-a-dec=",">
+                                                <small class="form-text text-muted">{{ __('Pour véhicules fonctionnant aux heures') }}</small>
+                                                @error('total_hours')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="horses">
+                                                    <i class="fas fa-horse mr-1 text-muted"></i>{{ __('Puissance (CV)') }} <span class="text-danger">*</span>
+                                                </label>
                                 <input
                                     type="text"
                                     value="{{ old('horses') }}"
                                     class="form-control autonumber @error('horses') is-invalid @enderror"
                                     name="horses"
+                                                    id="horses"
                                     data-a-sep="."
-                                    data-a-dec=",">
+                                                    data-a-dec=","
+                                                    required>
                                 @error('horses')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                                <div class="invalid-feedback d-block">
                                     {{ $message }}
                                 </div>
                                 @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('Permis Used (Category)') }}</label>
-                                <select name="category" class="form-control @error('category') is-invalid @enderror" >
-                                    <option value="0">{{ __('Sélectionner une catégorie') }}</option>
-                                    @foreach ($categories as $c)
-                                    <option value="{{ $c->id }}" @selected($c->id == old('category'))>{{ $c->label }}</option>
-                                    @endforeach
-                                </select>
-                                @error('category')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('Type de carburant') }}</label>
-                                <select name="fuel_type" id="" class="form-control @error('fuel_type') is-invalid @enderror" >
-                                    <option value="0">{{ __('Sélectionner le type de carburant') }}</option>
-                                    <option value="Gasoline" @selected(old('fuel_type') == 'Gasoline')>{{ __('Essence') }}</option>
-                                    <option value="Diesel" @selected(old('fuel_type') == 'Diesel')>{{ __('Diesel') }}</option>
-                                    <option value="Eletric" @selected(old('fuel_type') == 'Eletric')>{{ __('Électrique') }}</option>
-                                </select>
-                                @error('fuel_type')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="min_fuel_consumption_100km">{{ __('Consommation minimale (L/100km)') }}</label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    value="{{ old('min_fuel_consumption_100km') }}"
-                                    class="form-control @error('min_fuel_consumption_100km') is-invalid @enderror"
-                                    name="min_fuel_consumption_100km"
-                                    id="min_fuel_consumption_100km"
-                                    placeholder="Ex: 5.5"
-                                    min="0">
-                                <small class="form-text text-muted">{{ __('Optionnel: Consommation minimale de carburant en litres pour 100 km') }}</small>
-                                @error('min_fuel_consumption_100km')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="max_fuel_consumption_100km">{{ __('Consommation maximale (L/100km)') }}</label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    value="{{ old('max_fuel_consumption_100km') }}"
-                                    class="form-control @error('max_fuel_consumption_100km') is-invalid @enderror"
-                                    name="max_fuel_consumption_100km"
-                                    id="max_fuel_consumption_100km"
-                                    placeholder="Ex: 8.5"
-                                    min="0">
-                                <small class="form-text text-muted">{{ __('Optionnel: Consommation maximale de carburant en litres pour 100 km') }}</small>
-                                @error('max_fuel_consumption_100km')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="mt-2">
-                                <div class="custom-control custom-checkbox custom-control-inline">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck5" checked @checked(old('airbag') == 'on') name="airbag">
-                                    <label class="custom-control-label" for="customCheck5">{{ __('Airbag') }}</label>
-                                </div>
-                                <div class="custom-control custom-checkbox custom-control-inline">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck6" checked @checked(old('abs') == 'on') name="abs">
-                                    <label class="custom-control-label" for="customCheck6">{{ __('Abs') }}</label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('seuil KM vidange') }}</label>
-                                <input
-                                    type="text"
-                                    placeholder=""
-                                    value="{{ old('threshold_vidange') }}"
-                                    class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"
-                                    name="threshold_vidange"
-                                    data-a-sep="." data-a-dec=",">
-
-                                @error('threshold_vidange')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('seuil KM chaine de distrubution') }}</label>
-                                <input
-                                    type="text"
-                                    value="{{ old('threshold_timing_chaine') }}"
-                                    class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"
-                                    name="threshold_timing_chaine"
-                                    data-a-sep="."
-                                    data-a-dec=",">
-                                @error('threshold_timing_chaine')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="inputPassword2" class="">{{ __('expiration assurance') }}</label>
-                                <input
-                                    type="date"
-                                    value="{{ old('inssurance_expiration') }}"
-                                    class="form-control  @error('inssurance_expiration') is-invalid @enderror"
-                                    name="inssurance_expiration">
-                                @error('inssurance_expiration')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="inputPassword2" class="">{{ __('expiration visite technique') }}</label>
-                                <input
-                                    type="date"
-                                    value="{{ old('technical_visit_expiration') }}"
-                                    class="form-control @error('technical_visit_expiration') is-invalid @enderror"
-                                    name="technical_visit_expiration">
-                                @error('technical_visit_expiration')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="inputPassword2" class="">{{ __('Number of tires') }}</label>
-                                <input
-                                    type="number"
-                                    class="form-control  @error('numOfTires') is-invalid @enderror"
-                                    name="numOfTires"
-                                            id="numOfTires"
-                                            value="{{ old('numOfTires', 4) }}"
-                                            min="1"
-                                            max="20">
-                                @error('numOfTires')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="tireSize">{{ __('Tire Size') }}</label>
-                                <input
-                                    type="text"
-                                    class="form-control @error('tire_size') is-invalid @enderror"
-                                    id="tireSize"
-                                    name="tire_size"
-                                    placeholder=""
-                                    value="{{ old('tire_size') }}">
-                                @error('tire_size')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group mt-4">
-                                <label class="mb-3">{{ __('Documents et fichiers du véhicule') }}</label>
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ __('Télécharger des fichiers') }}</h5>
-                                        <p class="text-muted">{{ __('Vous pouvez télécharger plusieurs fichiers (images, PDF, documents) lors de la création du véhicule. Taille maximum: 50MB par fichier.') }}</p>
-                                        <div class="form-group">
-                                            <input type="file" class="form-control-file" name="files[]" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx">
-                                            <small class="form-text text-muted">{{ __('Sélectionner plusieurs fichiers à télécharger') }}</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                                    <div class="form-group mt-4">
-                                        <button type="button" class="btn btn-primary waves-effect waves-light" id="nextToStep2">{{ __('Suivant: Informations des pneus') }}</button>
+                            <!-- Section: Carburant et consommation -->
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-gas-pump text-primary mr-2"></i>{{ __('Carburant et consommation') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                            <div class="form-group">
+                                                <label for="fuel_type">
+                                                    <i class="fas fa-fill-drip mr-1 text-muted"></i>{{ __('Type de carburant') }} <span class="text-danger">*</span>
+                                                </label>
+                                                <select name="fuel_type" id="fuel_type" class="form-control @error('fuel_type') is-invalid @enderror" required>
+                                                    <option value="0">{{ __('Sélectionner le type de carburant') }}</option>
+                                                    <option value="Gasoline" @selected(old('fuel_type') == 'Gasoline')>
+                                                        <i class="fas fa-gas-pump"></i> {{ __('Essence') }}
+                                                    </option>
+                                                    <option value="Diesel" @selected(old('fuel_type') == 'Diesel')>
+                                                        <i class="fas fa-oil-can"></i> {{ __('Diesel') }}
+                                                    </option>
+                                                    <option value="Eletric" @selected(old('fuel_type') == 'Eletric')>
+                                                        <i class="fas fa-charging-station"></i> {{ __('Électrique') }}
+                                                    </option>
+                                </select>
+                                                @error('fuel_type')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="min_fuel_consumption_100km">
+                                                    <i class="fas fa-arrow-down mr-1 text-muted"></i>{{ __('Consommation min (L/100km)') }}
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value="{{ old('min_fuel_consumption_100km') }}"
+                                                    class="form-control @error('min_fuel_consumption_100km') is-invalid @enderror"
+                                                    name="min_fuel_consumption_100km"
+                                                    id="min_fuel_consumption_100km"
+                                                    placeholder="Ex: 5.5"
+                                                    min="0">
+                                                <small class="form-text text-muted">{{ __('Optionnel') }}</small>
+                                                @error('min_fuel_consumption_100km')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="max_fuel_consumption_100km">
+                                                    <i class="fas fa-arrow-up mr-1 text-muted"></i>{{ __('Consommation max (L/100km)') }}
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value="{{ old('max_fuel_consumption_100km') }}"
+                                                    class="form-control @error('max_fuel_consumption_100km') is-invalid @enderror"
+                                                    name="max_fuel_consumption_100km"
+                                                    id="max_fuel_consumption_100km"
+                                                    placeholder="Ex: 8.5"
+                                                    min="0">
+                                                <small class="form-text text-muted">{{ __('Optionnel') }}</small>
+                                                @error('max_fuel_consumption_100km')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Section: Sécurité et équipements -->
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-shield-alt text-primary mr-2"></i>{{ __('Sécurité et équipements') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-0">
+                                        <label class="mb-3">{{ __('Équipements de sécurité') }}</label>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck5" checked @checked(old('airbag') == 'on') name="airbag">
+                                                    <label class="custom-control-label" for="customCheck5">
+                                                        <i class="fas fa-shield-alt text-success mr-2"></i>{{ __('Airbag') }}
+                                                    </label>
+                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck6" checked @checked(old('abs') == 'on') name="abs">
+                                                    <label class="custom-control-label" for="customCheck6">
+                                                        <i class="fas fa-car-crash text-info mr-2"></i>{{ __('Système ABS') }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section: Maintenance -->
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-cogs text-primary mr-2"></i>{{ __('Maintenance') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                            <div class="form-group">
+                                                <label for="threshold_vidange">
+                                                    <i class="fas fa-oil-can mr-1 text-muted"></i>{{ __('Seuil KM vidange') }} <span class="text-danger">*</span>
+                                                </label>
+                                <input
+                                    type="text"
+                                                    placeholder="Ex: 10000"
+                                    value="{{ old('threshold_vidange') }}"
+                                    class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"
+                                    name="threshold_vidange"
+                                                    id="threshold_vidange"
+                                                    data-a-sep="." 
+                                                    data-a-dec=","
+                                                    required>
+                                                <small class="form-text text-muted">{{ __('Kilométrage entre chaque vidange') }}</small>
+                                @error('threshold_vidange')
+                                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                            <div class="form-group">
+                                                <label for="threshold_timing_chaine">
+                                                    <i class="fas fa-link mr-1 text-muted"></i>{{ __('Seuil KM chaîne de distribution') }} <span class="text-danger">*</span>
+                                                </label>
+                                <input
+                                    type="text"
+                                    value="{{ old('threshold_timing_chaine') }}"
+                                    class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"
+                                    name="threshold_timing_chaine"
+                                                    id="threshold_timing_chaine"
+                                    data-a-sep="."
+                                                    data-a-dec=","
+                                                    required>
+                                                <small class="form-text text-muted">{{ __('Kilométrage pour changement de chaîne') }}</small>
+                                @error('threshold_timing_chaine')
+                                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section: Documents et assurances -->
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-file-contract text-primary mr-2"></i>{{ __('Documents et assurances') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                            <div class="form-group">
+                                                <label for="inssurance_expiration">
+                                                    <i class="fas fa-shield-alt mr-1 text-muted"></i>{{ __('Date d\'expiration assurance') }} <span class="text-danger">*</span>
+                                                </label>
+                                <input
+                                    type="date"
+                                    value="{{ old('inssurance_expiration') }}"
+                                                    class="form-control @error('inssurance_expiration') is-invalid @enderror"
+                                                    id="inssurance_expiration"
+                                                    name="inssurance_expiration"
+                                                    required>
+                                @error('inssurance_expiration')
+                                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                            <div class="form-group">
+                                                <label for="technical_visit_expiration">
+                                                    <i class="fas fa-clipboard-check mr-1 text-muted"></i>{{ __('Date d\'expiration visite technique') }}
+                                                </label>
+                                <input
+                                    type="date"
+                                    value="{{ old('technical_visit_expiration') }}"
+                                    class="form-control @error('technical_visit_expiration') is-invalid @enderror"
+                                                    id="technical_visit_expiration"
+                                    name="technical_visit_expiration">
+                                @error('technical_visit_expiration')
+                                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section: Pneus -->
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-circle-notch text-primary mr-2"></i>{{ __('Configuration des pneus') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                            <div class="form-group">
+                                                <label for="numOfTires">
+                                                    <i class="fas fa-circle-notch mr-1 text-muted"></i>{{ __('Nombre de pneus') }} <span class="text-danger">*</span>
+                                                </label>
+                                <input
+                                    type="number"
+                                                    class="form-control @error('numOfTires') is-invalid @enderror"
+                                    name="numOfTires"
+                                            id="numOfTires"
+                                            value="{{ old('numOfTires', 4) }}"
+                                            min="1"
+                                                    max="20"
+                                                    required>
+                                @error('numOfTires')
+                                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                            <div class="form-group">
+                                                <label for="tireSize">
+                                                    <i class="fas fa-ruler mr-1 text-muted"></i>{{ __('Taille des pneus') }}
+                                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control @error('tire_size') is-invalid @enderror"
+                                    id="tireSize"
+                                    name="tire_size"
+                                                    placeholder="Ex: 205/55R16"
+                                    value="{{ old('tire_size') }}">
+                                                <small class="form-text text-muted">{{ __('Format: 205/55R16') }}</small>
+                                @error('tire_size')
+                                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section: Documents -->
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-file-alt text-primary mr-2"></i>{{ __('Documents et fichiers') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-0">
+                                        <label class="mb-2 font-weight-semibold">{{ __('Télécharger des fichiers') }}</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="files[]" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx">
+                                            <label class="custom-file-label" for="fileInput">
+                                                <i class="fas fa-cloud-upload-alt mr-2"></i>{{ __('Choisir des fichiers (PDF, images, documents)') }}
+                                            </label>
+                                        </div>
+                                        <small class="form-text text-muted mt-2">
+                                            <i class="fas fa-info-circle mr-1"></i>{{ __('Vous pouvez télécharger plusieurs fichiers. Taille maximum: 50MB par fichier.') }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Navigation Buttons -->
+                            <div class="form-group mt-4 d-flex justify-content-between">
+                                <a href="{{ route('admin.vehicule') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times mr-2"></i>{{ __('Annuler') }}
+                                </a>
+                                <button type="button" class="btn btn-primary waves-effect waves-light" id="nextToStep2">
+                                    {{ __('Suivant: Informations des pneus') }}
+                                    <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
                                 </div>
 
                                 <!-- Step 2: Tire Information -->
                                 <div class="tab-pane fade" id="step2" role="tabpanel" aria-labelledby="step2-tab">
-                                    <div id="tireFieldsContainer">
-                                        <!-- Tire fields will be dynamically generated here -->
+                                    <div class="card border mb-4">
+                                        <div class="card-header bg-light">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-circle-notch text-primary mr-2"></i>{{ __('Configuration détaillée des pneus') }}
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="tireFieldsContainer">
+                                                <!-- Tire fields will be dynamically generated here -->
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="form-group mt-4">
-                                        <button type="button" class="btn btn-secondary waves-effect waves-light mr-2" id="backToStep1">{{ __('Précédent') }}</button>
-                                        <button type="submit" class="btn btn-primary waves-effect waves-light" id="submitForm">{{ __('Enregistrer le véhicule') }}</button>
+                                    <div class="form-group mt-4 d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-secondary waves-effect waves-light" id="backToStep1">
+                                            <i class="fas fa-arrow-left mr-2"></i>{{ __('Précédent') }}
+                                        </button>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light" id="submitForm">
+                                            <i class="fas fa-save mr-2"></i>{{ __('Enregistrer le véhicule') }}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -436,8 +680,134 @@
         const oldTireNextKMs = @json(old('tire_nextKMs', []));
     </script>
 
+    <style>
+        /* Wizard Styles */
+        .wizard {
+            margin-bottom: 2rem;
+        }
+        .wizard-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .wizard-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        .wizard-step-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .wizard-step.active .wizard-step-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .wizard-step.completed .wizard-step-icon {
+            background: #28a745;
+            color: white;
+        }
+        .wizard-step-label {
+            text-align: center;
+        }
+        .wizard-step-label h6 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .wizard-step-label small {
+            font-size: 0.75rem;
+        }
+        .wizard-step-line {
+            flex: 1;
+            height: 2px;
+            background: #e9ecef;
+            margin: 0 1rem;
+            margin-top: -25px;
+            position: relative;
+        }
+        .wizard-step.active ~ .wizard-step-line,
+        .wizard-step.completed ~ .wizard-step-line {
+            background: #28a745;
+        }
+        
+        /* Form Section Cards */
+        .card.border {
+            border: 1px solid #e9ecef !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .card-header.bg-light {
+            background-color: #f8f9fa !important;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .card-header h5 {
+            color: #495057;
+        }
+        
+        /* Custom File Input */
+        .custom-file-label::after {
+            content: "Parcourir";
+        }
+        
+        /* Better form spacing */
+        .form-group label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        .form-group label i {
+            width: 18px;
+        }
+        
+        /* Image Preview */
+        #imagePreview img {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Progress Bar */
+        .progress {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Update progress bar and step indicators
+            function updateProgress(step) {
+                const progressBar = document.getElementById('progressBar');
+                const step1Indicator = document.getElementById('step-indicator-1');
+                const step2Indicator = document.getElementById('step-indicator-2');
+                
+                if (step === 1) {
+                    progressBar.style.width = '50%';
+                    step1Indicator.classList.add('active');
+                    step1Indicator.classList.remove('completed');
+                    step2Indicator.classList.remove('active', 'completed');
+                } else if (step === 2) {
+                    progressBar.style.width = '100%';
+                    step1Indicator.classList.remove('active');
+                    step1Indicator.classList.add('completed');
+                    step2Indicator.classList.add('active');
+                }
+            }
+            
+            // Initialize progress
+            updateProgress(1);
             // Image preview functionality
             const fileInput = document.getElementById('vehicleImages');
             if (fileInput) {
@@ -564,44 +934,67 @@
             numOfTiresInput.addEventListener('input', generateTireFields);
 
             // Navigate to step 2
-            nextToStep2Btn.addEventListener('click', function() {
-                // Validate step 1 required fields
-                const step1RequiredFields = document.querySelectorAll('#step1 [required]');
-                let isValid = true;
-                
-                step1RequiredFields.forEach(function(field) {
-                    if (!field.value || (field.type === 'select-one' && field.value === '0')) {
-                        isValid = false;
-                        field.classList.add('is-invalid');
+            if (nextToStep2Btn) {
+                nextToStep2Btn.addEventListener('click', function() {
+                    // Validate step 1 required fields
+                    const step1RequiredFields = document.querySelectorAll('#step1 [required]');
+                    let isValid = true;
+                    
+                    step1RequiredFields.forEach(function(field) {
+                        if (!field.value || (field.type === 'select-one' && field.value === '0')) {
+                            isValid = false;
+                            field.classList.add('is-invalid');
+                        } else {
+                            field.classList.remove('is-invalid');
+                        }
+                    });
+
+                    if (isValid) {
+                        // Clear any previous validation errors
+                        document.getElementById('frontendErrors').style.display = 'none';
+                        // Switch to step 2
+                        document.getElementById('step2-tab').click();
+                        updateProgress(2);
+                        generateTireFields(); // Regenerate in case numOfTires changed
                     } else {
-                        field.classList.remove('is-invalid');
+                        // Show error display
+                        const errorDisplay = document.getElementById('frontendErrors');
+                        const errorList = document.getElementById('frontendErrorsList');
+                        errorList.innerHTML = '<li>{{ __("Veuillez remplir tous les champs obligatoires de l'étape 1") }}</li>';
+                        errorDisplay.style.display = 'block';
+                        errorDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 });
-
-                if (isValid) {
-                    // Clear any previous validation errors
-                    document.getElementById('frontendErrors').style.display = 'none';
-                    // Switch to step 2
-                    document.getElementById('step2-tab').click();
-                    generateTireFields(); // Regenerate in case numOfTires changed
-                } else {
-                    // Show error display
-                    const errorDisplay = document.getElementById('frontendErrors');
-                    const errorList = document.getElementById('frontendErrorsList');
-                    errorList.innerHTML = '<li>{{ __("Veuillez remplir tous les champs obligatoires de l'étape 1") }}</li>';
-                    errorDisplay.style.display = 'block';
-                    errorDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            });
+            }
 
             // Navigate back to step 1
-            backToStep1Btn.addEventListener('click', function() {
-                // Clear validation errors
-                document.querySelectorAll('.is-invalid').forEach(el => {
-                    el.classList.remove('is-invalid');
+            if (backToStep1Btn) {
+                backToStep1Btn.addEventListener('click', function() {
+                    // Clear validation errors
+                    document.querySelectorAll('.is-invalid').forEach(el => {
+                        el.classList.remove('is-invalid');
+                    });
+                    document.getElementById('frontendErrors').style.display = 'none';
+                    document.getElementById('step1-tab').click();
+                    updateProgress(1);
                 });
-                document.getElementById('frontendErrors').style.display = 'none';
-                document.getElementById('step1-tab').click();
+            }
+            
+            // Update file input labels
+            const fileInputs = document.querySelectorAll('.custom-file-input');
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function(e) {
+                    const label = this.nextElementSibling;
+                    if (this.files && this.files.length > 0) {
+                        if (this.files.length === 1) {
+                            label.textContent = this.files[0].name;
+                        } else {
+                            label.textContent = this.files.length + ' fichiers sélectionnés';
+                        }
+                    } else {
+                        label.textContent = label.getAttribute('data-original-text') || 'Choisir un fichier';
+                    }
+                });
             });
 
             // Auto-calculate next KM for change based on current KM + threshold
@@ -653,13 +1046,6 @@
                 if (!matricule.value.trim()) {
                     matricule.classList.add('is-invalid');
                     errors.push('{{ __("Le matricule est requis") }}');
-                    isValid = false;
-                }
-                
-                const chassis = document.querySelector('input[name="chassis"]');
-                if (!chassis.value.trim()) {
-                    chassis.classList.add('is-invalid');
-                    errors.push('{{ __("Le numéro de châssis est requis") }}');
                     isValid = false;
                 }
                 

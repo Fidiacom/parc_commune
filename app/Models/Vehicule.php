@@ -83,7 +83,7 @@ class Vehicule extends Model
         return $this->getAttribute(self::MATRICULE_COLUMN);
     }
 
-    public function getNumChassis(): string
+    public function getNumChassis(): ?string
     {
         return $this->getAttribute(self::NUM_CHASSIS_COLUMN);
     }

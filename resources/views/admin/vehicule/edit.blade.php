@@ -152,6 +152,27 @@
                                 @enderror
                             </div>
 
+                            {{-- Total Hours --}}
+                            <div class="form-group">
+                                <label for="total_hours">{{ __('Heures totales') }}</label>
+                                <input
+                                    type="text"
+                                    value="{{ $vehicule->getTotalHours() }}"
+                                    class="form-control autonumber @error('total_hours') is-invalid @enderror"
+                                    name="total_hours"
+                                    id="total_hours"
+                                    placeholder="{{ __('Optionnel: pour les véhicules fonctionnant aux heures') }}"
+                                    data-a-sep="."
+                                    data-a-dec=","
+                                >
+                                <small class="form-text text-muted">{{ __('Optionnel: Nombre d\'heures de fonctionnement (pour véhicules fonctionnant aux heures plutôt qu\'aux kilomètres)') }}</small>
+                                @error('total_hours')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+
                             {{-- Horses --}}
                             <div class="form-group">
                                 <label for="exampleFormControlInput1">{{ __('cheveaux') }}</label>
@@ -186,7 +207,45 @@
                                 @enderror
                             </div>
 
+                            {{-- Min Fuel Consumption --}}
+                            <div class="form-group">
+                                <label for="min_fuel_consumption_100km">{{ __('Consommation minimale (L/100km)') }}</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ $vehicule->getMinFuelConsumption100km() ?? old('min_fuel_consumption_100km') }}"
+                                    class="form-control @error('min_fuel_consumption_100km') is-invalid @enderror"
+                                    name="min_fuel_consumption_100km"
+                                    id="min_fuel_consumption_100km"
+                                    placeholder="Ex: 5.5"
+                                    min="0">
+                                <small class="form-text text-muted">{{ __('Optionnel: Consommation minimale de carburant en litres pour 100 km') }}</small>
+                                @error('min_fuel_consumption_100km')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
+                            {{-- Max Fuel Consumption --}}
+                            <div class="form-group">
+                                <label for="max_fuel_consumption_100km">{{ __('Consommation maximale (L/100km)') }}</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ $vehicule->getMaxFuelConsumption100km() ?? old('max_fuel_consumption_100km') }}"
+                                    class="form-control @error('max_fuel_consumption_100km') is-invalid @enderror"
+                                    name="max_fuel_consumption_100km"
+                                    id="max_fuel_consumption_100km"
+                                    placeholder="Ex: 8.5"
+                                    min="0">
+                                <small class="form-text text-muted">{{ __('Optionnel: Consommation maximale de carburant en litres pour 100 km') }}</small>
+                                @error('max_fuel_consumption_100km')
+                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
                             {{-- CHeck boxes --}}
                             <div class="mt-2">

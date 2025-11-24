@@ -19,10 +19,13 @@ class Vehicule extends Model
     public const NUM_CHASSIS_COLUMN = 'num_chassis';
     public const CIRCULATION_DATE_COLUMN = 'circulation_date';
     public const TOTAL_KM_COLUMN = 'total_km';
+    public const TOTAL_HOURS_COLUMN = 'total_hours';
     public const HORSES_COLUMN = 'horses';
     public const NUMBER_OF_TIRES_COLUMN = 'number_of_tires';
     public const TIRE_SIZE_COLUMN = 'tire_size';
     public const FUEL_TYPE_COLUMN = 'fuel_type';
+    public const MIN_FUEL_CONSUMPTION_100KM_COLUMN = 'min_fuel_consumption_100km';
+    public const MAX_FUEL_CONSUMPTION_100KM_COLUMN = 'max_fuel_consumption_100km';
     public const AIRBAG_COLUMN = 'airbag';
     public const ABS_COLUMN = 'abs';
     public const INSSURANCE_EXPIRATION_COLUMN = 'inssurance_expiration';
@@ -41,10 +44,13 @@ class Vehicule extends Model
         self::NUM_CHASSIS_COLUMN,
         self::CIRCULATION_DATE_COLUMN,
         self::TOTAL_KM_COLUMN,
+        self::TOTAL_HOURS_COLUMN,
         self::HORSES_COLUMN,
         self::NUMBER_OF_TIRES_COLUMN,
         self::TIRE_SIZE_COLUMN,
         self::FUEL_TYPE_COLUMN,
+        self::MIN_FUEL_CONSUMPTION_100KM_COLUMN,
+        self::MAX_FUEL_CONSUMPTION_100KM_COLUMN,
         self::AIRBAG_COLUMN,
         self::ABS_COLUMN,
         self::INSSURANCE_EXPIRATION_COLUMN,
@@ -92,6 +98,11 @@ class Vehicule extends Model
         return $this->getAttribute(self::TOTAL_KM_COLUMN);
     }
 
+    public function getTotalHours(): ?int
+    {
+        return $this->getAttribute(self::TOTAL_HOURS_COLUMN);
+    }
+
     public function getHorses(): int
     {
         return $this->getAttribute(self::HORSES_COLUMN);
@@ -110,6 +121,16 @@ class Vehicule extends Model
     public function getFuelType(): string
     {
         return $this->getAttribute(self::FUEL_TYPE_COLUMN);
+    }
+
+    public function getMinFuelConsumption100km(): ?float
+    {
+        return $this->getAttribute(self::MIN_FUEL_CONSUMPTION_100KM_COLUMN);
+    }
+
+    public function getMaxFuelConsumption100km(): ?float
+    {
+        return $this->getAttribute(self::MAX_FUEL_CONSUMPTION_100KM_COLUMN);
     }
 
     public function getAirbag(): bool

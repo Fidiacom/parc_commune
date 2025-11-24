@@ -318,6 +318,53 @@
                                 @enderror
                             </div>
 
+                            {{-- Tires Information Section --}}
+                            <div class="form-group mt-4">
+                                <label class="mb-3">{{ __('Informations des pneus') }}</label>
+                                <div id="tireFieldsContainer">
+                                    @if($vehicule->pneu && $vehicule->pneu->count() > 0)
+                                        @foreach($vehicule->pneu as $index => $tire)
+                                        <div class="card mb-3">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">{{ __('Pneu') }} {{ $index + 1 }}</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <input type="hidden" name="tire_ids[]" value="{{ $tire->getId() }}">
+                                                <div class="form-group">
+                                                    <label for="tire_position_{{ $index }}">{{ __('Position du pneu') }}</label>
+                                                    <input 
+                                                        type="text" 
+                                                        id="tire_position_{{ $index }}" 
+                                                        class="form-control" 
+                                                        name="tire_positions[]" 
+                                                        placeholder="{{ __('Ex: Avant Gauche, Avant Droit, Arrière Gauche, Arrière Droit') }}"
+                                                        value="{{ old("tire_positions.{$index}", $tire->getTirePosition()) }}"
+                                                        required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="tire_threshold_{{ $index }}">{{ __('Seuil km') }}</label>
+                                                    <input 
+                                                        type="text" 
+                                                        id="tire_threshold_{{ $index }}" 
+                                                        class="form-control autonumber" 
+                                                        name="tire_thresholds[]" 
+                                                        data-a-sep="." 
+                                                        data-a-dec=","
+                                                        placeholder=""
+                                                        value="{{ old("tire_thresholds.{$index}", $tire->getThresholdKm()) }}"
+                                                        required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    @else
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i> {{ __('Aucun pneu enregistré. Les pneus seront créés lors de la mise à jour.') }}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
                             <input type="hidden" name="vehicule_id" value="{{ Crypt::encrypt($vehicule->getId()) }}">
                             {{-- Submit --}}
                             <div class="form-group">
@@ -377,6 +424,16 @@
                             }
                         });
                     }
+                });
+            }
+
+            // Initialize autonumber for tire threshold fields
+            if (typeof AutoNumeric !== 'undefined') {
+                document.querySelectorAll('#tireFieldsContainer .autonumber').forEach(function(el) {
+                    new AutoNumeric(el, {
+                        digitGroupSeparator: '.',
+                        decimalCharacter: ','
+                    });
                 });
             }
         });

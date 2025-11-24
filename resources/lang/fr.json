@@ -206,5 +206,7 @@
     "est requis":"est requis",
     "Prochain KM du pneu":"Prochain KM du pneu",
     "Image":"Image",
-    "dépasse la limite de 50MB":"dépasse la limite de 50MB"
+    "dépasse la limite de 50MB":"dépasse la limite de 50MB",
+    "Informations des pneus":"Informations des pneus",
+    "Aucun pneu enregistré. Les pneus seront créés lors de la mise à jour.":"Aucun pneu enregistré. Les pneus seront créés lors de la mise à jour."
 }

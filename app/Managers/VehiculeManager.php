@@ -142,6 +142,31 @@ class VehiculeManager
     }
 
     /**
+     * Update tires for a vehicule.
+     */
+    public function updateTires(Vehicule $vehicule, array $tireData): void
+    {
+        if (!isset($tireData['tire_ids']) || !is_array($tireData['tire_ids'])) {
+            return;
+        }
+
+        $tireIds = $tireData['tire_ids'];
+        $positions = $tireData['positions'] ?? [];
+        $thresholds = $tireData['thresholds'] ?? [];
+
+        foreach ($tireIds as $index => $tireId) {
+            if (isset($positions[$index]) && isset($thresholds[$index])) {
+                $pneu = pneu::find($tireId);
+                if ($pneu && $pneu->getCarId() == $vehicule->getId()) {
+                    $pneu->tire_position = $positions[$index];
+                    $pneu->threshold_km = intval(str_replace('.', '', $thresholds[$index]));
+                    $pneu->save();
+                }
+            }
+        }
+    }
+
+    /**
      * Add images to vehicule.
      */
     public function addImages(Vehicule $vehicule, array $images): void

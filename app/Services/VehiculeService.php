@@ -102,6 +102,16 @@ class VehiculeService
             $this->manager->addImages($vehicule, $request->file('images'));
         }
 
+        // Handle tire updates
+        if ($request->has('tire_ids') && is_array($request->tire_ids)) {
+            $tireData = [
+                'tire_ids' => $request->tire_ids,
+                'positions' => $request->tire_positions ?? [],
+                'thresholds' => $request->tire_thresholds ?? [],
+            ];
+            $this->manager->updateTires($vehicule, $tireData);
+        }
+
         return $this->manager->updateVehicule($vehicule, $data);
     }
 

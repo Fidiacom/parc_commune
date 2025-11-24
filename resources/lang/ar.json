@@ -206,5 +206,7 @@
     "est requis":"مطلوب",
     "Prochain KM du pneu":"الكيلومتر القادم للعجلة",
     "Image":"صورة",
-    "dépasse la limite de 50MB":"يتجاوز الحد الأقصى 50MB"
+    "dépasse la limite de 50MB":"يتجاوز الحد الأقصى 50MB",
+    "Informations des pneus":"معلومات العجلات",
+    "Aucun pneu enregistré. Les pneus seront créés lors de la mise à jour.":"لم يتم تسجيل أي عجلات. سيتم إنشاء العجلات عند التحديث."
 }

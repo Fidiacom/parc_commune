@@ -179,7 +179,7 @@ class VehiculeController extends Controller
     public function edit($id)
     {
         try {
-            $vehicule = $this->vehiculeService->getVehiculeById($id, ['vidange', 'timing_chaine', 'images', 'attachments']);
+            $vehicule = $this->vehiculeService->getVehiculeById($id, ['vidange', 'timing_chaine', 'images', 'attachments', 'pneu']);
         } catch (\Throwable $th) {
             return view('admin.vehicule.404');
         }
@@ -207,6 +207,9 @@ class VehiculeController extends Controller
             'circulation_date' => 'nullable|date',
             'images.*' => 'nullable|image|max:51200', // 50MB max
             'files.*' => 'nullable|file|max:51200', // 50MB max
+            'tire_ids.*' => 'nullable|integer',
+            'tire_positions.*' => 'nullable|string',
+            'tire_thresholds.*' => 'nullable',
         ]);
 
         try {

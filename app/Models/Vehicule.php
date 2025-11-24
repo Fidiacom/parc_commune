@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Vehicule extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     public const TABLE = 'vehicules';
     public const ID_COLUMN = 'id';
@@ -31,6 +32,25 @@ class Vehicule extends Model
     public const UPDATED_AT_COLUMN = 'updated_at';
 
     protected $table = self::TABLE;
+
+    protected $fillable = [
+        self::BRAND_COLUMN,
+        self::IMAGE_COLUMN,
+        self::MODEL_COLUMN,
+        self::MATRICULE_COLUMN,
+        self::NUM_CHASSIS_COLUMN,
+        self::CIRCULATION_DATE_COLUMN,
+        self::TOTAL_KM_COLUMN,
+        self::HORSES_COLUMN,
+        self::NUMBER_OF_TIRES_COLUMN,
+        self::TIRE_SIZE_COLUMN,
+        self::FUEL_TYPE_COLUMN,
+        self::AIRBAG_COLUMN,
+        self::ABS_COLUMN,
+        self::INSSURANCE_EXPIRATION_COLUMN,
+        self::TECHNICALVISITE_EXPIRATION_COLUMN,
+        self::PERMIS_ID_COLUMN,
+    ];
 
     public function getId(): int
     {
@@ -137,8 +157,23 @@ class Vehicule extends Model
         return $this->hasMany(Trip::class, 'vehicule_id');
     }
 
+    public function images()
+    {
+        return $this->hasMany(VehiculeImage::class, 'vehicule_id');
+    }
+
     public function attachments()
     {
-        return $this->morphMany(Attachment::class, 'attachable');
+        return $this->hasMany(VehiculeAttachment::class, 'vehicule_id');
+    }
+
+    public function getThresholdVidange(): int
+    {
+        return $this->vidange->getThresholdKm();
+    }
+
+    public function getThresholdTimingChaine(): int
+    {
+        return $this->timing_chaine->getThresholdKm();
     }
 }

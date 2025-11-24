@@ -25,8 +25,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('vehicule/store', [VehiculeController::class, 'store'])->name('admin.vehicule.store');
         Route::get('vehicule/{id}', [VehiculeController::class, 'edit'])->name('admin.vehicule.edit');
         Route::post('vehicule/update/{id}', [VehiculeController::class, 'update'])->name('admin.vehicule.update');
-        Route::post('vehicule/files/upload', [VehiculeController::class, 'uploadFiles'])->name('admin.vehicule.files.upload');
-        Route::post('vehicule/files/delete/{id}', [VehiculeController::class, 'deleteFile'])->name('admin.vehicule.files.delete');
+        Route::post('vehicule/images/add', [VehiculeController::class, 'addImages'])->name('admin.vehicule.images.add');
+        Route::delete('vehicule/images/delete/{id}', [VehiculeController::class, 'deleteImage'])->name('admin.vehicule.images.delete');
+        Route::post('vehicule/images/set-main', [VehiculeController::class, 'setMainImage'])->name('admin.vehicule.images.set-main');
+        Route::post('vehicule/attachments/add', [VehiculeController::class, 'addAttachments'])->name('admin.vehicule.attachments.add');
+        Route::delete('vehicule/attachments/delete/{id}', [VehiculeController::class, 'deleteAttachment'])->name('admin.vehicule.attachments.delete');
+        Route::delete('vehicule/{id}', [VehiculeController::class, 'destroy'])->name('admin.vehicule.delete');
 
         Route::get('vehicule/drain-tire-timing/{vehicule_id}', [VehiculeController::class, 'dtt_get'])->name('admin.dtt');
 

@@ -19,44 +19,13 @@
                         <form action="{{ route('admin.vehicule.update', $vehicule->getId()) }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
-                            {{-- Picture --}}
-                            <div class="form-group">
-                                <label class="mb-2">{{ __('Images de vehicule') }}</label>
-                                <div class="col-xl-8 mx-auto">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 class="card-title">{{ __('Images de vehicule') }}</h4>
-                                            <p class="card-subtitle mb-4">{{ __('Vous pouvez sélectionner plusieurs images. Taille maximum: 5M par image.') }}</p>
-
-                                            @if($vehicule->getImage())
-                                            <div class="mb-3">
-                                                <p class="mb-2"><strong>{{ __('Image actuelle principale:') }}</strong></p>
-                                                <img src="{{ asset($vehicule->getImage()) }}" alt="Current Image" class="img-thumbnail" style="max-height: 150px;">
-                                            </div>
-                                            @endif
-
-                                            <input type="file" class="form-control-file" name="images[]" id="vehicleImages" multiple accept="image/*"/>
-                                            <small class="form-text text-muted">{{ __('Sélectionnez une ou plusieurs nouvelles images pour remplacer ou ajouter aux images existantes') }}</small>
-                                            
-                                            <div id="imagePreview" class="mt-3" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
-                                        </div> <!-- end card-body-->
-                                    </div> <!-- end card-->
-                                </div> <!-- end col -->
-
-                                @error('images')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                                @error('images.*')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
+                            {{-- Vehicle Images Section --}}
+                            <div class="form-group mt-4">
+                                <label class="mb-3">{{ __('Images du véhicule') }}</label>
+                                <x-vehicule-images :vehicule="$vehicule" :showUpload="true" />
                             </div>
 
                             <div class="form-group">
-
                                 <a href="{{ route('admin.dtt', Crypt::encrypt($vehicule->getId())) }}" class="btn btn-primary waves-effect waves-light">
                                     {{ __('Pneus/Vidange/Chaine de distribution') }}
                                 </a>
@@ -71,7 +40,7 @@
 
                             {{-- Vehicle Attachments Section --}}
                             <div class="form-group mt-4">
-                                <label class="mb-3">{{ __('Vehicle Documents & Files') }}</label>
+                                <label class="mb-3">{{ __('Documents et fichiers du véhicule') }}</label>
                                 <x-vehicule-file-attachments :vehicule="$vehicule" :showUpload="true" />
                             </div>
 
@@ -203,12 +172,12 @@
 
                             {{-- Fuel type --}}
                             <div class="form-group">
-                                <label for="exampleFormControlInput1">{{ __('Fuel Type') }}</label>
+                                <label for="exampleFormControlInput1">{{ __('Type de carburant') }}</label>
                                 <select name="fuel_type" id="" class="form-control @error('fuel_type') is-invalid @enderror" >
-                                    <option value="0">{{ __('Select Fuel Type') }}</option>
-                                    <option value="Gasoline" @selected($vehicule->getFuelType() == "Gasoline")>{{ __('Gasoline') }}</option>
+                                    <option value="0">{{ __('Sélectionner le type de carburant') }}</option>
+                                    <option value="Gasoline" @selected($vehicule->getFuelType() == "Gasoline")>{{ __('Essence') }}</option>
                                     <option value="Diesel" @selected($vehicule->getFuelType() == "Diesel")>{{ __('Diesel') }}</option>
-                                    <option value="Eletric" @selected($vehicule->getFuelType() == "Eletric")>{{ __('Eletric') }}</option>
+                                    <option value="Eletric" @selected($vehicule->getFuelType() == "Eletric")>{{ __('Électrique') }}</option>
                                 </select>
                                 @error('fuel_type')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
@@ -252,6 +221,7 @@
                                     placeholder=""
                                     class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"
                                     name="threshold_vidange"
+                                    value="{{ $vehicule->getThresholdVidange() }}"
                                     data-a-sep="." data-a-dec=",">
 
 
@@ -268,7 +238,7 @@
                                 <label for="exampleFormControlInput1">{{ __('seuil KM chaine de distrubution') }}</label>
                                 <input
                                     type="text"
-                                    value="{{ old('threshold_timing_chaine') }}"
+                                    value="{{ $vehicule->getThresholdTimingChaine() }}"
                                     class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"
                                     name="threshold_timing_chaine"
                                     data-a-sep="."
@@ -332,15 +302,15 @@
 
                             {{-- Tire Size --}}
                             <div class="form-group">
-                                <label for="tireSize">{{ __('Tire Size') }}</label>
+                                <label for="tireSize">{{ __('Taille des pneus') }}</label>
                                 <input
                                     type="text"
                                     class="form-control @error('tire_size') is-invalid @enderror"
                                     id="tireSize"
                                     name="tire_size"
-                                    placeholder="e.g., 205/55R16, 225/45R17"
+                                    placeholder="Ex: 205/55R16, 225/45R17"
                                     value="{{ $vehicule->getTireSize() ?? old('tire_size') }}">
-                                <small class="form-text text-muted">{{ __('Enter tire size (e.g., 205/55R16)') }}</small>
+                                <small class="form-text text-muted">{{ __('Entrer la taille des pneus (Ex: 205/55R16)') }}</small>
                                 @error('tire_size')
                                 <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                     {{ $message }}

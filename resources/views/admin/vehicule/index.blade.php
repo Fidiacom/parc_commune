@@ -16,7 +16,7 @@
                                 <th>{{ __('total KM') }}</th>
                                 <th>{{ __('fuel type') }}</th>
                                 <th>{{ __('Tire Size') }}</th>
-                                <th>{{ __('Files') }}</th>
+                                <th>{{ __('Fichiers') }}</th>
                             </tr>
                         </thead>
 
@@ -37,7 +37,7 @@
                                 <td>
                                     <span class="badge badge-{{ $vehicule->attachments_count > 0 ? 'success' : 'secondary' }}">
                                         <i class="fas fa-{{ $vehicule->attachments_count > 0 ? 'file-alt' : 'file' }}"></i>
-                                        {{ $vehicule->attachments_count ?? 0 }} {{ __('files') }}
+                                        {{ $vehicule->attachments_count ?? 0 }} {{ __('fichiers') }}
                                     </span>
                                 </td>
                             </tr>

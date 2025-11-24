@@ -20,12 +20,12 @@
                                                     <img src="{{ asset('assets/images/404-error.svg') }}" title="invite.svg">
                                                 </div>
                                             </div>
-                                            <h3 class="expired-title mb-4 mt-3">Vehicule Not Found</h3>
-                                            <p class="text-muted mt-3"> It's looking like you may have taken a wrong turn. Don't worry... it happens to the best of us. You might want to check your internet connection. </p>
+                                            <h3 class="expired-title mb-4 mt-3">{{ __('Véhicule introuvable') }}</h3>
+                                            <p class="text-muted mt-3">{{ __('Il semble que vous ayez pris un mauvais virage. Ne vous inquiétez pas... cela arrive aux meilleurs d'entre nous. Vous pourriez vouloir vérifier votre connexion Internet.') }}</p>
                                         </div>
 
                                         <div class="mb-3 mt-4 text-center">
-                                            <a href="{{ route('dashboard') }}" class="btn btn-primary btn-block">Back to Home</a>
+                                            <a href="{{ route('dashboard') }}" class="btn btn-primary btn-block">{{ __('Retour à l'accueil') }}</a>
                                         </div>
                                     </div>
                                     <!-- end card-body -->

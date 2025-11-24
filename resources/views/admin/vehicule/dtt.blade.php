@@ -21,13 +21,13 @@
                             <li class="nav-item">
                                 <a href="#timingChaine" data-toggle="tab" aria-expanded="true" class="nav-link @error('km_actuel_timichaine') active @enderror">
 
-                                    <span class=" d-lg-block">Chaine de distribution</span>
+                                    <span class=" d-lg-block">{{ __('Chaine de distribution') }}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="#pneus" data-toggle="tab" aria-expanded="false" class="nav-link @error('km_actuel_pneu') active @enderror">
 
-                                    <span class="d-lg-block">Pneus</span>
+                                    <span class="d-lg-block">{{ __('Pneus') }}</span>
                                 </a>
                             </li>
                         </ul>
@@ -189,7 +189,7 @@
                                                 <label>{{ __('Position') }}</label>
 
                                                 <div>
-                                                    <select class="form-control select2-multiple w-100" name="positions[]" data-toggle="select2" multiple="multiple" style="width:100%" data-placeholder="Choose ...">
+                                                    <select class="form-control select2-multiple w-100" name="positions[]" data-toggle="select2" multiple="multiple" style="width:100%" data-placeholder="{{ __('Choisir...') }}">
                                                         @foreach ($vehicule->pneu as $pneu)
                                                             <option value="{{ $pneu->id }}">{{ 'Position: '.$pneu->tire_position }}</option>
                                                         @endforeach
@@ -214,7 +214,7 @@
                                     <div class="col-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h4 class="card-title">Basic Data Table</h4>
+                                                <h4 class="card-title">{{ __('Tableau de données de base') }}</h4>
                                                 <table class="table nowrap dtt">
                                                     <thead>
                                                         <tr>

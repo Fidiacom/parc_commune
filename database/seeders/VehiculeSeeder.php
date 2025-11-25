@@ -12,6 +12,7 @@ use App\Models\Vidange;
 use App\Models\VidangeHistorique;
 use App\Models\TimingChaine;
 use App\Models\TimingChaineHistorique;
+use Carbon\Carbon;
 
 class VehiculeSeeder extends Seeder
 {
@@ -20,23 +21,24 @@ class VehiculeSeeder extends Seeder
      */
     public function run(): void
     {
-        $fuelType = array("Gasoline", "Diesel", "Electric");
+        $fuelTypes = ["Gasoline", "Diesel", "Electric"];
+        $permisB = CategoriePermi::where(CategoriePermi::LABEL_COLUMN, '=', 'B')->first();
 
         //DACIA
         $dacia  =   new Vehicule;
-        $dacia->brand  =   'Dacia';
-        $dacia->model  =   'Logan 2016';
-        $dacia->matricule  =   '1111 | أ | 2';
-        $dacia->num_chassis  =   'XXXXXXXXXXXXXXXXXX1';
-        $dacia->total_km  =   120000;
-        $dacia->horses  =   6;
-        $dacia->number_of_tires  =   4;
-        $dacia->fuel_type  =   $fuelType[array_rand($fuelType)];
-        $dacia->airbag  =   1;
-        $dacia->abs  =   1;
-        $dacia->inssurance_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $dacia->technicalvisite_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $dacia->permis_id   =   CategoriePermi::where('label','=', 'B')->first()->id;
+        $dacia->setAttribute(Vehicule::BRAND_COLUMN, 'Dacia');
+        $dacia->setAttribute(Vehicule::MODEL_COLUMN, 'Logan 2016');
+        $dacia->setAttribute(Vehicule::MATRICULE_COLUMN, '1111 | أ | 2');
+        $dacia->setAttribute(Vehicule::NUM_CHASSIS_COLUMN, 'XXXXXXXXXXXXXXXXXX1');
+        $dacia->setAttribute(Vehicule::TOTAL_KM_COLUMN, 120000);
+        $dacia->setAttribute(Vehicule::HORSES_COLUMN, 6);
+        $dacia->setAttribute(Vehicule::NUMBER_OF_TIRES_COLUMN, 4);
+        $dacia->setAttribute(Vehicule::FUEL_TYPE_COLUMN, $fuelTypes[array_rand($fuelTypes)]);
+        $dacia->setAttribute(Vehicule::AIRBAG_COLUMN, true);
+        $dacia->setAttribute(Vehicule::ABS_COLUMN, true);
+        $dacia->setAttribute(Vehicule::INSSURANCE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $dacia->setAttribute(Vehicule::TECHNICALVISITE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $dacia->setAttribute(Vehicule::PERMIS_ID_COLUMN, $permisB->getId());
         $dacia->save();
 
         foreach(range(0, $dacia->number_of_tires-1) as $num)
@@ -83,19 +85,19 @@ class VehiculeSeeder extends Seeder
 
         //Duster
         $duster  =   new Vehicule;
-        $duster->brand  =   'Dacia';
-        $duster->model  =   'Duster 2020';
-        $duster->matricule  =   '1112 | أ | 2';
-        $duster->num_chassis  =   'XXXXXXXXXXXXXXXXXX2';
-        $duster->total_km  =   120000;
-        $duster->horses  =   6;
-        $duster->number_of_tires  =   4;
-        $duster->fuel_type  =   $fuelType[array_rand($fuelType)];
-        $duster->airbag  =   1;
-        $duster->abs  =   1;
-        $duster->inssurance_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $duster->technicalvisite_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $duster->permis_id   =   CategoriePermi::where('label','=', 'B')->first()->id;
+        $duster->setAttribute(Vehicule::BRAND_COLUMN, 'Dacia');
+        $duster->setAttribute(Vehicule::MODEL_COLUMN, 'Duster 2020');
+        $duster->setAttribute(Vehicule::MATRICULE_COLUMN, '1112 | أ | 2');
+        $duster->setAttribute(Vehicule::NUM_CHASSIS_COLUMN, 'XXXXXXXXXXXXXXXXXX2');
+        $duster->setAttribute(Vehicule::TOTAL_KM_COLUMN, 120000);
+        $duster->setAttribute(Vehicule::HORSES_COLUMN, 6);
+        $duster->setAttribute(Vehicule::NUMBER_OF_TIRES_COLUMN, 4);
+        $duster->setAttribute(Vehicule::FUEL_TYPE_COLUMN, $fuelTypes[array_rand($fuelTypes)]);
+        $duster->setAttribute(Vehicule::AIRBAG_COLUMN, true);
+        $duster->setAttribute(Vehicule::ABS_COLUMN, true);
+        $duster->setAttribute(Vehicule::INSSURANCE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $duster->setAttribute(Vehicule::TECHNICALVISITE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $duster->setAttribute(Vehicule::PERMIS_ID_COLUMN, $permisB->getId());
         $duster->save();
 
         foreach(range(0, $duster->number_of_tires-1) as $num)
@@ -144,19 +146,19 @@ class VehiculeSeeder extends Seeder
 
         //Hyundai
         $hyundain  =   new Vehicule;
-        $hyundain->brand  =   'Hyundain';
-        $hyundain->model  =   'Tucson 2020';
-        $hyundain->matricule  =   '1113 | أ | 2';
-        $hyundain->num_chassis  =   'XXXXXXXXXXXXXXXXXX3';
-        $hyundain->total_km  =   120000;
-        $hyundain->horses  =   6;
-        $hyundain->number_of_tires  =   4;
-        $hyundain->fuel_type  =   $fuelType[array_rand($fuelType)];
-        $hyundain->airbag  =   1;
-        $hyundain->abs  =   1;
-        $hyundain->inssurance_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $hyundain->technicalvisite_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $hyundain->permis_id   =   CategoriePermi::where('label','=', 'B')->first()->id;
+        $hyundain->setAttribute(Vehicule::BRAND_COLUMN, 'Hyundain');
+        $hyundain->setAttribute(Vehicule::MODEL_COLUMN, 'Tucson 2020');
+        $hyundain->setAttribute(Vehicule::MATRICULE_COLUMN, '1113 | أ | 2');
+        $hyundain->setAttribute(Vehicule::NUM_CHASSIS_COLUMN, 'XXXXXXXXXXXXXXXXXX3');
+        $hyundain->setAttribute(Vehicule::TOTAL_KM_COLUMN, 120000);
+        $hyundain->setAttribute(Vehicule::HORSES_COLUMN, 6);
+        $hyundain->setAttribute(Vehicule::NUMBER_OF_TIRES_COLUMN, 4);
+        $hyundain->setAttribute(Vehicule::FUEL_TYPE_COLUMN, $fuelTypes[array_rand($fuelTypes)]);
+        $hyundain->setAttribute(Vehicule::AIRBAG_COLUMN, true);
+        $hyundain->setAttribute(Vehicule::ABS_COLUMN, true);
+        $hyundain->setAttribute(Vehicule::INSSURANCE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $hyundain->setAttribute(Vehicule::TECHNICALVISITE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $hyundain->setAttribute(Vehicule::PERMIS_ID_COLUMN, $permisB->getId());
         $hyundain->save();
 
         foreach(range(0, $hyundain->number_of_tires-1) as $num)
@@ -209,19 +211,19 @@ class VehiculeSeeder extends Seeder
 
         //Honda
         $honda  =   new Vehicule;
-        $honda->brand  =   'honda';
-        $honda->model  =   'Accord 2020';
-        $honda->matricule  =   '1114 | أ | 2';
-        $honda->num_chassis  =   'XXXXXXXXXXXXXXXXXX4';
-        $honda->total_km  =   120000;
-        $honda->horses  =   6;
-        $honda->number_of_tires  =   4;
-        $honda->fuel_type  =   $fuelType[array_rand($fuelType)];
-        $honda->airbag  =   1;
-        $honda->abs  =   1;
-        $honda->inssurance_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $honda->technicalvisite_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $honda->permis_id   =   CategoriePermi::where('label','=', 'B')->first()->id;
+        $honda->setAttribute(Vehicule::BRAND_COLUMN, 'honda');
+        $honda->setAttribute(Vehicule::MODEL_COLUMN, 'Accord 2020');
+        $honda->setAttribute(Vehicule::MATRICULE_COLUMN, '1114 | أ | 2');
+        $honda->setAttribute(Vehicule::NUM_CHASSIS_COLUMN, 'XXXXXXXXXXXXXXXXXX4');
+        $honda->setAttribute(Vehicule::TOTAL_KM_COLUMN, 120000);
+        $honda->setAttribute(Vehicule::HORSES_COLUMN, 6);
+        $honda->setAttribute(Vehicule::NUMBER_OF_TIRES_COLUMN, 4);
+        $honda->setAttribute(Vehicule::FUEL_TYPE_COLUMN, $fuelTypes[array_rand($fuelTypes)]);
+        $honda->setAttribute(Vehicule::AIRBAG_COLUMN, true);
+        $honda->setAttribute(Vehicule::ABS_COLUMN, true);
+        $honda->setAttribute(Vehicule::INSSURANCE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $honda->setAttribute(Vehicule::TECHNICALVISITE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $honda->setAttribute(Vehicule::PERMIS_ID_COLUMN, $permisB->getId());
         $honda->save();
 
         foreach(range(0, $honda->number_of_tires-1) as $num)
@@ -270,19 +272,19 @@ class VehiculeSeeder extends Seeder
 
         //volswagen
         $volswagen  =   new Vehicule;
-        $volswagen->brand  =   'volswagen';
-        $volswagen->model  =   'tiguan 2020';
-        $volswagen->matricule  =   '1114 | أ | 2';
-        $volswagen->num_chassis  =   'XXXXXXXXXXXXXXXXXX4';
-        $volswagen->total_km  =   120000;
-        $volswagen->horses  =   6;
-        $volswagen->number_of_tires  =   4;
-        $volswagen->fuel_type  =   $fuelType[array_rand($fuelType)];
-        $volswagen->airbag  =   1;
-        $volswagen->abs  =   1;
-        $volswagen->inssurance_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $volswagen->technicalvisite_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $volswagen->permis_id   =   CategoriePermi::where('label','=', 'B')->first()->id;
+        $volswagen->setAttribute(Vehicule::BRAND_COLUMN, 'volswagen');
+        $volswagen->setAttribute(Vehicule::MODEL_COLUMN, 'tiguan 2020');
+        $volswagen->setAttribute(Vehicule::MATRICULE_COLUMN, '1114 | أ | 2');
+        $volswagen->setAttribute(Vehicule::NUM_CHASSIS_COLUMN, 'XXXXXXXXXXXXXXXXXX4');
+        $volswagen->setAttribute(Vehicule::TOTAL_KM_COLUMN, 120000);
+        $volswagen->setAttribute(Vehicule::HORSES_COLUMN, 6);
+        $volswagen->setAttribute(Vehicule::NUMBER_OF_TIRES_COLUMN, 4);
+        $volswagen->setAttribute(Vehicule::FUEL_TYPE_COLUMN, $fuelTypes[array_rand($fuelTypes)]);
+        $volswagen->setAttribute(Vehicule::AIRBAG_COLUMN, true);
+        $volswagen->setAttribute(Vehicule::ABS_COLUMN, true);
+        $volswagen->setAttribute(Vehicule::INSSURANCE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $volswagen->setAttribute(Vehicule::TECHNICALVISITE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $volswagen->setAttribute(Vehicule::PERMIS_ID_COLUMN, $permisB->getId());
         $volswagen->save();
 
         foreach(range(0, $volswagen->number_of_tires-1) as $num)
@@ -331,19 +333,19 @@ class VehiculeSeeder extends Seeder
 
         //skoda
         $skoda  =   new Vehicule;
-        $skoda->brand  =   'skoda';
-        $skoda->model  =   'Octavia 2020';
-        $skoda->matricule  =   '1115 | أ | 2';
-        $skoda->num_chassis  =   'XXXXXXXXXXXXXXXXXX5';
-        $skoda->total_km  =   120000;
-        $skoda->horses  =   6;
-        $skoda->number_of_tires  =   4;
-        $skoda->fuel_type  =   $fuelType[array_rand($fuelType)];
-        $skoda->airbag  =   1;
-        $skoda->abs  =   1;
-        $skoda->inssurance_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $skoda->technicalvisite_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $skoda->permis_id   =   CategoriePermi::where('label','=', 'B')->first()->id;
+        $skoda->setAttribute(Vehicule::BRAND_COLUMN, 'skoda');
+        $skoda->setAttribute(Vehicule::MODEL_COLUMN, 'Octavia 2020');
+        $skoda->setAttribute(Vehicule::MATRICULE_COLUMN, '1115 | أ | 2');
+        $skoda->setAttribute(Vehicule::NUM_CHASSIS_COLUMN, 'XXXXXXXXXXXXXXXXXX5');
+        $skoda->setAttribute(Vehicule::TOTAL_KM_COLUMN, 120000);
+        $skoda->setAttribute(Vehicule::HORSES_COLUMN, 6);
+        $skoda->setAttribute(Vehicule::NUMBER_OF_TIRES_COLUMN, 4);
+        $skoda->setAttribute(Vehicule::FUEL_TYPE_COLUMN, $fuelTypes[array_rand($fuelTypes)]);
+        $skoda->setAttribute(Vehicule::AIRBAG_COLUMN, true);
+        $skoda->setAttribute(Vehicule::ABS_COLUMN, true);
+        $skoda->setAttribute(Vehicule::INSSURANCE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $skoda->setAttribute(Vehicule::TECHNICALVISITE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $skoda->setAttribute(Vehicule::PERMIS_ID_COLUMN, $permisB->getId());
         $skoda->save();
 
         foreach(range(0, $skoda->number_of_tires-1) as $num)
@@ -392,19 +394,19 @@ class VehiculeSeeder extends Seeder
 
         //skoda_fabia
         $skoda_fabia  =   new Vehicule;
-        $skoda_fabia->brand  =   'skoda';
-        $skoda_fabia->model  =   'fabia 2020';
-        $skoda_fabia->matricule  =   '1116 | أ | 2';
-        $skoda_fabia->num_chassis  =   'XXXXXXXXXXXXXXXXXX6';
-        $skoda_fabia->total_km  =   120000;
-        $skoda_fabia->horses  =   6;
-        $skoda_fabia->number_of_tires  =   4;
-        $skoda_fabia->fuel_type  =   $fuelType[array_rand($fuelType)];
-        $skoda_fabia->airbag  =   1;
-        $skoda_fabia->abs  =   1;
-        $skoda_fabia->inssurance_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $skoda_fabia->technicalvisite_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $skoda_fabia->permis_id   =   CategoriePermi::where('label','=', 'B')->first()->id;
+        $skoda_fabia->setAttribute(Vehicule::BRAND_COLUMN, 'skoda');
+        $skoda_fabia->setAttribute(Vehicule::MODEL_COLUMN, 'fabia 2020');
+        $skoda_fabia->setAttribute(Vehicule::MATRICULE_COLUMN, '1116 | أ | 2');
+        $skoda_fabia->setAttribute(Vehicule::NUM_CHASSIS_COLUMN, 'XXXXXXXXXXXXXXXXXX6');
+        $skoda_fabia->setAttribute(Vehicule::TOTAL_KM_COLUMN, 120000);
+        $skoda_fabia->setAttribute(Vehicule::HORSES_COLUMN, 6);
+        $skoda_fabia->setAttribute(Vehicule::NUMBER_OF_TIRES_COLUMN, 4);
+        $skoda_fabia->setAttribute(Vehicule::FUEL_TYPE_COLUMN, $fuelTypes[array_rand($fuelTypes)]);
+        $skoda_fabia->setAttribute(Vehicule::AIRBAG_COLUMN, true);
+        $skoda_fabia->setAttribute(Vehicule::ABS_COLUMN, true);
+        $skoda_fabia->setAttribute(Vehicule::INSSURANCE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $skoda_fabia->setAttribute(Vehicule::TECHNICALVISITE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $skoda_fabia->setAttribute(Vehicule::PERMIS_ID_COLUMN, $permisB->getId());
         $skoda_fabia->save();
 
         foreach(range(0, $skoda_fabia->number_of_tires-1) as $num)
@@ -451,19 +453,19 @@ class VehiculeSeeder extends Seeder
 
         //toyota
         $toyota  =   new Vehicule;
-        $toyota->brand  =   'toyota';
-        $toyota->model  =   'Yaris 2020';
-        $toyota->matricule  =   '1117 | أ | 2';
-        $toyota->num_chassis  =   'XXXXXXXXXXXXXXXXXX7';
-        $toyota->total_km  =   120000;
-        $toyota->horses  =   6;
-        $toyota->number_of_tires  =   4;
-        $toyota->fuel_type  =   $fuelType[array_rand($fuelType)];
-        $toyota->airbag  =   1;
-        $toyota->abs  =   1;
-        $toyota->inssurance_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $toyota->technicalvisite_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $toyota->permis_id   =   CategoriePermi::where('label','=', 'B')->first()->id;
+        $toyota->setAttribute(Vehicule::BRAND_COLUMN, 'toyota');
+        $toyota->setAttribute(Vehicule::MODEL_COLUMN, 'Yaris 2020');
+        $toyota->setAttribute(Vehicule::MATRICULE_COLUMN, '1117 | أ | 2');
+        $toyota->setAttribute(Vehicule::NUM_CHASSIS_COLUMN, 'XXXXXXXXXXXXXXXXXX7');
+        $toyota->setAttribute(Vehicule::TOTAL_KM_COLUMN, 120000);
+        $toyota->setAttribute(Vehicule::HORSES_COLUMN, 6);
+        $toyota->setAttribute(Vehicule::NUMBER_OF_TIRES_COLUMN, 4);
+        $toyota->setAttribute(Vehicule::FUEL_TYPE_COLUMN, $fuelTypes[array_rand($fuelTypes)]);
+        $toyota->setAttribute(Vehicule::AIRBAG_COLUMN, true);
+        $toyota->setAttribute(Vehicule::ABS_COLUMN, true);
+        $toyota->setAttribute(Vehicule::INSSURANCE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $toyota->setAttribute(Vehicule::TECHNICALVISITE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $toyota->setAttribute(Vehicule::PERMIS_ID_COLUMN, $permisB->getId());
         $toyota->save();
 
         foreach(range(0, $toyota->number_of_tires-1) as $num)
@@ -513,19 +515,19 @@ class VehiculeSeeder extends Seeder
 
         //citroen
         $citroen  =   new Vehicule;
-        $citroen->brand  =   'citroen';
-        $citroen->model  =   'C3 2020';
-        $citroen->matricule  =   '1118 | أ | 2';
-        $citroen->num_chassis  =   'XXXXXXXXXXXXXXXXXX8';
-        $citroen->total_km  =   120000;
-        $citroen->horses  =   6;
-        $citroen->number_of_tires  =   4;
-        $citroen->fuel_type  =   $fuelType[array_rand($fuelType)];
-        $citroen->airbag  =   1;
-        $citroen->abs  =   1;
-        $citroen->inssurance_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $citroen->technicalvisite_expiration  =   \Carbon\Carbon::parse('01/01/2024');
-        $citroen->permis_id   =   CategoriePermi::where('label','=', 'B')->first()->id;
+        $citroen->setAttribute(Vehicule::BRAND_COLUMN, 'citroen');
+        $citroen->setAttribute(Vehicule::MODEL_COLUMN, 'C3 2020');
+        $citroen->setAttribute(Vehicule::MATRICULE_COLUMN, '1118 | أ | 2');
+        $citroen->setAttribute(Vehicule::NUM_CHASSIS_COLUMN, 'XXXXXXXXXXXXXXXXXX8');
+        $citroen->setAttribute(Vehicule::TOTAL_KM_COLUMN, 120000);
+        $citroen->setAttribute(Vehicule::HORSES_COLUMN, 6);
+        $citroen->setAttribute(Vehicule::NUMBER_OF_TIRES_COLUMN, 4);
+        $citroen->setAttribute(Vehicule::FUEL_TYPE_COLUMN, $fuelTypes[array_rand($fuelTypes)]);
+        $citroen->setAttribute(Vehicule::AIRBAG_COLUMN, true);
+        $citroen->setAttribute(Vehicule::ABS_COLUMN, true);
+        $citroen->setAttribute(Vehicule::INSSURANCE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $citroen->setAttribute(Vehicule::TECHNICALVISITE_EXPIRATION_COLUMN, Carbon::parse('01/01/2024'));
+        $citroen->setAttribute(Vehicule::PERMIS_ID_COLUMN, $permisB->getId());
         $citroen->save();
 
         foreach(range(0, $citroen->number_of_tires-1) as $num)

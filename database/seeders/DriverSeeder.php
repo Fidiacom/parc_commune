@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Driver;
-use App\Models\DriverHasPermi;
 use App\Models\CategoriePermi;
 
 class DriverSeeder extends Seeder
@@ -15,20 +14,12 @@ class DriverSeeder extends Seeder
      */
     public function run(): void
     {
-
-        foreach(range(0,10) as $item)
-        {
-            $driver = new Driver;
-
-            $driver->full_name  =   'Driver '.$item;
-            $driver->cin    =   'XXXXXX'.$item;
-            $driver->phone  =   '+212 600 00 00 0'.$item;
+        foreach (range(0, 10) as $item) {
+            $driver = new Driver();
+            $driver->setAttribute(Driver::FULL_NAME_COLUMN, 'Driver ' . $item);
+            $driver->setAttribute(Driver::CIN_COLUMN, 'XXXXXX' . $item);
+            $driver->setAttribute(Driver::PHONE_COLUMN, '+212 600 00 00 0' . $item);
             $driver->save();
-
-            $hasPermis = new DriverHasPermi;
-            $hasPermis->driver_id   =   $driver->id;
-            $hasPermis->permi_id    =   CategoriePermi::where('label','=', 'B')->first()->id;
-            $hasPermis->save();
         }
     }
 }

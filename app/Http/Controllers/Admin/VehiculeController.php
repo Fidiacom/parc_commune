@@ -190,36 +190,42 @@ class VehiculeController extends Controller
         return view('admin.vehicule.edit', ['vehicule' => $vehicule]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'brand' => 'required',
-            'model' => 'required',
-            'matricule' => 'required',
-            'chassis' => 'nullable',
+            'brand' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
+            'matricule' => 'required|string|max:255',
+            'chassis' => 'nullable|string|max:255',
             'km_actuel' => 'required',
             'horses' => 'required',
             'fuel_type' => 'required|not_in:0',
-            'inssurance_expiration' => 'required',
+            'inssurance_expiration' => 'required|date',
             'technical_visit_expiration' => 'nullable|date',
-            'numOfTires' => 'required',
+            'numOfTires' => 'required|integer|min:1',
             'circulation_date' => 'nullable|date',
+            'total_hours' => 'nullable',
+            'min_fuel_consumption_100km' => 'nullable|numeric|min:0',
+            'max_fuel_consumption_100km' => 'nullable|numeric|min:0',
+            'tire_size' => 'nullable|string|max:255',
             'images.*' => 'nullable|image|max:51200', // 50MB max
             'files.*' => 'nullable|file|max:51200', // 50MB max
             'tire_ids.*' => 'nullable|integer',
-            'tire_positions.*' => 'nullable|string',
+            'tire_positions.*' => 'nullable|string|max:255',
             'tire_thresholds.*' => 'nullable',
         ]);
 
         try {
-            $id = Crypt::decrypt($request->vehicule_id);
+            // Get vehicule by ID (not encrypted)
             $vehicule = $this->vehiculeService->getVehiculeById($id);
         } catch (\Throwable $th) {
-            return view('admin.vehicule.404');
+            Alert::error(__('Erreur'), __('Véhicule introuvable'));
+            return back();
         }
 
         if (!$vehicule) {
-            return view('admin.vehicule.404');
+            Alert::error(__('Erreur'), __('Véhicule introuvable'));
+            return back();
         }
 
         try {
@@ -228,11 +234,19 @@ class VehiculeController extends Controller
                 $this->vehiculeService->addAttachments($vehicule, $request->file('files'));
             }
 
+            // Handle new images
+            if ($request->hasFile('images')) {
+                $this->vehiculeService->addImages($vehicule, $request->file('images'));
+            }
+
+            // Update vehicule and handle tire updates
             $this->vehiculeService->updateVehicule($vehicule, $request);
+            
             Alert::success(__('Véhicule enregistré avec succès'), __('mis à jour'));
-            return back();
+            return redirect()->route('admin.vehicule.edit', $vehicule->getId());
         } catch (\Throwable $th) {
-            Alert::error(__('Erreur'), __('Échec de la mise à jour du véhicule'));
+            Log::error('Vehicule update error: ' . $th->getMessage());
+            Alert::error(__('Erreur'), __('Échec de la mise à jour du véhicule: ') . $th->getMessage());
             return back();
         }
     }

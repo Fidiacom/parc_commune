@@ -159,10 +159,62 @@ class VehiculeManager
                 $pneu = pneu::find($tireId);
                 if ($pneu && $pneu->getCarId() == $vehicule->getId()) {
                     $pneu->tire_position = $positions[$index];
-                    $pneu->threshold_km = intval(str_replace('.', '', $thresholds[$index]));
+                    $pneu->threshold_km = intval(str_replace(['.', ','], '', $thresholds[$index]));
                     $pneu->save();
                 }
             }
+        }
+    }
+
+    /**
+     * Create a new tire for a vehicule.
+     */
+    public function createTire(Vehicule $vehicule, array $tireData): void
+    {
+        if (!isset($tireData['position']) || !isset($tireData['threshold'])) {
+            return;
+        }
+
+        $pneu = new pneu();
+        $pneu->car_id = $vehicule->getId();
+        $pneu->tire_position = $tireData['position'];
+        $pneu->threshold_km = intval(str_replace(['.', ','], '', $tireData['threshold']));
+        $pneu->save();
+    }
+
+    /**
+     * Update vidange threshold for a vehicule.
+     */
+    public function updateVidangeThreshold(Vehicule $vehicule, int $threshold): void
+    {
+        $vidange = Vidange::where('car_id', $vehicule->getId())->first();
+        if ($vidange) {
+            $vidange->threshold_km = $threshold;
+            $vidange->save();
+        } else {
+            // Create new vidange record if it doesn't exist
+            $vidange = new Vidange();
+            $vidange->car_id = $vehicule->getId();
+            $vidange->threshold_km = $threshold;
+            $vidange->save();
+        }
+    }
+
+    /**
+     * Update timing chaine threshold for a vehicule.
+     */
+    public function updateTimingChaineThreshold(Vehicule $vehicule, int $threshold): void
+    {
+        $timingChaine = TimingChaine::where('car_id', $vehicule->getId())->first();
+        if ($timingChaine) {
+            $timingChaine->threshold_km = $threshold;
+            $timingChaine->save();
+        } else {
+            // Create new timing chaine record if it doesn't exist
+            $timingChaine = new TimingChaine();
+            $timingChaine->car_id = $vehicule->getId();
+            $timingChaine->threshold_km = $threshold;
+            $timingChaine->save();
         }
     }
 

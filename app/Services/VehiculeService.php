@@ -89,9 +89,9 @@ class VehiculeService
             'matricule' => $request->matricule,
             'num_chassis' => $request->chassis,
             'circulation_date' => $request->circulation_date,
-            'total_km' => intval(str_replace('.', '', $request->km_actuel)),
-            'total_hours' => $request->has('total_hours') && $request->total_hours ? intval(str_replace('.', '', $request->total_hours)) : null,
-            'horses' => intval(str_replace('.', '', $request->horses)),
+            'total_km' => intval(str_replace(['.', ','], '', $request->km_actuel)),
+            'total_hours' => $request->has('total_hours') && $request->total_hours ? intval(str_replace(['.', ','], '', $request->total_hours)) : null,
+            'horses' => intval(str_replace(['.', ','], '', $request->horses)),
             'fuel_type' => $request->fuel_type,
             'min_fuel_consumption_100km' => $request->has('min_fuel_consumption_100km') && $request->min_fuel_consumption_100km ? $request->min_fuel_consumption_100km : null,
             'max_fuel_consumption_100km' => $request->has('max_fuel_consumption_100km') && $request->max_fuel_consumption_100km ? $request->max_fuel_consumption_100km : null,
@@ -108,17 +108,50 @@ class VehiculeService
             $this->manager->addImages($vehicule, $request->file('images'));
         }
 
-        // Handle tire updates
-        if ($request->has('tire_ids') && is_array($request->tire_ids)) {
-            $tireData = [
-                'tire_ids' => $request->tire_ids,
-                'positions' => $request->tire_positions ?? [],
-                'thresholds' => $request->tire_thresholds ?? [],
-            ];
-            $this->manager->updateTires($vehicule, $tireData);
+        // Handle tire updates or creation
+        if ($request->has('tire_positions') && is_array($request->tire_positions)) {
+            $tirePositions = $request->tire_positions;
+            $tireThresholds = $request->tire_thresholds ?? [];
+            $tireIds = $request->tire_ids ?? [];
+            
+            // Update existing tires
+            if (!empty($tireIds) && is_array($tireIds)) {
+                $tireData = [
+                    'tire_ids' => $tireIds,
+                    'positions' => $tirePositions,
+                    'thresholds' => $tireThresholds,
+                ];
+                $this->manager->updateTires($vehicule, $tireData);
+            }
+            
+            // Create new tires for positions without IDs
+            foreach ($tirePositions as $index => $position) {
+                $tireId = $tireIds[$index] ?? null;
+                $threshold = $tireThresholds[$index] ?? null;
+                
+                // If no tire ID for this position, create a new tire
+                if (!$tireId && $position && $threshold) {
+                    $this->manager->createTire($vehicule, [
+                        'position' => $position,
+                        'threshold' => $threshold,
+                    ]);
+                }
+            }
         }
 
-        return $this->manager->updateVehicule($vehicule, $data);
+        // Update vehicule
+        $updatedVehicule = $this->manager->updateVehicule($vehicule, $data);
+
+        // Handle threshold updates for vidange and timing chaine
+        if ($request->has('threshold_vidange') && $request->threshold_vidange) {
+            $this->manager->updateVidangeThreshold($vehicule, intval(str_replace(['.', ','], '', $request->threshold_vidange)));
+        }
+
+        if ($request->has('threshold_timing_chaine') && $request->threshold_timing_chaine) {
+            $this->manager->updateTimingChaineThreshold($vehicule, intval(str_replace(['.', ','], '', $request->threshold_timing_chaine)));
+        }
+
+        return $updatedVehicule;
     }
 
     /**

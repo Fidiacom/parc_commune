@@ -29,50 +29,50 @@
             <div class="col-xl-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.vehicule.update', $vehicule->getId()) }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-
-                            <!-- Quick Actions -->
-                            <div class="card border mb-4">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-2 mb-md-0">
-                                            <a href="{{ route('admin.dtt', Crypt::encrypt($vehicule->getId())) }}" class="btn btn-outline-primary btn-block">
-                                                <i class="fas fa-cogs mr-2"></i>{{ __('Maintenance (Pneus/Vidange/Chaine)') }}
-                                            </a>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <a href="{{ route('admin.maintenance.create', Crypt::encrypt($vehicule->getId())) }}" class="btn btn-outline-info btn-block">
-                                                <i class="fas fa-tools mr-2"></i>{{ __('Maintenance & Carburant') }}
-                                            </a>
-                                        </div>
+                        <!-- Quick Actions -->
+                        <div class="card border mb-4">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-2 mb-md-0">
+                                        <a href="{{ route('admin.dtt', Crypt::encrypt($vehicule->getId())) }}" class="btn btn-outline-primary btn-block">
+                                            <i class="fas fa-cogs mr-2"></i>{{ __('Maintenance (Pneus/Vidange/Chaine)') }}
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="{{ route('admin.maintenance.create', Crypt::encrypt($vehicule->getId())) }}" class="btn btn-outline-info btn-block">
+                                            <i class="fas fa-tools mr-2"></i>{{ __('Maintenance & Carburant') }}
+                                        </a>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Images Section -->
-                            <div class="card border mb-4">
-                                <div class="card-header bg-light">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-images text-primary mr-2"></i>{{ __('Images du véhicule') }}
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <x-vehicule-images :vehicule="$vehicule" :showUpload="true" />
-                                </div>
+                        <!-- Images Section (Outside main form to avoid nested forms) -->
+                        <div class="card border mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-images text-primary mr-2"></i>{{ __('Images du véhicule') }}
+                                </h5>
                             </div>
+                            <div class="card-body">
+                                <x-vehicule-images :vehicule="$vehicule" :showUpload="true" />
+                            </div>
+                        </div>
 
-                            <!-- Attachments Section -->
-                            <div class="card border mb-4">
-                                <div class="card-header bg-light">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-file-alt text-primary mr-2"></i>{{ __('Documents et fichiers') }}
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <x-vehicule-file-attachments :vehicule="$vehicule" :showUpload="true" />
-                                </div>
+                        <!-- Attachments Section (Outside main form to avoid nested forms) -->
+                        <div class="card border mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-file-alt text-primary mr-2"></i>{{ __('Documents et fichiers') }}
+                                </h5>
                             </div>
+                            <div class="card-body">
+                                <x-vehicule-file-attachments :vehicule="$vehicule" :showUpload="true" />
+                            </div>
+                        </div>
+
+                        <form id="vehiculeEditForm" action="{{ route('admin.vehicule.update', $vehicule->getId()) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
 
                             <!-- Informations générales -->
                             <div class="card border mb-4">
@@ -599,14 +599,12 @@
                                 </div>
                             </div>
 
-                            <input type="hidden" name="vehicule_id" value="{{ Crypt::encrypt($vehicule->getId()) }}">
-                            
                             <!-- Submit Button -->
                             <div class="form-group mt-4 d-flex justify-content-between">
                                 <a href="{{ route('admin.vehicule') }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-times mr-2"></i>{{ __('Annuler') }}
                                 </a>
-                                <button type="submit" class="btn btn-primary waves-effect waves-light">
+                                <button type="button" id="submitVehiculeForm" class="btn btn-primary waves-effect waves-light" onclick="submitVehiculeEditForm(event)">
                                     <i class="fas fa-save mr-2"></i>{{ __('Enregistrer les modifications') }}
                                 </button>
                             </div>
@@ -627,6 +625,82 @@
     </div> <!-- container-fluid -->
 
     <script>
+        // Global function to submit the form
+        function submitVehiculeEditForm(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.log('submitVehiculeEditForm called');
+            
+            const form = document.getElementById('vehiculeEditForm');
+            if (!form) {
+                console.error('Form not found!');
+                alert('Erreur: Formulaire introuvable');
+                return false;
+            }
+            
+            // Process AutoNumeric fields - get raw values without destroying
+            if (typeof AutoNumeric !== 'undefined') {
+                const autonumberFields = form.querySelectorAll('.autonumber');
+                console.log('Processing', autonumberFields.length, 'AutoNumeric fields');
+                autonumberFields.forEach(function(field) {
+                    try {
+                        const autoNumericInstance = AutoNumeric.getAutoNumericElement(field);
+                        if (autoNumericInstance) {
+                            // Get the raw unformatted value
+                            const rawValue = autoNumericInstance.getNumber();
+                            // Set value directly without destroying (will be destroyed on submit)
+                            if (rawValue !== null) {
+                                // Temporarily remove AutoNumeric to set raw value
+                                autoNumericInstance.destroy();
+                                field.value = rawValue.toString();
+                                console.log('Processed field:', field.name, '=', field.value);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error processing AutoNumeric field:', error);
+                    }
+                });
+            }
+            
+            // Log all form data before submission
+            const formData = new FormData(form);
+            console.log('Form data before submission:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ':', value);
+            }
+            
+            // Validate required fields
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            const firstInvalidField = [];
+            requiredFields.forEach(function(field) {
+                const value = field.type === 'checkbox' ? field.checked : field.value;
+                if (!value || (field.type === 'select-one' && value === '0')) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    if (firstInvalidField.length === 0) {
+                        firstInvalidField.push(field);
+                    }
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                alert('Veuillez remplir tous les champs obligatoires');
+                if (firstInvalidField.length > 0) {
+                    firstInvalidField[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalidField[0].focus();
+                }
+                return false;
+            }
+            
+            // Submit the form
+            console.log('Submitting form...');
+            form.submit();
+            return false;
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             const fileInput = document.getElementById('vehicleImages');
             if (fileInput) {
@@ -667,15 +741,21 @@
                 });
             }
 
-            // Initialize autonumber for tire threshold fields
+            // Initialize autonumber for all autonumber fields
             if (typeof AutoNumeric !== 'undefined') {
-                document.querySelectorAll('#tireFieldsContainer .autonumber').forEach(function(el) {
-                    new AutoNumeric(el, {
-                        digitGroupSeparator: '.',
-                        decimalCharacter: ','
-                    });
+                document.querySelectorAll('.autonumber').forEach(function(el) {
+                    // Check if already initialized
+                    if (!AutoNumeric.getAutoNumericElement(el)) {
+                        new AutoNumeric(el, {
+                            digitGroupSeparator: '.',
+                            decimalCharacter: ','
+                        });
+                    }
                 });
             }
+
+            // Additional initialization if needed
+            console.log('Page loaded, form ready');
         });
     </script>
 </x-admin.app>

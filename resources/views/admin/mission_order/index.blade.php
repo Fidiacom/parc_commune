@@ -31,7 +31,7 @@
                             <select class="form-control @error('driver') is-invalid @enderror" data-toggle="select2" style="width: 100%" name="driver">
                                 <option value="0">{{ __('Select') }}</option>
                                 @foreach ($drivers as $d)
-                                    <option value="{{ $d->id }}">{{ $d->full_name. ' | '.$d->cin }}</option>
+                                    <option value="{{ $d->id }}">{{ $d->getFirstNameFr().' '.$d->getLastNameFr().' | '.$d->getCin() }}</option>
                                 @endforeach
                             </select>
                             @error('driver')

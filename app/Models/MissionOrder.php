@@ -22,6 +22,15 @@ class MissionOrder extends Model
 
     protected $table = self::TABLE;
 
+    protected $fillable = [
+        self::DRIVER_ID_COLUMN,
+        self::VEHICULE_ID_COLUMN,
+        self::PERMANENT_COLUMN,
+        self::START_COLUMN,
+        self::END_COLUMN,
+        self::DONE_AT_COLUMN,
+    ];
+
     public function getId(): int
     {
         return $this->getAttribute(self::ID_COLUMN);

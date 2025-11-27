@@ -12,16 +12,28 @@ use App\Services\SettingService;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Crypt;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use App\Services\DriverService;
+use App\Services\VehiculeService;
+use App\Services\MissionOrderService;
 class MissionOrderController extends Controller
 {
+    protected DriverService $driverService;
+    protected VehiculeService $vehiculeService;
+    protected MissionOrderService $missionOrderService;
+    
+    public function __construct(DriverService $driverService, VehiculeService $vehiculeService, MissionOrderService $missionOrderService)
+    {
+        $this->driverService = $driverService;
+        $this->vehiculeService = $vehiculeService;
+        $this->missionOrderService = $missionOrderService;
+    }
+
     public function index()
     {
-        $vehicules = Vehicule::latest()->get();
-        $drivers   = Driver::latest()->get();
+        $vehicules = $this->vehiculeService->getAllVehicules();
+        $drivers   = $this->driverService->getAllDrivers();
 
-
-        $missionOrders = MissionOrder::with('driver', 'vehicule')->get();
+        $missionOrders = $this->missionOrderService->getAllMissionOrders();
 
         return view('admin.mission_order.index', [
                 'drivers'   =>  $drivers,
@@ -60,8 +72,6 @@ class MissionOrderController extends Controller
 
         $driver = Driver::with('permis')->find($request->driver);
         $vehicule = Vehicule::join('categorie_permis', 'vehicules.permis_id','=','categorie_permis.id')->find($request->vehicule);
-
-
 
         if(!$driver->permis->pluck('id')->contains($vehicule->permis_id))
         {

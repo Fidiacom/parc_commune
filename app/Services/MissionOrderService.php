@@ -38,13 +38,24 @@ class MissionOrderService
      */
     public function createMissionOrder(Request $request): MissionOrder
     {
+        $isPermanent = isset($request->mission_order_type);
+        
         $missionOrderData = [
             MissionOrder::DRIVER_ID_COLUMN => $request->driver,
             MissionOrder::VEHICULE_ID_COLUMN => $request->vehicule,
-            MissionOrder::PERMANENT_COLUMN => isset($request->mission_order_type) ? 1 : 0,
+            MissionOrder::PERMANENT_COLUMN => $isPermanent ? 1 : 0,
             MissionOrder::START_COLUMN => $request->start_date,
             MissionOrder::END_COLUMN => isset($request->end_date) ? $request->end_date : null,
+            MissionOrder::REGISTRATION_DATETIME_COLUMN => $request->registration_datetime ?? null,
         ];
+
+        // Only add mission fields and place_togo if mission is NOT permanent
+        if (!$isPermanent) {
+            $missionOrderData[MissionOrder::MISSION_FR_COLUMN] = $request->mission_fr ?? null;
+            $missionOrderData[MissionOrder::MISSION_AR_COLUMN] = $request->mission_ar ?? null;
+            $missionOrderData[MissionOrder::PLACE_TOGO_FR_COLUMN] = $request->place_togo_fr ?? null;
+            $missionOrderData[MissionOrder::PLACE_TOGO_AR_COLUMN] = $request->place_togo_ar ?? null;
+        }
 
         return $this->manager->createMissionOrder($missionOrderData);
     }
@@ -54,17 +65,29 @@ class MissionOrderService
      */
     public function updateMissionOrder(MissionOrder $missionOrder, Request $request): MissionOrder
     {
+        $isPermanent = isset($request->mission_order_type);
+        
         $missionOrderData = [
             MissionOrder::DRIVER_ID_COLUMN => $request->driver,
             MissionOrder::VEHICULE_ID_COLUMN => $request->vehicule,
-            MissionOrder::PERMANENT_COLUMN => isset($request->mission_order_type) ? 1 : 0,
+            MissionOrder::PERMANENT_COLUMN => $isPermanent ? 1 : 0,
             MissionOrder::START_COLUMN => $request->start_date,
+            MissionOrder::REGISTRATION_DATETIME_COLUMN => $request->registration_datetime ?? null,
         ];
 
-        if (isset($request->mission_order_type)) {
+        if ($isPermanent) {
             $missionOrderData[MissionOrder::END_COLUMN] = null;
+            // Clear mission and place_togo fields if permanent
+            $missionOrderData[MissionOrder::MISSION_FR_COLUMN] = null;
+            $missionOrderData[MissionOrder::MISSION_AR_COLUMN] = null;
+            $missionOrderData[MissionOrder::PLACE_TOGO_FR_COLUMN] = null;
+            $missionOrderData[MissionOrder::PLACE_TOGO_AR_COLUMN] = null;
         } else {
             $missionOrderData[MissionOrder::END_COLUMN] = $request->end_date;
+            $missionOrderData[MissionOrder::MISSION_FR_COLUMN] = $request->mission_fr ?? null;
+            $missionOrderData[MissionOrder::MISSION_AR_COLUMN] = $request->mission_ar ?? null;
+            $missionOrderData[MissionOrder::PLACE_TOGO_FR_COLUMN] = $request->place_togo_fr ?? null;
+            $missionOrderData[MissionOrder::PLACE_TOGO_AR_COLUMN] = $request->place_togo_ar ?? null;
         }
 
         return $this->manager->updateMissionOrder($missionOrder, $missionOrderData);

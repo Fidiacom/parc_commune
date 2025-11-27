@@ -8,7 +8,7 @@
         <title>Parking management</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta content="Application de gestion de parking" name="description" />
-        <meta content="Fidiacom" name="author" />
+        <meta content="Jamaycom" name="author" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
         <!-- App favicon -->

@@ -17,6 +17,11 @@ class MissionOrder extends Model
     public const START_COLUMN = 'start';
     public const END_COLUMN = 'end';
     public const DONE_AT_COLUMN = 'done_at';
+    public const MISSION_FR_COLUMN = 'mission_fr';
+    public const MISSION_AR_COLUMN = 'mission_ar';
+    public const REGISTRATION_DATETIME_COLUMN = 'registration_datetime';
+    public const PLACE_TOGO_FR_COLUMN = 'place_togo_fr';
+    public const PLACE_TOGO_AR_COLUMN = 'place_togo_ar';
     public const CREATED_AT_COLUMN = 'created_at';
     public const UPDATED_AT_COLUMN = 'updated_at';
 
@@ -29,6 +34,11 @@ class MissionOrder extends Model
         self::START_COLUMN,
         self::END_COLUMN,
         self::DONE_AT_COLUMN,
+        self::MISSION_FR_COLUMN,
+        self::MISSION_AR_COLUMN,
+        self::REGISTRATION_DATETIME_COLUMN,
+        self::PLACE_TOGO_FR_COLUMN,
+        self::PLACE_TOGO_AR_COLUMN,
     ];
 
     public function getId(): int
@@ -66,14 +76,54 @@ class MissionOrder extends Model
         return $this->getAttribute(self::DONE_AT_COLUMN);
     }
 
+    public function getMissionFr(): ?string
+    {
+        return $this->getAttribute(self::MISSION_FR_COLUMN);
+    }
+
+    public function getMissionAr(): ?string
+    {
+        return $this->getAttribute(self::MISSION_AR_COLUMN);
+    }
+
+    public function getRegistrationDatetime(): ?string
+    {
+        return $this->getAttribute(self::REGISTRATION_DATETIME_COLUMN);
+    }
+
+    public function getPlaceTogoFr(): ?string
+    {
+        return $this->getAttribute(self::PLACE_TOGO_FR_COLUMN);
+    }
+
+    public function getPlaceTogoAr(): ?string
+    {
+        return $this->getAttribute(self::PLACE_TOGO_AR_COLUMN);
+    }
+
+    public function isPermanent(): bool
+    {
+        return $this->getAttribute(self::PERMANENT_COLUMN) == 1;
+    }
+
     public function driver()
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
 
+    public function getDriver(): ?Driver
+    {
+        return $this->driver;
+    }
+
     public function vehicule()
     {
         return $this->belongsTo(Vehicule::class, 'vehicule_id');
+    }
+
+    public function getVehicule(): ?Vehicule
+    {
+        return $this->vehicule;
     }
 
     public function getCreatedAt(): string

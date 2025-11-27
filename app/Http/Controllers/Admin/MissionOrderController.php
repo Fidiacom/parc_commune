@@ -11,7 +11,8 @@ use App\Models\MissionOrder;
 use App\Services\SettingService;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Crypt;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Mpdf\Mpdf;
+use Illuminate\Support\Facades\View;
 use App\Services\DriverService;
 use App\Services\VehiculeService;
 use App\Services\MissionOrderService;
@@ -20,12 +21,14 @@ class MissionOrderController extends Controller
     protected DriverService $driverService;
     protected VehiculeService $vehiculeService;
     protected MissionOrderService $missionOrderService;
+    protected SettingService $settingService;
     
-    public function __construct(DriverService $driverService, VehiculeService $vehiculeService, MissionOrderService $missionOrderService)
+    public function __construct(DriverService $driverService, VehiculeService $vehiculeService, MissionOrderService $missionOrderService, SettingService $settingService)
     {
         $this->driverService = $driverService;
         $this->vehiculeService = $vehiculeService;
         $this->missionOrderService = $missionOrderService;
+        $this->settingService = $settingService;
     }
 
     public function index()
@@ -46,12 +49,19 @@ class MissionOrderController extends Controller
     {
         try {
             $id = Crypt::decrypt($id);
-            $missionOrder = MissionOrder::with('driver', 'vehicule')->findOrFail($id);
+            $missionOrder = $this->missionOrderService->getMissionOrderById($id);
+            
+            if (!$missionOrder) {
+                Alert::error('Error', 'Mission order not found');
+                return redirect(route('admin.mission_order'));
+            }
         } catch (\Throwable $th) {
-            throw $th;
+            Alert::error('Error', 'Invalid mission order ID');
+            return redirect(route('admin.mission_order'));
         }
-        $vehicules = Vehicule::latest()->get();
-        $drivers   = Driver::latest()->get();
+        
+        $vehicules = $this->vehiculeService->getAllVehicules();
+        $drivers   = $this->driverService->getAllDrivers();
 
         return view('admin.mission_order.edit', [
             'missionOrder'  =>   $missionOrder,
@@ -62,87 +72,79 @@ class MissionOrderController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request->all());
         $validated = $request->validate([
-            'vehicule'    =>  'required|not_in:0',
-            'driver'      =>  'required|not_in:0',
-            'start_date'  =>  'required',
-            'end_date'    =>  'nullable'
+            'vehicule'              =>  'required|not_in:0',
+            'driver'                =>  'required|not_in:0',
+            'start_date'            =>  'required',
+            'end_date'              =>  'nullable',
+            'mission_fr'            =>  'nullable|string',
+            'mission_ar'            =>  'nullable|string',
+            'registration_datetime' =>  'nullable|date',
+            'place_togo_fr'         =>  'nullable|string',
+            'place_togo_ar'         =>  'nullable|string',
         ]);
 
-        $driver = Driver::with('permis')->find($request->driver);
-        $vehicule = Vehicule::join('categorie_permis', 'vehicules.permis_id','=','categorie_permis.id')->find($request->vehicule);
-
-        if(!$driver->permis->pluck('id')->contains($vehicule->permis_id))
-        {
-            Alert::error('Error', 'Driver Should have: Permis '.$vehicule->label);
-            return back();
+        try {
+            $this->missionOrderService->createMissionOrder($request);
+            Alert::success('Success', 'Saved Correctly');
+        } catch (\Exception $e) {
+            Alert::error('Error', $e->getMessage());
         }
 
-        $missionOrder = new MissionOrder;
-        $missionOrder->driver_id    =   $request->driver;
-        $missionOrder->vehicule_id  =   $request->vehicule;
-        $missionOrder->permanent    =   isset($request->mission_order_type) ? 1 : 0;
-        $missionOrder->start        =   $request->start_date;
-        $missionOrder->end          =   isset($request->end_date) ? $request->end_date : null;
-        $missionOrder->save();
-
-
-        Alert::success('Success', 'Saved Correctly');
         return back();
     }
 
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'vehicule'    =>  'required|not_in:0',
-            'driver'      =>  'required|not_in:0',
-            'start_date'  =>  'required',
-            'end_date'    =>  'nullable'
+            'vehicule'              =>  'required|not_in:0',
+            'driver'                =>  'required|not_in:0',
+            'start_date'            =>  'required',
+            'end_date'              =>  'nullable',
+            'mission_fr'            =>  'nullable|string',
+            'mission_ar'            =>  'nullable|string',
+            'registration_datetime' =>  'nullable|date',
+            'place_togo_fr'         =>  'nullable|string',
+            'place_togo_ar'         =>  'nullable|string',
         ]);
-
-        $driver = Driver::with('permis')->find($request->driver);
-        $vehicule = Vehicule::join('categorie_permis', 'vehicules.permis_id','=','categorie_permis.id')->find($request->vehicule);
-
-
-
-        if(!$driver->permis->pluck('id')->contains($vehicule->permis_id))
-        {
-            Alert::error('Error', 'Driver Should have: Permis '.$vehicule->label);
-            return back();
-        }
 
         try {
             $id = Crypt::decrypt($id);
-            $missionOrder = MissionOrder::findOrFail($id);
+            $missionOrder = $this->missionOrderService->getMissionOrderById($id);
+            
+            if (!$missionOrder) {
+                Alert::error('Error', 'Mission order not found');
+                return back();
+            }
+
+            $this->missionOrderService->updateMissionOrder($missionOrder, $request);
+            Alert::success('Success', 'Saved Correctly');
+        } catch (\Exception $e) {
+            Alert::error('Error', $e->getMessage());
         } catch (\Throwable $th) {
-            throw $th;
+            Alert::error('Error', 'Invalid mission order ID');
         }
 
-
-
-        $missionOrder->driver_id    =   $request->driver;
-        $missionOrder->vehicule_id  =   $request->vehicule;
-        $missionOrder->permanent    =   isset($request->mission_order_type) ? 1 : 0;
-        $missionOrder->start        =   $request->start_date;
-
-        if(isset($request->mission_order_type))
-        {
-            $missionOrder->end = null;
-        }else{
-            $missionOrder->end          =   $request->end_date;
-        }
-        $missionOrder->save();
-
-        Alert::success('Success', 'Saved Correctly');
         return back();
     }
 
     public function destroy($id)
     {
-        $missionOrder = MissionOrder::findOrFail($id);
-        $missionOrder->delete();
-        Alert::success('Success', 'Deleted');
+        try {
+            $id = Crypt::decrypt($id);
+            $missionOrder = $this->missionOrderService->getMissionOrderById($id);
+            
+            if (!$missionOrder) {
+                Alert::error('Error', 'Mission order not found');
+                return redirect(route('admin.mission_order'));
+            }
+
+            $this->missionOrderService->deleteMissionOrder($missionOrder);
+            Alert::success('Success', 'Deleted');
+        } catch (\Throwable $th) {
+            Alert::error('Error', 'Invalid mission order ID');
+        }
+
         return redirect(route('admin.mission_order'));
     }
 
@@ -153,37 +155,76 @@ class MissionOrderController extends Controller
             'actual_km'      =>  'required',
         ]);
 
-        $missionOrder = MissionOrder::findOrFail($id);
-        $missionOrder->done_at = $request->return_date;
-        $missionOrder->update();
+        try {
+            $missionOrder = $this->missionOrderService->getMissionOrderById($id);
+            
+            if (!$missionOrder) {
+                Alert::error('Error', 'Mission order not found');
+                return back();
+            }
 
+            $this->missionOrderService->returnFromMissionOrder($missionOrder, $request);
+            Alert::success('Success', 'Saved Correctly');
+        } catch (\Exception $e) {
+            Alert::error('Error', $e->getMessage());
+        }
 
-        $vehicule = Vehicule::findOrFail($missionOrder->vehicule_id);
-        $vehicule->total_km = $request->actual_km;
-        $vehicule->update();
-
-        Alert::success('Success', 'Saved Correctly');
         return back();
     }
 
     public function print($id)
     {
         try {
-            $missionOrder = MissionOrder::with('driver', 'vehicule')->findOrFail($id);
+            $missionOrder = $this->missionOrderService->getMissionOrderById($id, ['driver', 'vehicule']);
+            
+            if (!$missionOrder) {
+                Alert::error('Error', 'Mission order not found');
+                return back();
+            }
         } catch (\Throwable $th) {
             Alert::error('Error', 'Mission order not found');
             return back();
         }
 
-        $settingService = app(SettingService::class);
-        $settings = $settingService->getSettings();
+        $settings = $this->settingService->getSettings();
         
-        $pdf = Pdf::loadView('admin.mission_order.print', [
+        // Determine which view to use
+        $viewName = $missionOrder->isPermanent() 
+            ? 'admin.mission_order.print_permanent' 
+            : 'admin.mission_order.print_single';
+        
+        // Render the view to HTML
+        $html = View::make($viewName, [
             'missionOrder' => $missionOrder,
             'settings' => $settings
+        ])->render();
+        
+        // Configure mPDF for Arabic support
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'orientation' => 'P',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 0,
+            'margin_bottom' => 15,
+            'margin_header' => 0,
+            'margin_footer' => 9,
+            'tempDir' => storage_path('app/temp'),
         ]);
         
-        return $pdf->stream('order_de_mission_' . $missionOrder->id . '.pdf');
+        // Set default font for Arabic support
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+        
+        // Write HTML content
+        $mpdf->WriteHTML($html);
+        
+        // Output the PDF as a response
+        return response()->make($mpdf->Output('', 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="order_de_mission_' . $missionOrder->getId() . '.pdf"',
+        ]);
     }
 }
 

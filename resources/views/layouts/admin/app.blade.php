@@ -289,11 +289,11 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            © Fidiacom.
+                            © Jamaycom.
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-right d-none d-sm-block">
-                                Design & Develop by Fidiacom
+                                Design & Develop by Jamaycom
                             </div>
                         </div>
                     </div>

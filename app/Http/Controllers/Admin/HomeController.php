@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Vehicule;
 use App\Models\Driver;
-use App\Models\Trip;
+use App\Models\MissionOrder;
 use App\Models\StockHistorique;
 
 class HomeController extends Controller
@@ -16,7 +16,7 @@ class HomeController extends Controller
     {
         $vehiculesCount = Vehicule::count();
         $driverCount = Driver::count();
-        $tripCount = Trip::count();
+        $missionOrderCount = MissionOrder::count();
         $stockHistoriqueCount = StockHistorique::count();
 
 
@@ -29,7 +29,7 @@ class HomeController extends Controller
         return view('dashboard', [
             'vehiculesCount'    =>  $vehiculesCount,
             'driverCount'       =>  $driverCount,
-            'tripCount'         =>  $tripCount,
+            'missionOrderCount'  =>  $missionOrderCount,
             'vehicules'         =>  $vehicules,
             'historiques'       =>  $historiques,
             'stockHistoriqueCount'  =>  $stockHistoriqueCount

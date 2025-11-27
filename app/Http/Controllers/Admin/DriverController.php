@@ -3,117 +3,101 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreDriverRequest;
+use App\Http\Requests\UpdateDriverRequest;
 use App\Models\CategoriePermi;
-use App\Models\Driver;
-use App\Models\DriverHasPermi;
-use Illuminate\Http\Request;
-use Alert;
-use Crypt;
+use App\Services\DriverService;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Crypt;
 
 class DriverController extends Controller
 {
+    protected DriverService $driverService;
+
+    public function __construct(DriverService $driverService)
+    {
+        $this->driverService = $driverService;
+    }
+
     public function index()
     {
-        $drivers = Driver::with('permis')->latest()->get();
-        return view('admin.drivers.index', ['drivers'   =>  $drivers]);
+        $drivers = $this->driverService->getAllDrivers();
+        return view('admin.drivers.index', ['drivers' => $drivers]);
     }
 
     public function create()
     {
         $permis = CategoriePermi::all();
-        return view('admin.drivers.create', ['permis'   =>  $permis]);
+        return view('admin.drivers.create', ['permis' => $permis]);
     }
 
-    public function store(Request $request)
+    public function store(StoreDriverRequest $request)
     {
-        $validated = $request->validate([
-            'image'         =>  'nullable|image',
-            'full_name'     =>  'required',
-            'cin'           =>  'required',
-            'permisType.*'  =>  'required',
-            'permisType'    =>  'required',
-            'phone'         =>  'required',
-        ]);
-
-
-        $driver = new Driver;
-        $driver->image =   isset($request->image) ? uploadFile($request->image, 'drivers') : null;
-        $driver->full_name  =   $request->full_name;
-        $driver->cin    =   $request->cin;
-        $driver->phone  =   $request->phone;
-        $driver->save();
-
-        foreach($request->permisType as $p)
-        {
-            $hasPermis = new DriverHasPermi;
-            $hasPermis->driver_id   =   $driver->id;
-            $hasPermis->permi_id    =   $p;
-            $hasPermis->save();
-        }
-
-        //$driver->permis()->attach($request->permisType);
+        $this->driverService->createDriver($request);
 
         Alert::success('Driver Saved Successfully', 'Please fill tires field');
         return redirect(route('admin.drivers'));
-
-
     }
 
     public function edit($id)
     {
         $permis = CategoriePermi::all();
 
-
         try {
             $id = Crypt::decrypt($id);
-            $driver = Driver::with('permis')->findOrFail($id);
+            $driver = $this->driverService->getDriverById($id);
+            
+            if (!$driver) {
+                Alert::error('Error', 'Driver not found');
+                return redirect(route('admin.drivers'));
+            }
         } catch (\Throwable $th) {
-            throw $th;
+            Alert::error('Error', 'Invalid driver ID');
+            return redirect(route('admin.drivers'));
         }
 
-        return view('admin.drivers.edit', ['driver' =>  $driver, 'permis'   =>  $permis]);
+        return view('admin.drivers.edit', ['driver' => $driver, 'permis' => $permis]);
     }
 
-
-    public function update(Request $request, $id)
+    public function update(UpdateDriverRequest $request, $id)
     {
-        $validated = $request->validate([
-            'image'         =>  'nullable|image',
-            'full_name'     =>  'required',
-            'cin'           =>  'required',
-            'permisType.*'  =>  'required',
-            'permisType'    =>  'required',
-            'phone'         =>  'required',
-        ]);
-
         try {
-            //code...
             $id = Crypt::decrypt($id);
-            $driver = Driver::findOrFail($id);
+            $driver = $this->driverService->getDriverById($id);
+            
+            if (!$driver) {
+                Alert::error('Error', 'Driver not found');
+                return redirect(route('admin.drivers'));
+            }
         } catch (\Throwable $th) {
-            throw $th;
+            Alert::error('Error', 'Invalid driver ID');
+            return redirect(route('admin.drivers'));
         }
 
-
-
-
-        $driver->image =   isset($request->image) ? uploadFile($request->image, 'drivers') : $driver->image;
-        $driver->full_name  =   $request->full_name;
-        $driver->cin    =   $request->cin;
-        $driver->phone  =   $request->phone;
-        $driver->update();
-
-
-        $driver->permis()->detach();
-        $driver->permis()->attach($request->permisType);
-
-
-
+        $this->driverService->updateDriver($driver, $request);
 
         Alert::success('Driver Saved Successfully', 'Please fill tires field');
         return redirect(route('admin.drivers'));
     }
 
+    public function destroy($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $driver = $this->driverService->getDriverById($id);
+            
+            if (!$driver) {
+                Alert::error('Error', 'Driver not found');
+                return redirect(route('admin.drivers'));
+            }
+        } catch (\Throwable $th) {
+            Alert::error('Error', 'Invalid driver ID');
+            return redirect(route('admin.drivers'));
+        }
 
-    
+        $this->driverService->deleteDriver($driver);
+
+        Alert::success('Driver Deleted Successfully', 'The driver has been soft deleted');
+        return redirect(route('admin.drivers'));
+    }
 }

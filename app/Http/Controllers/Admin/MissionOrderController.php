@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Vehicule;
 use App\Models\Driver;
-use App\Models\Trip;
-use Alert;
-use Crypt;
+use App\Models\MissionOrder;
+use App\Services\SettingService;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Crypt;
+use Barryvdh\DomPDF\Facade\Pdf;
 
-class TripController extends Controller
+class MissionOrderController extends Controller
 {
     public function index()
     {
@@ -19,29 +21,28 @@ class TripController extends Controller
         $drivers   = Driver::latest()->get();
 
 
-        $trips = Trip::with('driver', 'vehicule')->get();
+        $missionOrders = MissionOrder::with('driver', 'vehicule')->get();
 
-        return view('admin.trip.index', [
+        return view('admin.mission_order.index', [
                 'drivers'   =>  $drivers,
                 'vehicules' =>  $vehicules,
-                'trips'      =>  $trips
+                'missionOrders'      =>  $missionOrders
             ]);
     }
-
 
     public function edit($id)
     {
         try {
             $id = Crypt::decrypt($id);
-            $trip = Trip::with('driver', 'vehicule')->findOrFail($id);
+            $missionOrder = MissionOrder::with('driver', 'vehicule')->findOrFail($id);
         } catch (\Throwable $th) {
             throw $th;
         }
         $vehicules = Vehicule::latest()->get();
         $drivers   = Driver::latest()->get();
 
-        return view('admin.trip.edit', [
-            'trip'  =>   $trip,
+        return view('admin.mission_order.edit', [
+            'missionOrder'  =>   $missionOrder,
             'drivers'   =>  $drivers,
             'vehicules' =>  $vehicules,
         ]);
@@ -68,13 +69,13 @@ class TripController extends Controller
             return back();
         }
 
-        $trip = new Trip;
-        $trip->driver_id    =   $request->driver;
-        $trip->vehicule_id  =   $request->vehicule;
-        $trip->permanent    =   isset($request->trip_type) ? 1 : 0;
-        $trip->start        =   $request->start_date;
-        $trip->end          =   isset($request->end_date) ? $request->end_date : null;
-        $trip->save();
+        $missionOrder = new MissionOrder;
+        $missionOrder->driver_id    =   $request->driver;
+        $missionOrder->vehicule_id  =   $request->vehicule;
+        $missionOrder->permanent    =   isset($request->mission_order_type) ? 1 : 0;
+        $missionOrder->start        =   $request->start_date;
+        $missionOrder->end          =   isset($request->end_date) ? $request->end_date : null;
+        $missionOrder->save();
 
 
         Alert::success('Success', 'Saved Correctly');
@@ -103,25 +104,25 @@ class TripController extends Controller
 
         try {
             $id = Crypt::decrypt($id);
-            $trip = Trip::findOrFail($id);
+            $missionOrder = MissionOrder::findOrFail($id);
         } catch (\Throwable $th) {
             throw $th;
         }
 
 
 
-        $trip->driver_id    =   $request->driver;
-        $trip->vehicule_id  =   $request->vehicule;
-        $trip->permanent    =   isset($request->trip_type) ? 1 : 0;
-        $trip->start        =   $request->start_date;
+        $missionOrder->driver_id    =   $request->driver;
+        $missionOrder->vehicule_id  =   $request->vehicule;
+        $missionOrder->permanent    =   isset($request->mission_order_type) ? 1 : 0;
+        $missionOrder->start        =   $request->start_date;
 
-        if(isset($request->trip_type))
+        if(isset($request->mission_order_type))
         {
-            $trip->end = null;
+            $missionOrder->end = null;
         }else{
-            $trip->end          =   $request->end_date;
+            $missionOrder->end          =   $request->end_date;
         }
-        $trip->save();
+        $missionOrder->save();
 
         Alert::success('Success', 'Saved Correctly');
         return back();
@@ -129,25 +130,25 @@ class TripController extends Controller
 
     public function destroy($id)
     {
-        $trip = Trip::findOrFail($id);
-        $trip->delete();
+        $missionOrder = MissionOrder::findOrFail($id);
+        $missionOrder->delete();
         Alert::success('Success', 'Deleted');
-        return redirect(route('admin.trip'));
+        return redirect(route('admin.mission_order'));
     }
 
-    public function returnFromTrip(Request $request, $id)
+    public function returnFromMissionOrder(Request $request, $id)
     {
         $validated = $request->validate([
             'return_date'    =>  'required',
             'actual_km'      =>  'required',
         ]);
 
-        $trip = Trip::findOrFail($id);
-        $trip->done_at = $request->return_date;
-        $trip->update();
+        $missionOrder = MissionOrder::findOrFail($id);
+        $missionOrder->done_at = $request->return_date;
+        $missionOrder->update();
 
 
-        $vehicule = Vehicule::findOrFail($trip->vehicule_id);
+        $vehicule = Vehicule::findOrFail($missionOrder->vehicule_id);
         $vehicule->total_km = $request->actual_km;
         $vehicule->update();
 
@@ -155,7 +156,24 @@ class TripController extends Controller
         return back();
     }
 
+    public function print($id)
+    {
+        try {
+            $missionOrder = MissionOrder::with('driver', 'vehicule')->findOrFail($id);
+        } catch (\Throwable $th) {
+            Alert::error('Error', 'Mission order not found');
+            return back();
+        }
 
-
-
+        $settingService = app(SettingService::class);
+        $settings = $settingService->getSettings();
+        
+        $pdf = Pdf::loadView('admin.mission_order.print', [
+            'missionOrder' => $missionOrder,
+            'settings' => $settings
+        ]);
+        
+        return $pdf->stream('order_de_mission_' . $missionOrder->id . '.pdf');
+    }
 }
+

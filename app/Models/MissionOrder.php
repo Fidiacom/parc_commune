@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Trip extends Model
+class MissionOrder extends Model
 {
     use HasFactory;
 
-    public const TABLE = 'trips';
+    public const TABLE = 'mission_orders';
     public const ID_COLUMN = 'id';
     public const DRIVER_ID_COLUMN = 'driver_id';
     public const VEHICULE_ID_COLUMN = 'vehicule_id';
@@ -66,4 +66,10 @@ class Trip extends Model
     {
         return $this->belongsTo(Vehicule::class, 'vehicule_id');
     }
+
+    public function getCreatedAt(): string
+    {
+        return $this->getAttribute(self::CREATED_AT_COLUMN);
+    }
 }
+

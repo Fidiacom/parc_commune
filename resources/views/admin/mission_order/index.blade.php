@@ -6,7 +6,7 @@
                 <div class="card-body">
                     <h4 class="card-title">{{ __('Orders de mission') }}</h4>
 
-                    <form action="{{ route('admin.trip.store') }}" method="post">
+                    <form action="{{ route('admin.mission_order.store') }}" method="post">
                         @csrf
                         <div class="form-group">
                             <label for="">{{ __('Select Car') }}</label>
@@ -44,7 +44,7 @@
 
                         <div class="form-group">
                             <div class="custom-control custom-checkbox custom-control-inline">
-                                <input type="checkbox" class="custom-control-input" id="customCheck3" name="trip_type">
+                                <input type="checkbox" class="custom-control-input" id="customCheck3" name="mission_order_type">
                                 <label class="custom-control-label" for="customCheck3">{{ __('Le Voyage permanent') }}</label>
                             </div>
                         </div>
@@ -98,27 +98,36 @@
                                 <th>{{ __('From - To') }}</th>
                                 <th>{{ __('Done at') }}</th>
                                 <th>{{ __('Cree le') }}</th>
+                                <th>{{ __('Actions') }}</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            @foreach ($trips as $trip)
-                            <tr @if ($trip->done_at != null) @class(['bg-success', 'text-white']) style="--bs-bg-opacity: .5;" @endif>
+                            @foreach ($missionOrders as $missionOrder)
+                            <tr @if ($missionOrder->done_at != null) @class(['bg-success', 'text-white']) style="--bs-bg-opacity: .5;" @endif>
                                 <td>
-                                    <a href="{{ route('admin.trip.edit', Crypt::encrypt($trip->id)) }}">
-                                        {{ $trip->driver->full_name }}
+                                    <a href="{{ route('admin.mission_order.edit', Crypt::encrypt($missionOrder->id)) }}">
+                                        {{ $missionOrder->driver->full_name }}
                                     </a>
                                 </td>
-                                <td>{{ $trip->driver->cin }}</td>
-                                <td>{{ $trip->vehicule->brand.' - '.$trip->vehicule->model }}</td>
-                                <td>{{ $trip->vehicule->matricule }}</td>
-                                <td>{{ $trip->permanent ? 'permanent' : 'temporaire' }}</td>
-                                <td>{{ $trip->start.' | ' }} {{ $trip->permanent ? '-----' : $trip->end }}</td>
+                                <td>{{ $missionOrder->driver->cin }}</td>
+                                <td>{{ $missionOrder->vehicule->brand.' - '.$missionOrder->vehicule->model }}</td>
+                                <td>{{ $missionOrder->vehicule->matricule }}</td>
+                                <td>{{ $missionOrder->permanent ? 'permanent' : 'temporaire' }}</td>
+                                <td>{{ $missionOrder->start.' | ' }} {{ $missionOrder->permanent ? '-----' : $missionOrder->end }}</td>
                                 <td>
-                                    {{ $trip->done_at ?? '--------'  }}
+                                    {{ $missionOrder->done_at ?? '--------'  }}
                                 </td>
                                 <td>
-                                    {{ $trip->created_at }}
+                                    {{ $missionOrder->created_at }}
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.mission_order.print', $missionOrder->getId()) }}" 
+                                       target="_blank" 
+                                       class="btn btn-sm btn-info" 
+                                       title="{{ __('Print Order de Mission') }}">
+                                        <i class="mdi mdi-printer"></i> {{ __('Print') }}
+                                    </a>
                                 </td>
                             </tr>
                             @endforeach
@@ -128,6 +137,7 @@
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
-        <script src="{{ asset('assets/js/trip/trip.js') }}"></script>
+        <script src="{{ asset('assets/js/mission_order/mission_order.js') }}"></script>
     </div>
 </x-admin.app>
+

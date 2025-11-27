@@ -173,9 +173,9 @@ class Vehicule extends Model
         return $this->hasMany(pneu::class, 'car_id');
     }
 
-    public function trips()
+    public function missionOrders()
     {
-        return $this->hasMany(Trip::class, 'vehicule_id');
+        return $this->hasMany(MissionOrder::class, 'vehicule_id');
     }
 
     public function images()

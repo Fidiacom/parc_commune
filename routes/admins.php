@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\VehiculeController;
 use App\Http\Controllers\Admin\DriverController;
-use App\Http\Controllers\Admin\TripController;
+use App\Http\Controllers\Admin\MissionOrderController;
 use App\Http\Controllers\Admin\TireController;
 use App\Http\Controllers\Admin\VidangeController;
 use App\Http\Controllers\Admin\TiminChaineController;
@@ -51,16 +51,18 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/driver/store', [DriverController::class, 'store'])->name('admin.driver.store');
         Route::get('/drive/{id}', [DriverController::class, 'edit'])->name('admin.driver.edit');
         Route::post('/driver/update/{id}', [DriverController::class, 'update'])->name('admin.driver.update');
+        Route::delete('/driver/{id}', [DriverController::class, 'destroy'])->name('admin.driver.delete');
 
 
-        //Trip (Voyage)
-        Route::get('/trip', [TripController::class, 'index'])->name('admin.trip');
-        Route::get('/trip/create', [TripController::class, 'create'])->name('admin.trip.create');
-        Route::post('/trip/store', [TripController::class,'store'])->name('admin.trip.store');
-        Route::get('/trip/{id}', [TripController::class,'edit'])->name('admin.trip.edit');
-        Route::put('/trip/update/{id}',[TripController::class, 'update'])->name('admin.trip.update');
-        Route::delete('/trip/destroy/{id}',[TripController::class, 'destroy'])->name('admin.trip.delete');
-        Route::post('/trip/return/{id}', [TripController::class, 'returnFromTrip'])->name('admin.trip.return');
+        //Mission Order (Ordre de Mission)
+        Route::get('/mission-order', [MissionOrderController::class, 'index'])->name('admin.mission_order');
+        Route::get('/mission-order/create', [MissionOrderController::class, 'create'])->name('admin.mission_order.create');
+        Route::post('/mission-order/store', [MissionOrderController::class,'store'])->name('admin.mission_order.store');
+        Route::get('/mission-order/{id}', [MissionOrderController::class,'edit'])->name('admin.mission_order.edit');
+        Route::put('/mission-order/update/{id}',[MissionOrderController::class, 'update'])->name('admin.mission_order.update');
+        Route::delete('/mission-order/destroy/{id}',[MissionOrderController::class, 'destroy'])->name('admin.mission_order.delete');
+        Route::post('/mission-order/return/{id}', [MissionOrderController::class, 'returnFromMissionOrder'])->name('admin.mission_order.return');
+        Route::get('/mission-order/print/{id}', [MissionOrderController::class, 'print'])->name('admin.mission_order.print');
 
 
         //Stock

@@ -11,3 +11,4 @@ isPermanant.addEventListener('change', function() {
         document.getElementById('end_date').value = singleDateValue;
     }
 });
+

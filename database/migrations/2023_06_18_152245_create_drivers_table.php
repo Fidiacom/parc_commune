@@ -14,9 +14,14 @@ return new class extends Migration
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
             $table->text('image')->nullable();
-            $table->string('full_name');
-            $table->string('cin');
-            $table->string('phone');
+            $table->string('first_name_ar')->nullable();
+            $table->string('first_name_fr')->nullable();
+            $table->string('last_name_ar')->nullable();
+            $table->string('last_name_fr')->nullable();
+            $table->string('role_ar')->nullable();
+            $table->string('role_fr')->nullable();
+            $table->string('cin')->nullable();
+            $table->string('phone')->nullable();
             $table->timestamps();
         });
     }

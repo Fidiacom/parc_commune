@@ -18,41 +18,101 @@
                     <div class="card-body">
                         <form action="{{ route('admin.driver.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            
+                            {{-- Image Section --}}
                             <div class="form-group">
-
                                 <div>
                                     <div class="col-xl-5 mx-auto">
                                         <div class="card">
                                             <div class="card-body">
-
                                                 <h4 class="card-title">{{ __('Image') }}</h4>
                                                 <p class="card-subtitle mb-4">{{ __('la taile maximum est') }}</p>
-
                                                 <input type="file" class="dropify" data-max-file-size="5M" name="image" accept="image/*"/>
-
                                             </div> <!-- end card-body-->
                                         </div> <!-- end card-->
                                     </div> <!-- end col -->
-
-
                                     @error('image')
                                     <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                         {{ $message }}
                                     </div>
                                     @enderror
                                 </div>
-
-
                             </div>
 
-                            <div class="form-group">
-                                <label for="simpleinput">{{ __('full name') }}</label>
-                                <input type="text" id="simpleinput" class="form-control @error('full_name') is-invalid @enderror" name="full_name" placeholder="Name...">
-                                @error('full_name')
-                                <div id="validationServerUsernameFeedback" class="invalid-feedback">
-                                    {{ $message }}
+                            {{-- Arabic Data Section --}}
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">{{ __('Données en arabe') }} ({{ __('العربية') }})</h5>
                                 </div>
-                                @enderror
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="first_name_ar">{{ __('First Name') }}</label>
+                                        <input type="text" id="first_name_ar" class="form-control @error('first_name_ar') is-invalid @enderror" name="first_name_ar" placeholder="{{ __('First Name in Arabic') }}" dir="rtl" value="{{ old('first_name_ar') }}">
+                                        @error('first_name_ar')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="last_name_ar">{{ __('Last Name') }}</label>
+                                        <input type="text" id="last_name_ar" class="form-control @error('last_name_ar') is-invalid @enderror" name="last_name_ar" placeholder="{{ __('Last Name in Arabic') }}" dir="rtl" value="{{ old('last_name_ar') }}">
+                                        @error('last_name_ar')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="role_ar">{{ __('Role') }}</label>
+                                        <input type="text" id="role_ar" class="form-control @error('role_ar') is-invalid @enderror" name="role_ar" placeholder="{{ __('Role in Arabic') }}" dir="rtl" value="{{ old('role_ar') }}">
+                                        @error('role_ar')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- French Data Section --}}
+                            <div class="card mb-3">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">{{ __('Données en français') }} ({{ __('Français') }})</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="first_name_fr">{{ __('First Name') }}</label>
+                                        <input type="text" id="first_name_fr" class="form-control @error('first_name_fr') is-invalid @enderror" name="first_name_fr" placeholder="{{ __('First Name in French') }}" value="{{ old('first_name_fr') }}">
+                                        @error('first_name_fr')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="last_name_fr">{{ __('Last Name') }}</label>
+                                        <input type="text" id="last_name_fr" class="form-control @error('last_name_fr') is-invalid @enderror" name="last_name_fr" placeholder="{{ __('Last Name in French') }}" value="{{ old('last_name_fr') }}">
+                                        @error('last_name_fr')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="role_fr">{{ __('Role') }}</label>
+                                        <input type="text" id="role_fr" class="form-control @error('role_fr') is-invalid @enderror" name="role_fr" placeholder="{{ __('Role in French') }}" value="{{ old('role_fr') }}">
+                                        @error('role_fr')
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group">

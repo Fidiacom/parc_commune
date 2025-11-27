@@ -46,7 +46,7 @@
                     <div class="card-body">
                         <i class="bx bx-bx bx-analyse float-right m-0 h2 text-muted"></i>
                         <h6 class="text-muted text-uppercase mt-0">{{ __('Orders de mission') }}</h6>
-                        <h3 class="mb-3"><span data-plugin="counterup">{{ $tripCount }}</span></h3>
+                        <h3 class="mb-3"><span data-plugin="counterup">{{ $missionOrderCount }}</span></h3>
                     </div>
                 </div>
             </div>

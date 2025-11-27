@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Stock;
-use App\Models\Trip;
+use App\Models\MissionOrder;
 use App\Models\Vehicule;
 use Closure;
 use Illuminate\Http\Request;
@@ -103,14 +103,14 @@ class NotificationMiddleware
 
 
 
-    //Trips
-    public function trip()
+    //Mission Orders
+    public function missionOrder()
     {
         $currentDate = date('Y-m-d');
-        $expiredTrip = Trip::with('driver','vehicule')->whereNotNull('end')->where('end', '<=', $currentDate)->get();
+        $expiredMissionOrder = MissionOrder::with('driver','vehicule')->whereNotNull('end')->where('end', '<=', $currentDate)->get();
 
         
-        return $expiredTrip;
+        return $expiredMissionOrder;
     }
 
 
@@ -121,15 +121,15 @@ class NotificationMiddleware
         
         $stockNotifications = $this->stock();
         $chargeNotifications = $this->chargeNotifications();
-        $tripNotifications = $this->trip();
+        $missionOrderNotifications = $this->missionOrder();
 
-        $numberOfNotification = $stockNotifications->count() + $chargeNotifications->count() + $tripNotifications->count();
+        $numberOfNotification = $stockNotifications->count() + $chargeNotifications->count() + $missionOrderNotifications->count();
 
         View::share([
             'chargeNotification'    =>  $chargeNotifications,
             'stockNotification'     =>  $stockNotifications,
             'numberOfNotification'  =>  $numberOfNotification,
-            'trips'                 =>  $tripNotifications
+            'missionOrders'         =>  $missionOrderNotifications
         ]);
         return $next($request);
     }

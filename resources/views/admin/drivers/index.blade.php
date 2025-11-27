@@ -21,11 +21,14 @@
                                     <table id="datatable-buttons" class="table table-striped nowrap">
                                         <thead>
                                             <tr>
-                                                <th>{{ __('Full Name') }}</th>
+                                                <th>{{ __('First Name') }}</th>
+                                                <th>{{ __('Last Name') }}</th>
+                                                <th>{{ __('Role') }}</th>
                                                 <th>{{ __('cin') }}</th>
                                                 <th>{{ __('telephone') }}</th>
                                                 <th>{{ __('Categorie Permis') }}</th>
                                                 <th>{{ __('Cree le') }}</th>
+                                                <th>{{ __('Actions') }}</th>
                                             </tr>
                                         </thead>
 
@@ -35,18 +38,40 @@
 
                                             <tr>
                                                 <td>
-                                                    <a href="{{ route('admin.driver.edit', Crypt::encrypt($d->id)) }}">
-                                                        {{ $d->full_name }}
+                                                    <a href="{{ route('admin.driver.edit', Crypt::encrypt($d->getId())) }}">
+                                                        {{ $d->getFirstNameFr() ?: $d->getFirstNameAr() ?: '-' }}
                                                     </a>
                                                 </td>
-                                                <td>{{ $d->cin }}</td>
-                                                <td>{{ $d->phone }}</td>
+                                                <td>{{ $d->getLastNameFr() ?: $d->getLastNameAr() ?: '-' }}</td>
+                                                <td>{{ $d->getRoleFr() ?: $d->getRoleAr() ?: '-' }}</td>
+                                                <td>{{ $d->getCin() ?: '-' }}</td>
+                                                <td>{{ $d->getPhone() ?: '-' }}</td>
                                                 <td>
                                                     @foreach ($d->permis as $permi)
                                                         {{ $permi->label.' | ' }}
                                                     @endforeach
                                                 </td>
                                                 <td>{{ $d->created_at }}</td>
+                                                <td class="text-center">
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ route('admin.driver.edit', Crypt::encrypt($d->getId())) }}" 
+                                                           class="btn btn-sm btn-outline-primary" 
+                                                           title="{{ __('Modifier') }}">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <form action="{{ route('admin.driver.delete', Crypt::encrypt($d->getId())) }}" 
+                                                              method="POST" 
+                                                              class="d-inline delete-driver-form">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" 
+                                                                    class="btn btn-sm btn-outline-danger" 
+                                                                    title="{{ __('Supprimer') }}">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
                                             </tr>
                                             @endforeach
                                         </tbody>
@@ -60,4 +85,18 @@
             </div> <!-- end card body-->
         </div> <!-- end card -->
     </div><!-- end col-->
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteForms = document.querySelectorAll('.delete-driver-form');
+            var confirmMessage = "{{ __('Êtes-vous sûr de vouloir supprimer ce conducteur?') }}";
+            deleteForms.forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    if (!confirm(confirmMessage)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
 </x-admin.app>

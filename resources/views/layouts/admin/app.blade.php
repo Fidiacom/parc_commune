@@ -168,12 +168,12 @@
                                 </a>
                                 @endforeach
 
-                                @foreach ($trips as $trip)
-                                <a href="{{ route('admin.trip.edit', Crypt::encrypt($trip->id)) }}" class="text-reset notification-item">
+                                @foreach ($missionOrders as $missionOrder)
+                                <a href="{{ route('admin.mission_order.edit', Crypt::encrypt($missionOrder->id)) }}" class="text-reset notification-item">
                                     <div class="media">
                                         <div class="media-body">
-                                            <h6 class="mt-0 mb-1">{{ 'Trip :'. $trip->driver->full_name.' | '.$trip->vehicule->brand.'-'.$trip->vehicule->model }}</h6>
-                                            <p class="font-size-13 mb-1">{{ __('Trip expired') }}</p>
+                                            <h6 class="mt-0 mb-1">{{ 'Mission Order :'. $missionOrder->driver->full_name.' | '.$missionOrder->vehicule->brand.'-'.$missionOrder->vehicule->model }}</h6>
+                                            <p class="font-size-13 mb-1">{{ __('Mission order expired') }}</p>
                                         </div>
                                     </div>
                                 </a>
@@ -252,7 +252,7 @@
                         </li>
 
                         <li>
-                            <a href="{{ route('admin.trip') }}" class="wwaves-effect"><i
+                            <a href="{{ route('admin.mission_order') }}" class="wwaves-effect"><i
                                     class="mdi mdi-road"></i>
                                     <span>{{ __('Ordre de mission') }}</span>
                             </a>

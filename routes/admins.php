@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\PaymentVoucherController;
 use App\Http\Controllers\Admin\VehiculeUpdateController;
 use App\Http\Controllers\Admin\CategoriePermiController;
+use App\Http\Controllers\Admin\ReformeController;
 use App\Http\Controllers\LanguageController;
 
 Route::middleware(['auth'])->group(function () {
@@ -112,5 +113,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/settings/categorie-permis/{id}/edit', [CategoriePermiController::class, 'edit'])->name('admin.categorie_permis.edit');
         Route::put('/settings/categorie-permis/{id}', [CategoriePermiController::class, 'update'])->name('admin.categorie_permis.update');
         Route::delete('/settings/categorie-permis/{id}', [CategoriePermiController::class, 'destroy'])->name('admin.categorie_permis.destroy');
+
+        //Reformes
+        Route::get('/reforme', [ReformeController::class, 'index'])->name('admin.reforme');
+        Route::get('/reforme/create', [ReformeController::class, 'create'])->name('admin.reforme.create');
+        Route::post('/reforme/store', [ReformeController::class, 'store'])->name('admin.reforme.store');
+        Route::get('/reforme/{id}', [ReformeController::class, 'show'])->name('admin.reforme.show');
+        Route::get('/reforme/{id}/edit', [ReformeController::class, 'edit'])->name('admin.reforme.edit');
+        Route::post('/reforme/update/{id}', [ReformeController::class, 'update'])->name('admin.reforme.update');
+        Route::post('/reforme/update-status/{id}', [ReformeController::class, 'updateStatus'])->name('admin.reforme.update-status');
+        Route::post('/reforme/attachments/add', [ReformeController::class, 'addAttachments'])->name('admin.reforme.attachments.add');
+        Route::delete('/reforme/attachments/delete/{id}', [ReformeController::class, 'deleteAttachment'])->name('admin.reforme.attachments.delete');
+        Route::delete('/reforme/status-attachments/delete/{id}', [ReformeController::class, 'deleteStatusAttachment'])->name('admin.reforme.status-attachments.delete');
+        Route::delete('/reforme/{id}', [ReformeController::class, 'destroy'])->name('admin.reforme.delete');
     });
 });

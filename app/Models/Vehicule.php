@@ -188,6 +188,26 @@ class Vehicule extends Model
         return $this->hasMany(VehiculeAttachment::class, 'vehicule_id');
     }
 
+    public function reformes()
+    {
+        return $this->hasMany(Reforme::class, 'vehicule_id');
+    }
+
+    public function getActiveReforme(): ?Reforme
+    {
+        return $this->reformes()
+            ->whereIn('status', [Reforme::STATUS_CONFIRMED, Reforme::STATUS_SELLED])
+            ->latest()
+            ->first();
+    }
+
+    public function hasActiveReforme(): bool
+    {
+        return $this->reformes()
+            ->whereIn('status', [Reforme::STATUS_CONFIRMED, Reforme::STATUS_SELLED])
+            ->exists();
+    }
+
     public function getThresholdVidange(): ?int
     {
         return $this->vidange ? $this->vidange->getThresholdKm() : null;

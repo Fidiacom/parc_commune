@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Vehicule;
+use App\Models\Reforme;
 
 class VehiculeRepository
 {
@@ -11,13 +12,27 @@ class VehiculeRepository
      */
     public function getAll()
     {
-        return Vehicule::latest()->get();
+        return $this->excludeReformedVehicles(Vehicule::query())->latest()->get();
     }
 
     /**
      * Get all vehicules with counts.
      */
     public function getAllWithCounts(array $relations = [])
+    {
+        $query = $this->excludeReformedVehicles(Vehicule::query());
+        
+        foreach ($relations as $relation) {
+            $query->withCount($relation);
+        }
+        
+        return $query->latest()->get();
+    }
+
+    /**
+     * Get all vehicules with counts (including reformed vehicles).
+     */
+    public function getAllWithCountsIncludingReformed(array $relations = [])
     {
         $query = Vehicule::query();
         
@@ -26,6 +41,16 @@ class VehiculeRepository
         }
         
         return $query->latest()->get();
+    }
+
+    /**
+     * Exclude vehicles with confirmed or selled reform status.
+     */
+    protected function excludeReformedVehicles($query)
+    {
+        return $query->whereDoesntHave('reformes', function ($q) {
+            $q->whereIn('status', [Reforme::STATUS_CONFIRMED, Reforme::STATUS_SELLED]);
+        });
     }
 
     /**

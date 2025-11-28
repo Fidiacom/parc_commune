@@ -17,12 +17,21 @@ class VehiculeService
     }
 
     /**
-     * Get all vehicules.
+     * Get all vehicules (excluding reformed vehicles with confirmed/selled status).
      */
     public function getAllVehicules()
     {
         $repository = new \App\Repositories\VehiculeRepository();
         return $repository->getAllWithCounts(['images', 'attachments']);
+    }
+
+    /**
+     * Get all vehicules including reformed ones (for vehicle list page).
+     */
+    public function getAllVehiculesIncludingReformed()
+    {
+        $repository = new \App\Repositories\VehiculeRepository();
+        return $repository->getAllWithCountsIncludingReformed(['images', 'attachments']);
     }
 
     /**

@@ -21,7 +21,8 @@ class VehiculeController extends Controller
 
     public function index()
     {
-        $vehicules = $this->vehiculeService->getAllVehicules();
+        // Show all vehicles including reformed ones in the vehicle list page
+        $vehicules = $this->vehiculeService->getAllVehiculesIncludingReformed();
         return view('admin.vehicule.index', ['vehicules' => $vehicules]);
     }
 

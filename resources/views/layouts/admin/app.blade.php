@@ -259,6 +259,12 @@
                             </a>
                         </li>
 
+                        <li>
+                            <a href="{{ route('admin.reforme') }}" class="wwaves-effect"><i
+                                    class="mdi mdi-recycle"></i>
+                                    <span>{{ __('Réforme') }}</span>
+                            </a>
+                        </li>
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="mdi mdi-package"></i></i><span>{{ __('Stock') }}</span></a>

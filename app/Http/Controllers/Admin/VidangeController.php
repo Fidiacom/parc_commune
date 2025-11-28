@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\Vidange;
 use App\Models\Vehicule;
 use App\Models\VidangeHistorique;
-use Crypt;
 use Alert;
 
 class VidangeController extends Controller
@@ -38,8 +37,7 @@ class VidangeController extends Controller
     {
         //dump($request->all(), $vehicule_id);
         try {
-            $id = Crypt::decrypt($vehicule_id);
-            $vehicule = Vehicule::with('vidange')->findOrFail($id);
+            $vehicule = Vehicule::with('vidange')->findOrFail($vehicule_id);
 
             $validated = $request->validate([
                 'km_actuel_vidange' =>  'required|numeric|min:'.$vehicule->total_km

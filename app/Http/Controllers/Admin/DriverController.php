@@ -8,7 +8,6 @@ use App\Http\Requests\UpdateDriverRequest;
 use App\Models\CategoriePermi;
 use App\Services\DriverService;
 use RealRashid\SweetAlert\Facades\Alert;
-use Illuminate\Support\Facades\Crypt;
 
 class DriverController extends Controller
 {
@@ -44,7 +43,6 @@ class DriverController extends Controller
         $permis = CategoriePermi::all();
 
         try {
-            $id = Crypt::decrypt($id);
             $driver = $this->driverService->getDriverById($id);
             
             if (!$driver) {
@@ -62,7 +60,6 @@ class DriverController extends Controller
     public function update(UpdateDriverRequest $request, $id)
     {
         try {
-            $id = Crypt::decrypt($id);
             $driver = $this->driverService->getDriverById($id);
             
             if (!$driver) {
@@ -83,7 +80,6 @@ class DriverController extends Controller
     public function destroy($id)
     {
         try {
-            $id = Crypt::decrypt($id);
             $driver = $this->driverService->getDriverById($id);
             
             if (!$driver) {

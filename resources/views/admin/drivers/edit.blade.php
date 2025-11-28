@@ -16,7 +16,7 @@
             <div class="col-xl-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.driver.update', Crypt::encrypt($driver->getId())) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.driver.update', $driver->getId()) }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             {{-- Image Section --}}
@@ -212,7 +212,7 @@
                         </form>
                         
                         {{-- Delete Form --}}
-                        <form action="{{ route('admin.driver.delete', Crypt::encrypt($driver->getId())) }}" method="POST" id="deleteForm">
+                        <form action="{{ route('admin.driver.delete', $driver->getId()) }}" method="POST" id="deleteForm">
                             @csrf
                             @method('DELETE')
                         </form>

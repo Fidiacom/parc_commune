@@ -10,7 +10,6 @@ use App\Models\Driver;
 use App\Models\MissionOrder;
 use App\Services\SettingService;
 use RealRashid\SweetAlert\Facades\Alert;
-use Illuminate\Support\Facades\Crypt;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\View;
 use App\Services\DriverService;
@@ -48,7 +47,6 @@ class MissionOrderController extends Controller
     public function edit($id)
     {
         try {
-            $id = Crypt::decrypt($id);
             $missionOrder = $this->missionOrderService->getMissionOrderById($id);
             
             if (!$missionOrder) {
@@ -109,7 +107,6 @@ class MissionOrderController extends Controller
         ]);
 
         try {
-            $id = Crypt::decrypt($id);
             $missionOrder = $this->missionOrderService->getMissionOrderById($id);
             
             if (!$missionOrder) {
@@ -131,7 +128,6 @@ class MissionOrderController extends Controller
     public function destroy($id)
     {
         try {
-            $id = Crypt::decrypt($id);
             $missionOrder = $this->missionOrderService->getMissionOrderById($id);
             
             if (!$missionOrder) {

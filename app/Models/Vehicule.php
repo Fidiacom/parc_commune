@@ -188,13 +188,13 @@ class Vehicule extends Model
         return $this->hasMany(VehiculeAttachment::class, 'vehicule_id');
     }
 
-    public function getThresholdVidange(): int
+    public function getThresholdVidange(): ?int
     {
-        return $this->vidange->getThresholdKm();
+        return $this->vidange ? $this->vidange->getThresholdKm() : null;
     }
 
-    public function getThresholdTimingChaine(): int
+    public function getThresholdTimingChaine(): ?int
     {
-        return $this->timing_chaine->getThresholdKm();
+        return $this->timing_chaine ? $this->timing_chaine->getThresholdKm() : null;
     }
 }

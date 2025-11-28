@@ -8,7 +8,6 @@ use App\Models\CategoriePermi;
 use App\Models\pneu;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 
 class VehiculeController extends Controller
@@ -175,10 +174,10 @@ class VehiculeController extends Controller
         }
     }
 
-    public function edit($id)
+    public function show($id, Request $request)
     {
         try {
-            $vehicule = $this->vehiculeService->getVehiculeById($id, ['vidange', 'timing_chaine', 'images', 'attachments', 'pneu']);
+            $vehicule = $this->vehiculeService->getVehiculeById($id, ['images', 'attachments', 'pneu', 'vidange', 'timing_chaine']);
         } catch (\Throwable $th) {
             return view('admin.vehicule.404');
         }
@@ -187,7 +186,167 @@ class VehiculeController extends Controller
             return view('admin.vehicule.404');
         }
 
-        return view('admin.vehicule.edit', ['vehicule' => $vehicule]);
+        // Get date filters from request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Build query for all payment vouchers
+        $allVouchersQuery = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId());
+        
+        // Apply date filters if provided
+        if ($startDate) {
+            $allVouchersQuery->where('invoice_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $allVouchersQuery->where('invoice_date', '<=', $endDate);
+        }
+        
+        $allVouchers = $allVouchersQuery->orderBy('invoice_date', 'desc')->get();
+
+        // Get fuel vouchers for consumption statistics with date filter
+        $fuelVouchersQuery = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
+            ->where('category', 'carburant')
+            ->whereNotNull('fuel_liters');
+        
+        if ($startDate) {
+            $fuelVouchersQuery->where('invoice_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $fuelVouchersQuery->where('invoice_date', '<=', $endDate);
+        }
+        
+        $fuelVouchers = $fuelVouchersQuery->orderBy('invoice_date', 'asc')->get();
+
+        // Calculate consumption statistics
+        $consumptionStats = $this->calculateConsumptionStats($vehicule, $fuelVouchers);
+
+        // Get vouchers by category (filtered)
+        $vouchersByCategory = $allVouchers->groupBy('category');
+
+        // Calculate total costs by category (filtered)
+        $costsByCategory = [];
+        foreach ($vouchersByCategory as $category => $vouchers) {
+            $costsByCategory[$category] = $vouchers->sum('amount');
+        }
+
+        // Get latest insurance and technical visit vouchers (not filtered by date)
+        $latestInsurance = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
+            ->where('category', 'insurance')
+            ->whereNotNull('insurance_expiration_date')
+            ->orderBy('insurance_expiration_date', 'desc')
+            ->first();
+
+        $latestTechnicalVisit = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
+            ->where('category', 'visite_technique')
+            ->whereNotNull('technical_visit_expiration_date')
+            ->orderBy('technical_visit_expiration_date', 'desc')
+            ->first();
+
+        return view('admin.vehicule.show', [
+            'vehicule' => $vehicule,
+            'fuelVouchers' => $fuelVouchers,
+            'consumptionStats' => $consumptionStats,
+            'allVouchers' => $allVouchers,
+            'vouchersByCategory' => $vouchersByCategory,
+            'costsByCategory' => $costsByCategory,
+            'latestInsurance' => $latestInsurance,
+            'latestTechnicalVisit' => $latestTechnicalVisit,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ]);
+    }
+
+    public function edit($id)
+    {
+        try {
+            $vehicule = $this->vehiculeService->getVehiculeById($id, ['images', 'attachments', 'pneu', 'vidange', 'timing_chaine']);
+        } catch (\Throwable $th) {
+            return view('admin.vehicule.404');
+        }
+
+        if (!$vehicule) {
+            return view('admin.vehicule.404');
+        }
+
+        // Get fuel vouchers for consumption statistics
+        $fuelVouchers = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
+            ->where('category', 'carburant')
+            ->whereNotNull('fuel_liters')
+            ->orderBy('invoice_date', 'asc')
+            ->get();
+
+        // Calculate consumption statistics
+        $consumptionStats = $this->calculateConsumptionStats($vehicule, $fuelVouchers);
+
+        return view('admin.vehicule.edit', [
+            'vehicule' => $vehicule,
+            'fuelVouchers' => $fuelVouchers,
+            'consumptionStats' => $consumptionStats,
+        ]);
+    }
+
+    /**
+     * Calculate consumption statistics for a vehicle.
+     */
+    protected function calculateConsumptionStats($vehicule, $fuelVouchers)
+    {
+        $stats = [
+            'total_fuel_liters' => 0,
+            'total_fuel_cost' => 0,
+            'total_km' => 0,
+            'total_hours' => 0,
+            'average_consumption_100km' => null,
+            'average_consumption_hour' => null,
+            'average_price_per_liter' => null,
+            'exceeds_max_consumption' => false,
+            'last_fuel_entry' => null,
+        ];
+
+        if ($fuelVouchers->count() < 2) {
+            return $stats;
+        }
+
+        $firstVoucher = $fuelVouchers->first();
+        $lastVoucher = $fuelVouchers->last();
+        $stats['last_fuel_entry'] = $lastVoucher;
+
+        // Calculate totals
+        foreach ($fuelVouchers as $voucher) {
+            if ($voucher->getFuelLiters()) {
+                $stats['total_fuel_liters'] += $voucher->getFuelLiters();
+                $stats['total_fuel_cost'] += $voucher->getAmount();
+            }
+        }
+
+        // Calculate KM difference
+        $stats['total_km'] = $lastVoucher->getVehicleKm() - $firstVoucher->getVehicleKm();
+        
+        // Calculate hours difference if available
+        if ($lastVoucher->getVehicleHours() && $firstVoucher->getVehicleHours()) {
+            $stats['total_hours'] = $lastVoucher->getVehicleHours() - $firstVoucher->getVehicleHours();
+        }
+
+        // Calculate average consumption per 100km
+        if ($stats['total_km'] > 0 && $stats['total_fuel_liters'] > 0) {
+            $stats['average_consumption_100km'] = ($stats['total_fuel_liters'] / $stats['total_km']) * 100;
+        }
+
+        // Calculate average consumption per hour
+        if ($stats['total_hours'] > 0 && $stats['total_fuel_liters'] > 0) {
+            $stats['average_consumption_hour'] = $stats['total_fuel_liters'] / $stats['total_hours'];
+        }
+
+        // Calculate average price per liter
+        if ($stats['total_fuel_liters'] > 0) {
+            $stats['average_price_per_liter'] = $stats['total_fuel_cost'] / $stats['total_fuel_liters'];
+        }
+
+        // Check if exceeds max consumption
+        if ($vehicule->getMaxFuelConsumption100km() && $stats['average_consumption_100km']) {
+            $stats['exceeds_max_consumption'] = $stats['average_consumption_100km'] > $vehicule->getMaxFuelConsumption100km();
+        }
+
+        return $stats;
     }
 
     public function update(Request $request, $id)
@@ -254,8 +413,7 @@ class VehiculeController extends Controller
     public function dtt_get($vehicule_id)
     {
         try {
-            $id = Crypt::decrypt($vehicule_id);
-            $vehicule = $this->vehiculeService->getVehiculeById($id, ['vidange.vidange_historique', 'timing_chaine.timingchaine_historique', 'pneu.pneu_historique']);
+            $vehicule = $this->vehiculeService->getVehiculeById($vehicule_id, ['vidange.vidange_historique', 'timing_chaine.timingchaine_historique', 'pneu.pneu_historique']);
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -280,8 +438,7 @@ class VehiculeController extends Controller
         ]);
 
         try {
-            $id = Crypt::decrypt($request->vehicule_id);
-            $vehicule = $this->vehiculeService->getVehiculeById($id);
+            $vehicule = $this->vehiculeService->getVehiculeById($request->vehicule_id);
         } catch (\Throwable $th) {
             Alert::error(__('Erreur'), __('ID de véhicule invalide'));
             return back();
@@ -305,8 +462,7 @@ class VehiculeController extends Controller
     public function deleteImage($id)
     {
         try {
-            $imageId = Crypt::decrypt($id);
-            $this->vehiculeService->deleteImage($imageId);
+            $this->vehiculeService->deleteImage($id);
             Alert::success(__('Succès'), __('Image supprimée avec succès'));
         } catch (\Throwable $th) {
             Alert::error(__('Erreur'), __("Échec de la suppression de l'image"));
@@ -323,9 +479,7 @@ class VehiculeController extends Controller
         ]);
 
         try {
-            $vehiculeId = Crypt::decrypt($request->vehicule_id);
-            $imageId = Crypt::decrypt($request->image_id);
-            $this->vehiculeService->setMainImage($vehiculeId, $imageId);
+            $this->vehiculeService->setMainImage($request->vehicule_id, $request->image_id);
             Alert::success(__('Succès'), __('Image principale mise à jour avec succès'));
         } catch (\Throwable $th) {
             Alert::error(__('Erreur'), __("Échec de la définition de l'image principale"));
@@ -342,8 +496,7 @@ class VehiculeController extends Controller
         ]);
 
         try {
-            $id = Crypt::decrypt($request->vehicule_id);
-            $vehicule = $this->vehiculeService->getVehiculeById($id);
+            $vehicule = $this->vehiculeService->getVehiculeById($request->vehicule_id);
         } catch (\Throwable $th) {
             Alert::error(__('Erreur'), __('ID de véhicule invalide'));
             return back();
@@ -367,8 +520,7 @@ class VehiculeController extends Controller
     public function deleteAttachment($id)
     {
         try {
-            $attachmentId = Crypt::decrypt($id);
-            $this->vehiculeService->deleteAttachment($attachmentId);
+            $this->vehiculeService->deleteAttachment($id);
             Alert::success(__('Succès'), __('Fichier supprimé avec succès'));
         } catch (\Throwable $th) {
             Alert::error(__('Erreur'), __('Échec de la suppression du fichier'));
@@ -380,7 +532,6 @@ class VehiculeController extends Controller
     public function destroy($id)
     {
         try {
-            $id = Crypt::decrypt($id);
             $vehicule = $this->vehiculeService->getVehiculeById($id);
         } catch (\Throwable $th) {
             Alert::error(__('Erreur'), __('ID de véhicule invalide'));

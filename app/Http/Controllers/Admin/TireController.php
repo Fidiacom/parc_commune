@@ -9,7 +9,6 @@ use App\Models\pneu;
 use App\Models\PneuHistorique;
 use Validator;
 use Alert;
-use Crypt;
 class TireController extends Controller
 {
     public function create($carId)
@@ -98,8 +97,6 @@ class TireController extends Controller
     public function update(Request $request, $vehicule_id)
     {
         try {
-            $vehicule_id = Crypt::decrypt($vehicule_id);
-
             $vehicule = Vehicule::with('pneu')->findOrFail($vehicule_id);
 
             $validated = $request->validate([

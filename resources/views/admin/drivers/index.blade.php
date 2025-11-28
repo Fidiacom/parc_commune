@@ -38,7 +38,7 @@
 
                                             <tr>
                                                 <td>
-                                                    <a href="{{ route('admin.driver.edit', Crypt::encrypt($d->getId())) }}">
+                                                    <a href="{{ route('admin.driver.edit', $d->getId()) }}">
                                                         {{ $d->getFirstNameFr() ?: $d->getFirstNameAr() ?: '-' }}
                                                     </a>
                                                 </td>
@@ -54,12 +54,12 @@
                                                 <td>{{ $d->created_at }}</td>
                                                 <td class="text-center">
                                                     <div class="btn-group" role="group">
-                                                        <a href="{{ route('admin.driver.edit', Crypt::encrypt($d->getId())) }}" 
+                                                        <a href="{{ route('admin.driver.edit', $d->getId()) }}" 
                                                            class="btn btn-sm btn-outline-primary" 
                                                            title="{{ __('Modifier') }}">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.driver.delete', Crypt::encrypt($d->getId())) }}" 
+                                                        <form action="{{ route('admin.driver.delete', $d->getId()) }}" 
                                                               method="POST" 
                                                               class="d-inline delete-driver-form">
                                                             @csrf

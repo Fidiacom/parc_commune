@@ -8,7 +8,7 @@
         <h5 class="card-title">{{ __('Télécharger de nouvelles images') }}</h5>
         <form id="imageUploadForm" action="{{ route('admin.vehicule.images.add') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <input type="hidden" name="vehicule_id" value="{{ Crypt::encrypt($vehicule->getId()) }}">
+            <input type="hidden" name="vehicule_id" value="{{ $vehicule->getId() }}">
             <div class="form-group">
                 <input type="file" class="form-control-file" name="images[]" id="imageInput" multiple accept="image/*">
                 <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs images. Taille maximum: 50MB par image') }}</small>
@@ -44,8 +44,8 @@
                             @if(!$image->getIsMain())
                             <form action="{{ route('admin.vehicule.images.set-main') }}" method="POST" class="d-inline">
                                 @csrf
-                                <input type="hidden" name="vehicule_id" value="{{ Crypt::encrypt($vehicule->getId()) }}">
-                                <input type="hidden" name="image_id" value="{{ Crypt::encrypt($image->getId()) }}">
+                                <input type="hidden" name="vehicule_id" value="{{ $vehicule->getId() }}">
+                                <input type="hidden" name="image_id" value="{{ $image->getId() }}">
                                 <button type="submit" class="btn btn-primary btn-sm" title="{{ __('Définir comme image principale') }}">
                                     <i class="fas fa-star"></i> {{ __('Définir principale') }}
                                 </button>
@@ -54,7 +54,7 @@
                             <a href="{{ asset($image->getFilePath()) }}" target="_blank" class="btn btn-info btn-sm" title="{{ __('Voir en taille réelle') }}">
                                 <i class="fas fa-eye"></i> {{ __('Voir') }}
                             </a>
-                            <form action="{{ route('admin.vehicule.images.delete', Crypt::encrypt($image->getId())) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer cette image?') }}');">
+                            <form action="{{ route('admin.vehicule.images.delete', $image->getId()) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer cette image?') }}');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" title="{{ __('Supprimer l\'image') }}">

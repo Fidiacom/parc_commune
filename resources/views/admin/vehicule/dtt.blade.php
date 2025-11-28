@@ -35,7 +35,7 @@
 
                         <div class="tab-content">
                             <div class="tab-pane @if (!$errors->any() || $errors->has('km_actuel_vidange')) active @endif)" id="vidange">
-                                <form action="{{ route('admin.drain.update', Crypt::encrypt($vehicule->getId())) }}"
+                                <form action="{{ route('admin.drain.update', $vehicule->getId()) }}"
                                     method="post">
                                     @csrf
                                     <div class="form-group">
@@ -99,7 +99,7 @@
                             </div>
 
                             <div class="tab-pane @error('km_actuel_timichaine') active @enderror" id="timingChaine">
-                                <form action="{{ route('admin.timingchaine.update', Crypt::encrypt($vehicule->getId())) }}"
+                                <form action="{{ route('admin.timingchaine.update', $vehicule->getId()) }}"
                                     method="post">
                                     @csrf
 
@@ -168,7 +168,7 @@
                                 <div class="row">
 
                                     <div class="col-12">
-                                        <form action="{{ route('admin.pneu.update', Crypt::encrypt($vehicule->getId())) }}" method="POST" class="form-group">
+                                        <form action="{{ route('admin.pneu.update', $vehicule->getId()) }}" method="POST" class="form-group">
                                             @csrf
                                             <div class="form-group mb-0">
                                                 <label>

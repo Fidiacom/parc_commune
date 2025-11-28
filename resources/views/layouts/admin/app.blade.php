@@ -169,7 +169,7 @@
                                 @endforeach
 
                                 @foreach ($missionOrders as $missionOrder)
-                                <a href="{{ route('admin.mission_order.edit', Crypt::encrypt($missionOrder->id)) }}" class="text-reset notification-item">
+                                <a href="{{ route('admin.mission_order.edit', $missionOrder->id) }}" class="text-reset notification-item">
                                     <div class="media">
                                         <div class="media-body">
                                             <h6 class="mt-0 mb-1">{{ 'Mission Order :'. $missionOrder->driver->full_name.' | '.$missionOrder->vehicule->brand.'-'.$missionOrder->vehicule->model }}</h6>
@@ -239,10 +239,11 @@
                         </li>
 
                         <li>
-                            <a href="{{ route('admin.vehicule') }}" class="wwaves-effect"><i
-                                    class="bx bx-car"></i>
-                                    <span>{{ __('Vehicule') }}</span>
-                            </a>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="bx bx-car"></i><span>{{ __('Vehicule') }}</span></a>
+                            <ul class="sub-menu" aria-expanded="true">
+                                <li><a href="{{ route('admin.vehicule') }}">{{ __('Liste des véhicules') }}</a></li>
+                                <li><a href="{{ route('admin.vehicule.update.index') }}">{{ __('Mise à jour KM/Heures') }}</a></li>
+                            </ul>
                         </li>
                         <li>
                             <a href="{{ route('admin.drivers') }}" class="wwaves-effect"><i
@@ -265,6 +266,24 @@
                                 <li><a href="{{ route('admin.stock-entry') }}">{{ __('Entree de stock') }}</a></li>
                                 <li><a href="{{ route('admin.stock') }}">{{ __('Gestion du stock') }}</a></li>
                                 <li><a href="{{ route('admin.stockHistorie') }}">{{ __('Historique Stock') }}</a></li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="mdi mdi-receipt"></i><span>{{ __('Bon de paiement') }}</span></a>
+                            <ul class="sub-menu" aria-expanded="true">
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'carburant') }}">{{ __('Bon pour Carburant') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'entretien') }}">{{ __('Entretien') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'vidange') }}">{{ __('Vidange') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'lavage') }}">{{ __('Lavage') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'lubrifiant') }}">{{ __('Lubrifiant') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'reparation') }}">{{ __('Reparation') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'achat_pieces_recharges') }}">{{ __('Achat pieces de recharges') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'rechange_pneu') }}">{{ __('Rechange pneu') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'frais_immatriculation') }}">{{ __('Frais d\'immatriculation') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'visite_technique') }}">{{ __('Visite technique') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'insurance') }}">{{ __('Assurance') }}</a></li>
+                                <li><a href="{{ route('admin.payment_voucher.index.category', 'other') }}">{{ __('Autre') }}</a></li>
                             </ul>
                         </li>
 

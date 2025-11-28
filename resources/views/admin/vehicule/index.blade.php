@@ -215,17 +215,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
+                                                <a href="{{ route('admin.vehicule.show', $vehicule->getId()) }}" 
+                                                   class="btn btn-sm btn-info" 
+                                                   title="{{ __('Voir') }}">
+                                                    <i class="mdi mdi-eye"></i>
+                                                </a>
                                                 <a href="{{ route('admin.vehicule.edit', $vehicule->getId()) }}" 
                                                    class="btn btn-sm btn-outline-primary" 
                                                    title="{{ __('Modifier') }}">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="{{ route('admin.dtt', Crypt::encrypt($vehicule->getId())) }}" 
+                                                <a href="{{ route('admin.dtt', $vehicule->getId()) }}" 
                                                    class="btn btn-sm btn-outline-info" 
                                                    title="{{ __('Maintenance') }}">
                                                     <i class="fas fa-cogs"></i>
                                                 </a>
-                                                <form action="{{ route('admin.vehicule.delete', Crypt::encrypt($vehicule->getId())) }}" 
+                                                <form action="{{ route('admin.vehicule.delete', $vehicule->getId()) }}" 
                                                       method="POST" 
                                                       class="d-inline"
                                                       onsubmit="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer ce véhicule?') }}');">

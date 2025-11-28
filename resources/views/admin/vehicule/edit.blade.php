@@ -16,7 +16,7 @@
                         <a href="{{ route('admin.vehicule') }}" class="btn btn-outline-secondary mr-2">
                             <i class="fas fa-arrow-left mr-2"></i>{{ __('Retour') }}
                         </a>
-                        <a href="{{ route('admin.dtt', Crypt::encrypt($vehicule->getId())) }}" class="btn btn-outline-info">
+                        <a href="{{ route('admin.dtt', $vehicule->getId()) }}" class="btn btn-outline-info">
                             <i class="fas fa-cogs mr-2"></i>{{ __('Maintenance') }}
                         </a>
                     </div>
@@ -34,18 +34,90 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6 mb-2 mb-md-0">
-                                        <a href="{{ route('admin.dtt', Crypt::encrypt($vehicule->getId())) }}" class="btn btn-outline-primary btn-block">
+                                        <a href="{{ route('admin.dtt', $vehicule->getId()) }}" class="btn btn-outline-primary btn-block">
                                             <i class="fas fa-cogs mr-2"></i>{{ __('Maintenance (Pneus/Vidange/Chaine)') }}
                                         </a>
                                     </div>
                                     <div class="col-md-6">
-                                        <a href="{{ route('admin.maintenance.create', Crypt::encrypt($vehicule->getId())) }}" class="btn btn-outline-info btn-block">
+                                        <a href="{{ route('admin.maintenance.create', $vehicule->getId()) }}" class="btn btn-outline-info btn-block">
                                             <i class="fas fa-tools mr-2"></i>{{ __('Maintenance & Carburant') }}
                                         </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Consumption Statistics -->
+                        @if(isset($consumptionStats) && $fuelVouchers->count() >= 2)
+                        <div class="card border mb-4 {{ $consumptionStats['exceeds_max_consumption'] ? 'border-danger' : '' }}">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-chart-line text-primary mr-2"></i>{{ __('Statistiques de consommation') }}
+                                    @if($consumptionStats['exceeds_max_consumption'])
+                                        <span class="badge badge-danger ml-2">{{ __('Consommation élevée!') }}</span>
+                                    @endif
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="text-center">
+                                            <h6 class="text-muted mb-1">{{ __('Consommation moyenne') }}</h6>
+                                            <h4 class="mb-0 {{ $consumptionStats['exceeds_max_consumption'] ? 'text-danger' : 'text-success' }}">
+                                                {{ $consumptionStats['average_consumption_100km'] ? number_format($consumptionStats['average_consumption_100km'], 2, ',', ' ') : '-' }} L/100km
+                                            </h4>
+                                            @if($vehicule->getMinFuelConsumption100km() && $vehicule->getMaxFuelConsumption100km())
+                                                <small class="text-muted">
+                                                    {{ __('Normale') }}: {{ $vehicule->getMinFuelConsumption100km() }} - {{ $vehicule->getMaxFuelConsumption100km() }} L/100km
+                                                </small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="text-center">
+                                            <h6 class="text-muted mb-1">{{ __('Total carburant') }}</h6>
+                                            <h4 class="mb-0 text-info">
+                                                {{ number_format($consumptionStats['total_fuel_liters'], 2, ',', ' ') }} L
+                                            </h4>
+                                            <small class="text-muted">{{ __('Coût total') }}: {{ number_format($consumptionStats['total_fuel_cost'], 2, ',', ' ') }} {{ __('DH') }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="text-center">
+                                            <h6 class="text-muted mb-1">{{ __('Distance parcourue') }}</h6>
+                                            <h4 class="mb-0 text-primary">
+                                                {{ number_format($consumptionStats['total_km'], 0, ',', ' ') }} {{ __('KM') }}
+                                            </h4>
+                                            @if($consumptionStats['total_hours'] > 0)
+                                                <small class="text-muted">{{ __('Heures') }}: {{ number_format($consumptionStats['total_hours'], 0, ',', ' ') }} H</small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="text-center">
+                                            <h6 class="text-muted mb-1">{{ __('Prix moyen/Litre') }}</h6>
+                                            <h4 class="mb-0 text-success">
+                                                {{ $consumptionStats['average_price_per_liter'] ? number_format($consumptionStats['average_price_per_liter'], 2, ',', ' ') : '-' }} {{ __('DH/L') }}
+                                            </h4>
+                                            @if($consumptionStats['average_consumption_hour'])
+                                                <small class="text-muted">{{ __('Consommation/heure') }}: {{ number_format($consumptionStats['average_consumption_hour'], 2, ',', ' ') }} L/H</small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                @if($consumptionStats['last_fuel_entry'])
+                                <div class="mt-3 pt-3 border-top">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        {{ __('Dernière entrée carburant') }}: 
+                                        {{ \Carbon\Carbon::parse($consumptionStats['last_fuel_entry']->getInvoiceDate())->format('d/m/Y') }} 
+                                        ({{ number_format($consumptionStats['last_fuel_entry']->getFuelLiters(), 2, ',', ' ') }} L)
+                                    </small>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        @endif
 
                         <!-- Images Section (Outside main form to avoid nested forms) -->
                         <div class="card border mb-4">
@@ -411,7 +483,7 @@
                                                     class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"
                                                     name="threshold_vidange"
                                                     id="threshold_vidange"
-                                                    value="{{ $vehicule->getThresholdVidange() }}"
+                                                    value="{{ $vehicule->getThresholdVidange() ?? '' }}"
                                                     data-a-sep="." 
                                                     data-a-dec=",">
                                                 <small class="form-text text-muted">{{ __('Kilométrage entre chaque vidange') }}</small>
@@ -429,7 +501,7 @@
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    value="{{ $vehicule->getThresholdTimingChaine() }}"
+                                                    value="{{ $vehicule->getThresholdTimingChaine() ?? '' }}"
                                                     class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"
                                                     name="threshold_timing_chaine"
                                                     id="threshold_timing_chaine"

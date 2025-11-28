@@ -47,7 +47,7 @@
                 <div class="card-body">
                     <h4 class="card-title">{{ __('Ordre de mission') }}</h4>
 
-                    <form action="{{ route('admin.mission_order.update', Crypt::encrypt($missionOrder->getId())) }}" method="post">
+                    <form action="{{ route('admin.mission_order.update', $missionOrder->getId()) }}" method="post">
                         @csrf
                         @method('put')
                         <div class="form-group">
@@ -184,7 +184,7 @@
                     </form>
                 </div>
             </div>
-            <form action="{{ route('admin.mission_order.delete', Crypt::encrypt($missionOrder->getId())) }}" method="post" id="deleteForm">
+            <form action="{{ route('admin.mission_order.delete', $missionOrder->getId()) }}" method="post" id="deleteForm">
                 @csrf
                 @method('DELETE')
             </form>

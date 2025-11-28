@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\HistoriqueStockController;
 use App\Http\Controllers\Admin\MaintenenceController;
 use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\PaymentVoucherController;
+use App\Http\Controllers\Admin\VehiculeUpdateController;
 use App\Http\Controllers\LanguageController;
 
 Route::middleware(['auth'])->group(function () {
@@ -23,6 +25,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('vehicule', [VehiculeController::class, 'index'])->name('admin.vehicule');
         Route::get('vehicule/create', [VehiculeController::class, 'create'])->name('admin.vehicule.create');
         Route::post('vehicule/store', [VehiculeController::class, 'store'])->name('admin.vehicule.store');
+        // Vehicle KM/Hours Update - must be before vehicule/{id} route
+        Route::get('vehicule/update-km-hours', [VehiculeUpdateController::class, 'index'])->name('admin.vehicule.update.index');
+        Route::get('vehicule/{id}/show', [VehiculeController::class, 'show'])->name('admin.vehicule.show');
         Route::get('vehicule/{id}', [VehiculeController::class, 'edit'])->name('admin.vehicule.edit');
         Route::post('vehicule/update/{id}', [VehiculeController::class, 'update'])->name('admin.vehicule.update');
         Route::post('vehicule/images/add', [VehiculeController::class, 'addImages'])->name('admin.vehicule.images.add');
@@ -81,5 +86,22 @@ Route::middleware(['auth'])->group(function () {
         //Route::get('/maintenence', [MaintenenceController::class, 'index'])->name('admin.maintenance');
         Route::get('/maintenence/create/{id}', [MaintenenceController::class, 'create'])->name('admin.maintenance.create');
         Route::post('/maintenance/store', [MaintenenceController::class, 'store'])->name('admin.maintenance.store');
+
+        //Payment Vouchers (Bons de paiement)
+        Route::get('/payment-voucher', [PaymentVoucherController::class, 'index'])->name('admin.payment_voucher.index');
+        Route::get('/payment-voucher/category/{category}', [PaymentVoucherController::class, 'index'])->name('admin.payment_voucher.index.category');
+        Route::get('/payment-voucher/create', [PaymentVoucherController::class, 'create'])->name('admin.payment_voucher.create');
+        Route::get('/payment-voucher/create/{category}', [PaymentVoucherController::class, 'create'])->name('admin.payment_voucher.create.category');
+        Route::get('/payment-voucher/get-insurance-expiration/{vehiculeId}', [PaymentVoucherController::class, 'getInsuranceExpiration'])->name('admin.payment_voucher.get_insurance_expiration');
+        Route::get('/payment-voucher/get-technical-visit-expiration/{vehiculeId}', [PaymentVoucherController::class, 'getTechnicalVisitExpiration'])->name('admin.payment_voucher.get_technical_visit_expiration');
+        Route::get('/payment-voucher/get-vehicle-km/{vehiculeId}', [PaymentVoucherController::class, 'getVehicleKm'])->name('admin.payment_voucher.get_vehicle_km');
+        Route::post('/payment-voucher/store', [PaymentVoucherController::class, 'store'])->name('admin.payment_voucher.store');
+        Route::get('/payment-voucher/{id}', [PaymentVoucherController::class, 'show'])->name('admin.payment_voucher.show');
+        Route::get('/payment-voucher/{id}/edit', [PaymentVoucherController::class, 'edit'])->name('admin.payment_voucher.edit');
+        Route::put('/payment-voucher/{id}', [PaymentVoucherController::class, 'update'])->name('admin.payment_voucher.update');
+        Route::delete('/payment-voucher/{id}', [PaymentVoucherController::class, 'destroy'])->name('admin.payment_voucher.delete');
+
+        //Vehicle KM/Hours Update - PUT route (already moved GET route above)
+        Route::put('/vehicule/update-km-hours/{id}', [VehiculeUpdateController::class, 'update'])->name('admin.vehicule.update.km_hours');
     });
 });

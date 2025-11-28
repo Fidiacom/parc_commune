@@ -8,7 +8,6 @@ use App\Models\Unitie;
 use App\Models\StockHistorique;
 use App\Models\Stock;
 use Alert;
-use Crypt;
 
 class StockController extends Controller
 {
@@ -70,7 +69,6 @@ class StockController extends Controller
 
         $isStockChanged = false;
         try {
-            $id = Crypt::decrypt($id);
             $stock = Stock::findOrfail($id);
             $stock->name  = $request->nameUpdate;
             $stock->min_stock_alert  = $request->min_stock_alertUpdate;

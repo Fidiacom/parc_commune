@@ -102,7 +102,7 @@
                         <tbody>
                             @foreach ($stocks as $s)
                             <tr>
-                                <form action="{{ route('admin.stock.update', Crypt::encrypt($s->id)) }}" method="post">
+                                <form action="{{ route('admin.stock.update', $s->id) }}" method="post">
                                     @csrf
                                     @method('PUT')
                                     <td>

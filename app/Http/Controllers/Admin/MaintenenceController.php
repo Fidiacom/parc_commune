@@ -8,7 +8,6 @@ use App\Models\Maintenence;
 use App\Models\Vehicule;
 use App\Models\Stock;
 use App\Models\StockHistorique;
-use Crypt;
 use Alert;
 class MaintenenceController extends Controller
 {
@@ -16,7 +15,6 @@ class MaintenenceController extends Controller
     public function create($id)
     {
         try {
-            $id = Crypt::decrypt($id);
             $vehicule = Vehicule::findOrFail($id);
             $stocks = Stock::with('unitie')->get();
 

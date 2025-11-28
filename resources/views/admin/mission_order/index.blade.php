@@ -173,7 +173,7 @@
                             @foreach ($missionOrders as $missionOrder)
                             <tr @if ($missionOrder->getDoneAt() != null) @class(['bg-success', 'text-white']) style="--bs-bg-opacity: .5;" @endif>
                                 <td>
-                                    <a href="{{ route('admin.mission_order.edit', Crypt::encrypt($missionOrder->getId())) }}">
+                                    <a href="{{ route('admin.mission_order.edit', $missionOrder->getId()) }}">
                                         {{ ($missionOrder->driver->getFirstNameFr() ?: $missionOrder->driver->getFirstNameAr() ?: '') . ' ' . ($missionOrder->driver->getLastNameFr() ?: $missionOrder->driver->getLastNameAr() ?: '') }}
                                     </a>
                                 </td>

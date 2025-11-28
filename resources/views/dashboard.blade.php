@@ -63,6 +63,67 @@
         </div>
         <!-- end row -->
 
+        <!-- Alerts Section -->
+        @if(isset($vehiclesExceedingConsumption) && count($vehiclesExceedingConsumption) > 0)
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>{{ __('Alertes - Consommation élevée') }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-danger mb-0">
+                            <h6 class="alert-heading"><i class="fas fa-gas-pump mr-2"></i>{{ __('Véhicules dépassant la consommation maximale') }}</h6>
+                            <hr>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('Véhicule') }}</th>
+                                            <th>{{ __('Consommation moyenne') }}</th>
+                                            <th>{{ __('Consommation max') }}</th>
+                                            <th>{{ __('Dépassement') }}</th>
+                                            <th>{{ __('Actions') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($vehiclesExceedingConsumption as $item)
+                                        <tr>
+                                            <td>
+                                                <strong>{{ $item['vehicule']->getBrand() }} {{ $item['vehicule']->getModel() }}</strong><br>
+                                                <small class="text-muted">{{ $item['vehicule']->getMatricule() }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-danger">
+                                                    {{ number_format($item['average_consumption'], 2, ',', ' ') }} L/100km
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {{ number_format($item['max_consumption'], 2, ',', ' ') }} L/100km
+                                            </td>
+                                            <td>
+                                                <span class="text-danger font-weight-bold">
+                                                    +{{ number_format($item['excess'], 2, ',', ' ') }} L/100km
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('admin.vehicule.show', $item['vehicule']->getId()) }}" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-eye mr-1"></i>{{ __('Voir détails') }}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
 
         <div class="row">
 
@@ -89,7 +150,7 @@
                                 @foreach ($vehicules as $vehicule)
                                 <tr>
                                     <td>
-                                        <a href="{{ route('admin.vehicule.edit', $vehicule->getId()) }}">
+                                        <a href="{{ route('admin.vehicule.show', $vehicule->getId()) }}">
                                             {{ $vehicule->getBrand() }}
                                         </a>
                                     </td>

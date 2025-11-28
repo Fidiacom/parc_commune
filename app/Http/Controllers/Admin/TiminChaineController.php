@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\TimingChaine;
 use App\Models\Vehicule;
 use App\Models\TimingChaineHistorique;
-use Crypt;
 use Alert;
 
 class TiminChaineController extends Controller
@@ -37,10 +36,7 @@ class TiminChaineController extends Controller
     public function update(Request $request, $vehicule_id)
     {
         try {
-            //code...
-            $id = Crypt::decrypt($vehicule_id);
-
-            $vehicule = Vehicule::with('timing_chaine')->findOrFail($id);
+            $vehicule = Vehicule::with('timing_chaine')->findOrFail($vehicule_id);
 
             $validated = $request->validate([
                 'km_actuel_timichaine' =>  'required|numeric|min:'.$vehicule->total_km

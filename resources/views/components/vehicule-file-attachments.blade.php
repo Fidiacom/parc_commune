@@ -8,7 +8,7 @@
         <h5 class="card-title">{{ __('Télécharger de nouveaux fichiers') }}</h5>
         <form id="fileUploadForm" action="{{ route('admin.vehicule.attachments.add') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <input type="hidden" name="vehicule_id" value="{{ Crypt::encrypt($vehicule->getId()) }}">
+            <input type="hidden" name="vehicule_id" value="{{ $vehicule->getId() }}">
             <div class="form-group">
                 <input type="file" class="form-control-file" name="files[]" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx">
                 <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
@@ -51,7 +51,7 @@
                             @endif
                             
                             <div class="text-center mt-3">
-                                <form action="{{ route('admin.vehicule.attachments.delete', Crypt::encrypt($attachment->getId())) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer ce fichier?') }}');">
+                                <form action="{{ route('admin.vehicule.attachments.delete', $attachment->getId()) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer ce fichier?') }}');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm waves-effect waves-light">

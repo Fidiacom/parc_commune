@@ -2,37 +2,40 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
+
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $role = Role::where('label', '=', 'Service Technique')->first()->id;
-        $user = new User;
-        $user->name = 'Service Technique';
-        $user->username = 'servicetechnique';
-        $user->email = 'Servicetechnique@email.com';
-        $user->password = Hash::make('password');
-        $user->role_id = $role;
-        $user->save();
+        $users = [
+            [
+                'name' => 'Admin Principal',
+                'username' => 'admin',
+                'email' => 'admin@jamaycom.ma',
+                'password' => Hash::make('password'),
+                'role_id' => 1,
+            ],
+            [
+                'name' => 'Gestionnaire Parc',
+                'username' => 'gestionnaire',
+                'email' => 'gestionnaire@jamaycom.ma',
+                'password' => Hash::make('password'),
+                'role_id' => 2,
+            ],
+            [
+                'name' => 'Utilisateur Test',
+                'username' => 'user',
+                'email' => 'user@jamaycom.ma',
+                'password' => Hash::make('password'),
+                'role_id' => 3,
+            ],
+        ];
 
-
-
-        $role1 = Role::where('label', '=', 'Admin')->first()->id;
-        $user1 = new User;
-        $user1->name = 'Admin';
-        $user1->username = 'admin';
-        $user1->email = 'admin@email.com';
-        $user1->password = Hash::make('password');
-        $user1->role_id = $role1;
-        $user1->save();
-
+        foreach ($users as $user) {
+            User::create($user);
+        }
     }
 }

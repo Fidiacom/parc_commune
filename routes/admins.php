@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\MaintenenceController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\PaymentVoucherController;
 use App\Http\Controllers\Admin\VehiculeUpdateController;
+use App\Http\Controllers\Admin\CategoriePermiController;
 use App\Http\Controllers\LanguageController;
 
 Route::middleware(['auth'])->group(function () {
@@ -103,5 +104,13 @@ Route::middleware(['auth'])->group(function () {
 
         //Vehicle KM/Hours Update - PUT route (already moved GET route above)
         Route::put('/vehicule/update-km-hours/{id}', [VehiculeUpdateController::class, 'update'])->name('admin.vehicule.update.km_hours');
+
+        //Settings - Categorie Permis
+        Route::get('/settings/categorie-permis', [CategoriePermiController::class, 'index'])->name('admin.categorie_permis.index');
+        Route::get('/settings/categorie-permis/create', [CategoriePermiController::class, 'create'])->name('admin.categorie_permis.create');
+        Route::post('/settings/categorie-permis', [CategoriePermiController::class, 'store'])->name('admin.categorie_permis.store');
+        Route::get('/settings/categorie-permis/{id}/edit', [CategoriePermiController::class, 'edit'])->name('admin.categorie_permis.edit');
+        Route::put('/settings/categorie-permis/{id}', [CategoriePermiController::class, 'update'])->name('admin.categorie_permis.update');
+        Route::delete('/settings/categorie-permis/{id}', [CategoriePermiController::class, 'destroy'])->name('admin.categorie_permis.destroy');
     });
 });

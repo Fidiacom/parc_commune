@@ -17,6 +17,10 @@ class CategoriePermi extends Model
 
     protected $table = self::TABLE;
 
+    protected $fillable = [
+        self::LABEL_COLUMN,
+    ];
+
     public function getId(): int
     {
         return $this->getAttribute(self::ID_COLUMN);

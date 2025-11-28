@@ -146,7 +146,7 @@
                             </div>
 
                             <!-- Maintenance Type (for entretien) -->
-                            <div class="form-group" id="maintenance_group" style="display: none;">
+                            <!-- <div class="form-group" id="maintenance_group" style="display: none;">
                                 <label class="font-weight-semibold">{{ __('Type d\'entretien') }}</label>
                                 
                                 @if(count($vidanges) > 0)
@@ -182,7 +182,7 @@
                                     </select>
                                 </div>
                                 @endif
-                            </div>
+                            </div> -->
 
                             <!-- Supplier -->
                             <div class="form-group">

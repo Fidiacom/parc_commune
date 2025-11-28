@@ -953,7 +953,12 @@
                         // Clear any previous validation errors
                         document.getElementById('frontendErrors').style.display = 'none';
                         // Switch to step 2
-                        document.getElementById('step2-tab').click();
+                        const step1 = document.getElementById('step1');
+                        const step2 = document.getElementById('step2');
+                        if (step1 && step2) {
+                            step1.classList.remove('show', 'active');
+                            step2.classList.add('show', 'active');
+                        }
                         updateProgress(2);
                         generateTireFields(); // Regenerate in case numOfTires changed
                     } else {
@@ -975,7 +980,13 @@
                         el.classList.remove('is-invalid');
                     });
                     document.getElementById('frontendErrors').style.display = 'none';
-                    document.getElementById('step1-tab').click();
+                    // Switch to step 1
+                    const step1 = document.getElementById('step1');
+                    const step2 = document.getElementById('step2');
+                    if (step1 && step2) {
+                        step2.classList.remove('show', 'active');
+                        step1.classList.add('show', 'active');
+                    }
                     updateProgress(1);
                 });
             }

@@ -16,9 +16,6 @@
                         <a href="{{ route('admin.vehicule') }}" class="btn btn-outline-secondary mr-2">
                             <i class="fas fa-arrow-left mr-2"></i>{{ __('Retour') }}
                         </a>
-                        <a href="{{ route('admin.dtt', $vehicule->getId()) }}" class="btn btn-outline-info">
-                            <i class="fas fa-cogs mr-2"></i>{{ __('Maintenance') }}
-                        </a>
                     </div>
                 </div>
             </div>
@@ -29,24 +26,6 @@
             <div class="col-xl-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <!-- Quick Actions -->
-                        <div class="card border mb-4">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6 mb-2 mb-md-0">
-                                        <a href="{{ route('admin.dtt', $vehicule->getId()) }}" class="btn btn-outline-primary btn-block">
-                                            <i class="fas fa-cogs mr-2"></i>{{ __('Maintenance (Pneus/Vidange/Chaine)') }}
-                                        </a>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <a href="{{ route('admin.maintenance.create', $vehicule->getId()) }}" class="btn btn-outline-info btn-block">
-                                            <i class="fas fa-tools mr-2"></i>{{ __('Maintenance & Carburant') }}
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Consumption Statistics -->
                         @if(isset($consumptionStats) && $fuelVouchers->count() >= 2)
                         <div class="card border mb-4 {{ $consumptionStats['exceeds_max_consumption'] ? 'border-danger' : '' }}">

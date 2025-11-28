@@ -52,7 +52,7 @@
                         </h4>
 
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap">
+                            <table id="datatable-buttons" class="table table-striped table-bordered nowrap">
                                 <thead>
                                     <tr>
                                         <th>{{ __('Num de bon') }}</th>
@@ -130,6 +130,45 @@
     </form>
 
     <script>
+        $(document).ready(function() {
+            // Destroy existing DataTable instance if it exists (from global initialization)
+            if ($.fn.DataTable.isDataTable('#datatable-buttons')) {
+                $('#datatable-buttons').DataTable().destroy();
+            }
+
+            // Initialize DataTable with responsive configuration
+            var table = $('#datatable-buttons').DataTable({
+                lengthChange: false,
+                buttons: ['copy', 'print', 'pdf'],
+                responsive: {
+                    details: {
+                        type: 'column'
+                    }
+                },
+                columnDefs: [
+                    {
+                        // Actions column (last column) - highest priority (last to hide)
+                        targets: -1,
+                        responsivePriority: 1,
+                        orderable: false
+                    }
+                ],
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='mdi mdi-chevron-left'>",
+                        "next": "<i class='mdi mdi-chevron-right'>"
+                    }
+                },
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                }
+            });
+
+            // Append buttons to the wrapper
+            table.buttons().container()
+                .appendTo('#datatable-buttons_wrapper .col-md-6:eq(0)');
+        });
+
         function deleteVoucher(id) {
             Swal.fire({
                 title: "{{ __('Êtes-vous sûr?') }}",

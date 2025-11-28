@@ -297,6 +297,17 @@
                             <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="mdi mdi-cog"></i><span>{{ __('Paramètres') }}</span></a>
                             <ul class="sub-menu" aria-expanded="true">
                                 <li><a href="{{ route('admin.categorie_permis.index') }}">{{ __('Catégories de permis') }}</a></li>
+                                @php
+                                    $user = auth()->user();
+                                    $isAdmin = false;
+                                    if ($user && $user->getRoleId()) {
+                                        $role = \App\Models\Role::find($user->getRoleId());
+                                        $isAdmin = $role && $role->getLabel() === 'Administrateur';
+                                    }
+                                @endphp
+                                @if($isAdmin)
+                                <li><a href="{{ route('admin.users.index') }}">{{ __('Gestion des utilisateurs') }}</a></li>
+                                @endif
                             </ul>
                         </li>
 

@@ -6,8 +6,16 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ProfileUpdateRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -15,13 +23,15 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->user()->getId();
+        $userId = $this->route('id');
 
         return [
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', Rule::unique(User::class, User::USERNAME_COLUMN)->ignore($userId)],
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class, User::EMAIL_COLUMN)->ignore($userId)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'role_id' => ['required', 'integer', 'exists:roles,id'],
         ];
     }
 }
+

@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-8 mx-auto">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0 font-size-18">{{ __('Profile') }}</h4>
+                    <h4 class="mb-0 font-size-18">{{ __('Add new User') }}</h4>
                 </div>
             </div>
         </div>
@@ -14,17 +14,13 @@
             <div class="col-xl-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title mb-4">{{ __('Profile Information') }}</h5>
-                        <p class="text-muted mb-4">{{ __("Update your account's profile information and email address.") }}</p>
-
-                        <form method="post" action="{{ route('profile.update') }}">
+                        <form action="{{ route('admin.users.store') }}" method="POST">
                             @csrf
-                            @method('patch')
-
+                            
                             <div class="form-group">
                                 <label for="name">{{ __('Name') }}</label>
                                 <input type="text" id="name" class="form-control @error('name') is-invalid @enderror" 
-                                       name="name" value="{{ old('name', $user->getName()) }}" required autofocus>
+                                       name="name" placeholder="{{ __('Name') }}" value="{{ old('name') }}" required>
                                 @error('name')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -35,7 +31,7 @@
                             <div class="form-group">
                                 <label for="username">{{ __('Username') }}</label>
                                 <input type="text" id="username" class="form-control @error('username') is-invalid @enderror" 
-                                       name="username" value="{{ old('username', $user->getUsername()) }}" required>
+                                       name="username" placeholder="{{ __('Username') }}" value="{{ old('username') }}" required>
                                 @error('username')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -46,7 +42,7 @@
                             <div class="form-group">
                                 <label for="email">{{ __('Email') }}</label>
                                 <input type="email" id="email" class="form-control @error('email') is-invalid @enderror" 
-                                       name="email" value="{{ old('email', $user->getEmail()) }}" required>
+                                       name="email" placeholder="{{ __('Email') }}" value="{{ old('email') }}" required>
                                 @error('email')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -55,9 +51,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="password">{{ __('New Password') }} <small class="text-muted">({{ __('Leave blank to keep current password') }})</small></label>
+                                <label for="password">{{ __('Password') }}</label>
                                 <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" 
-                                       name="password" autocomplete="new-password">
+                                       name="password" placeholder="{{ __('Password') }}" required>
                                 @error('password')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -68,11 +64,30 @@
                             <div class="form-group">
                                 <label for="password_confirmation">{{ __('Confirm Password') }}</label>
                                 <input type="password" id="password_confirmation" class="form-control" 
-                                       name="password_confirmation" autocomplete="new-password">
+                                       name="password_confirmation" placeholder="{{ __('Confirm Password') }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="role_id">{{ __('Role') }}</label>
+                                <select class="form-control @error('role_id') is-invalid @enderror" 
+                                        id="role_id" name="role_id" required>
+                                    <option value="">{{ __('Select a role') }}</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->getId() }}" {{ old('role_id') == $role->getId() ? 'selected' : '' }}>
+                                            {{ $role->getLabel() }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('role_id')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Save') }}</button>
+                                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary waves-effect waves-light">{{ __('Cancel') }}</a>
                             </div>
                         </form>
                     </div>
@@ -84,3 +99,4 @@
         <!-- end row-->
     </div> <!-- container-fluid -->
 </x-admin.app>
+

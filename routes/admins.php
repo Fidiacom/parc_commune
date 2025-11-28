@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PaymentVoucherController;
 use App\Http\Controllers\Admin\VehiculeUpdateController;
 use App\Http\Controllers\Admin\CategoriePermiController;
 use App\Http\Controllers\Admin\ReformeController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\LanguageController;
 
 Route::middleware(['auth'])->group(function () {
@@ -126,5 +127,13 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/reforme/attachments/delete/{id}', [ReformeController::class, 'deleteAttachment'])->name('admin.reforme.attachments.delete');
         Route::delete('/reforme/status-attachments/delete/{id}', [ReformeController::class, 'deleteStatusAttachment'])->name('admin.reforme.status-attachments.delete');
         Route::delete('/reforme/{id}', [ReformeController::class, 'destroy'])->name('admin.reforme.delete');
+
+        //Users (Admin only)
+        Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('admin.users.create');
+        Route::post('/users/store', [UserController::class, 'store'])->name('admin.users.store');
+        Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+        Route::put('/users/update/{id}', [UserController::class, 'update'])->name('admin.users.update');
+        Route::delete('/users/delete/{id}', [UserController::class, 'destroy'])->name('admin.users.delete');
     });
 });

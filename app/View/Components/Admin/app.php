@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class app extends Component
+class App extends Component
 {
     public string $logoUrl;
     public string $mainColor;

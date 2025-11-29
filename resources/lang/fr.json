@@ -285,5 +285,17 @@
     "Quantité en litres":"Quantité en litres",
     "Nom du fournisseur":"Nom du fournisseur",
     "Informations complémentaires":"Informations complémentaires",
-    "Choisir un fichier":"Choisir un fichier"
+    "Choisir un fichier":"Choisir un fichier",
+    
+    "Alert | out of stock":"Alerte | Rupture de stock",
+    "Alert | still only: :quantity":"Alerte | Il ne reste que : :quantity",
+    "Need a drain":"Vidange nécessaire",
+    "Need to change Timing Chaine":"Changement de chaîne de distribution nécessaire",
+    "Need to change Pneu | Position: :position":"Changement de pneu nécessaire | Position : :position",
+    "Consommation":"Consommation",
+    "High consumption (KM): :avg L/100km (max: :max L/100km, excess: :excess L/100km)":"Consommation élevée (KM) : :avg L/100km (max : :max L/100km, excès : :excess L/100km)",
+    "High consumption (Hours): :avg L/H (max: :max L/H, excess: :excess L/H)":"Consommation élevée (Heures) : :avg L/H (max : :max L/H, excès : :excess L/H)",
+    "Low consumption (Hours): :avg L/H (min: :min L/H, deficit: :deficit L/H)":"Consommation faible (Heures) : :avg L/H (min : :min L/H, déficit : :deficit L/H)",
+    "Mission order expired":"Ordre de mission expiré",
+    "Ordre de mission":"Ordre de mission"
 }

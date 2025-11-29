@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
         // Vehicle KM/Hours Update - must be before vehicule/{id} route
         Route::get('vehicule/update-km-hours', [VehiculeUpdateController::class, 'index'])->name('admin.vehicule.update.index');
         Route::get('vehicule/{id}/show', [VehiculeController::class, 'show'])->name('admin.vehicule.show');
+        Route::get('vehicule/{id}/dashboard', [VehiculeController::class, 'dashboard'])->name('admin.vehicule.dashboard');
         Route::get('vehicule/{id}', [VehiculeController::class, 'edit'])->name('admin.vehicule.edit');
         Route::post('vehicule/update/{id}', [VehiculeController::class, 'update'])->name('admin.vehicule.update');
         Route::post('vehicule/images/add', [VehiculeController::class, 'addImages'])->name('admin.vehicule.images.add');
@@ -59,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/driver/create', [DriverController::class, 'create'])->name('admin.drivers.create');
         Route::post('/driver/store', [DriverController::class, 'store'])->name('admin.driver.store');
         Route::get('/drive/{id}', [DriverController::class, 'edit'])->name('admin.driver.edit');
+        Route::get('/driver/{id}/dashboard', [DriverController::class, 'dashboard'])->name('admin.driver.dashboard');
         Route::post('/driver/update/{id}', [DriverController::class, 'update'])->name('admin.driver.update');
         Route::delete('/driver/{id}', [DriverController::class, 'destroy'])->name('admin.driver.delete');
 

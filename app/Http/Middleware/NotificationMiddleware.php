@@ -25,7 +25,9 @@ class NotificationMiddleware
         {
             if($stock->min_stock_alert >= $stock->stock_actuel)
             {
-                $stock->message = $stock->stock_actuel == 0 ? 'Alert | out of stock' : 'Alert | still only: '.$stock->stock_actuel ;
+                $stock->message = $stock->stock_actuel == 0 
+                    ? __('Alert | out of stock') 
+                    : __('Alert | still only: :quantity', ['quantity' => $stock->stock_actuel]);
                 $stockNotif->push($stock);
             }
         }
@@ -49,8 +51,8 @@ class NotificationMiddleware
                     $notification->push([
                         'vehicule_id'   => $vehicule->id,
                         'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
-                        'notif'         => 'vidange',
-                        'message'       => 'need a drain',
+                        'notif'         => __('Vidange'),
+                        'message'       => __('Need a drain'),
                     ]);
                 }
             }
@@ -66,8 +68,8 @@ class NotificationMiddleware
                     $notification->push([
                         'vehicule_id'   => $vehicule->id,
                         'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
-                        'notif'         => 'Timing Chaine',
-                        'message'       => 'Need to change Timing Chaine',
+                        'notif'         => __('Timing Chaine'),
+                        'message'       => __('Need to change Timing Chaine'),
                     ]);
                 }
             }
@@ -90,8 +92,8 @@ class NotificationMiddleware
                         $notification->push([
                             'vehicule_id'   => $vehicule->id,
                             'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
-                            'notif'         => 'Pneu',
-                            'message'       => 'Need to change Pneu | Position:'.$pneu->tire_position,
+                            'notif'         => __('Pneu'),
+                            'message'       => __('Need to change Pneu | Position: :position', ['position' => $pneu->tire_position]),
                         ]);
                     }
                 }
@@ -141,7 +143,11 @@ class NotificationMiddleware
             
             if ($vehicule->getMaxFuelConsumption100km() && $averageConsumptionKm > $vehicule->getMaxFuelConsumption100km()) {
                 $excess = $averageConsumptionKm - $vehicule->getMaxFuelConsumption100km();
-                $messages[] = 'Consommation élevée (KM): ' . number_format($averageConsumptionKm, 2, ',', ' ') . ' L/100km (max: ' . number_format($vehicule->getMaxFuelConsumption100km(), 2, ',', ' ') . ' L/100km, excès: ' . number_format($excess, 2, ',', ' ') . ' L/100km)';
+                $messages[] = __('High consumption (KM): :avg L/100km (max: :max L/100km, excess: :excess L/100km)', [
+                    'avg' => number_format($averageConsumptionKm, 2, ',', ' '),
+                    'max' => number_format($vehicule->getMaxFuelConsumption100km(), 2, ',', ' '),
+                    'excess' => number_format($excess, 2, ',', ' ')
+                ]);
                 $alertType = 'consumption_km';
             }
         }
@@ -152,14 +158,22 @@ class NotificationMiddleware
             
             if ($vehicule->getMaxFuelConsumptionHour() && $averageConsumptionHour > $vehicule->getMaxFuelConsumptionHour()) {
                 $excess = $averageConsumptionHour - $vehicule->getMaxFuelConsumptionHour();
-                $messages[] = 'Consommation élevée (Heures): ' . number_format($averageConsumptionHour, 2, ',', ' ') . ' L/H (max: ' . number_format($vehicule->getMaxFuelConsumptionHour(), 2, ',', ' ') . ' L/H, excès: ' . number_format($excess, 2, ',', ' ') . ' L/H)';
+                $messages[] = __('High consumption (Hours): :avg L/H (max: :max L/H, excess: :excess L/H)', [
+                    'avg' => number_format($averageConsumptionHour, 2, ',', ' '),
+                    'max' => number_format($vehicule->getMaxFuelConsumptionHour(), 2, ',', ' '),
+                    'excess' => number_format($excess, 2, ',', ' ')
+                ]);
                 $alertType = $alertType ? 'consumption_both' : 'consumption_hour';
             }
 
             // Check if below min hour consumption
             if ($vehicule->getMinFuelConsumptionHour() && $averageConsumptionHour < $vehicule->getMinFuelConsumptionHour()) {
                 $deficit = $vehicule->getMinFuelConsumptionHour() - $averageConsumptionHour;
-                $messages[] = 'Consommation faible (Heures): ' . number_format($averageConsumptionHour, 2, ',', ' ') . ' L/H (min: ' . number_format($vehicule->getMinFuelConsumptionHour(), 2, ',', ' ') . ' L/H, déficit: ' . number_format($deficit, 2, ',', ' ') . ' L/H)';
+                $messages[] = __('Low consumption (Hours): :avg L/H (min: :min L/H, deficit: :deficit L/H)', [
+                    'avg' => number_format($averageConsumptionHour, 2, ',', ' '),
+                    'min' => number_format($vehicule->getMinFuelConsumptionHour(), 2, ',', ' '),
+                    'deficit' => number_format($deficit, 2, ',', ' ')
+                ]);
                 $alertType = $alertType ? 'consumption_both' : 'consumption_hour_low';
             }
         }
@@ -168,7 +182,7 @@ class NotificationMiddleware
             return [
                 'vehicule_id'   => $vehicule->id,
                 'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
-                'notif'         => 'Consommation',
+                'notif'         => __('Consommation'),
                 'message'       => implode(' | ', $messages),
             ];
         }

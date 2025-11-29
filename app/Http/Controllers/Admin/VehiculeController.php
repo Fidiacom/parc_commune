@@ -577,4 +577,135 @@ class VehiculeController extends Controller
 
         return redirect(route('admin.vehicule'));
     }
+
+    public function dashboard($id)
+    {
+        try {
+            $vehicule = $this->vehiculeService->getVehiculeById($id, ['images', 'attachments', 'pneu', 'vidange', 'timing_chaine', 'missionOrders.driver']);
+        } catch (\Throwable $th) {
+            return view('admin.vehicule.404');
+        }
+
+        if (!$vehicule) {
+            return view('admin.vehicule.404');
+        }
+
+        // Get all payment vouchers
+        $allVouchers = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
+            ->orderBy('invoice_date', 'desc')
+            ->get();
+
+        // Get fuel vouchers for consumption statistics
+        $fuelVouchers = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
+            ->where('category', 'carburant')
+            ->whereNotNull('fuel_liters')
+            ->orderBy('invoice_date', 'asc')
+            ->get();
+
+        // Calculate consumption statistics
+        $consumptionStats = $this->calculateConsumptionStats($vehicule, $fuelVouchers);
+
+        // Get vouchers by category
+        $vouchersByCategory = $allVouchers->groupBy('category');
+
+        // Calculate total costs by category
+        $costsByCategory = [];
+        foreach ($vouchersByCategory as $category => $vouchers) {
+            $costsByCategory[$category] = $vouchers->sum('amount');
+        }
+
+        // Get latest insurance and technical visit vouchers
+        $latestInsurance = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
+            ->where('category', 'insurance')
+            ->whereNotNull('insurance_expiration_date')
+            ->orderBy('insurance_expiration_date', 'desc')
+            ->first();
+
+        $latestTechnicalVisit = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
+            ->where('category', 'visite_technique')
+            ->whereNotNull('technical_visit_expiration_date')
+            ->orderBy('technical_visit_expiration_date', 'desc')
+            ->first();
+
+        // Get mission orders
+        $missionOrders = $vehicule->missionOrders()->with('driver')->latest()->limit(10)->get();
+        $activeMissionOrders = $vehicule->missionOrders()->whereNull('done_at')->with('driver')->latest()->get();
+
+        // Get maintenance alerts
+        $maintenanceAlerts = $this->getMaintenanceAlerts($vehicule);
+
+        // Get recent activity (last 10 payment vouchers)
+        $recentVouchers = $allVouchers->take(10);
+
+        return view('admin.vehicule.dashboard', [
+            'vehicule' => $vehicule,
+            'fuelVouchers' => $fuelVouchers,
+            'consumptionStats' => $consumptionStats,
+            'allVouchers' => $allVouchers,
+            'vouchersByCategory' => $vouchersByCategory,
+            'costsByCategory' => $costsByCategory,
+            'latestInsurance' => $latestInsurance,
+            'latestTechnicalVisit' => $latestTechnicalVisit,
+            'missionOrders' => $missionOrders,
+            'activeMissionOrders' => $activeMissionOrders,
+            'maintenanceAlerts' => $maintenanceAlerts,
+            'recentVouchers' => $recentVouchers,
+        ]);
+    }
+
+    /**
+     * Get maintenance alerts for a vehicle.
+     */
+    protected function getMaintenanceAlerts($vehicule)
+    {
+        $alerts = [];
+
+        // Check vidange threshold
+        if ($vehicule->vidange) {
+            $thresholdKm = $vehicule->vidange->getThresholdKm();
+            $currentKm = $vehicule->getTotalKm();
+            if ($thresholdKm && $currentKm >= $thresholdKm) {
+                $alerts[] = [
+                    'type' => 'vidange',
+                    'message' => __('Vidange nécessaire'),
+                    'current_km' => $currentKm,
+                    'threshold_km' => $thresholdKm,
+                    'overdue_km' => $currentKm - $thresholdKm,
+                ];
+            }
+        }
+
+        // Check timing chain threshold
+        if ($vehicule->timing_chaine) {
+            $thresholdKm = $vehicule->timing_chaine->getThresholdKm();
+            $currentKm = $vehicule->getTotalKm();
+            if ($thresholdKm && $currentKm >= $thresholdKm) {
+                $alerts[] = [
+                    'type' => 'timing_chaine',
+                    'message' => __('Chaîne de distribution nécessaire'),
+                    'current_km' => $currentKm,
+                    'threshold_km' => $thresholdKm,
+                    'overdue_km' => $currentKm - $thresholdKm,
+                ];
+            }
+        }
+
+        // Check tire thresholds
+        foreach ($vehicule->pneu as $tire) {
+            $thresholdKm = $tire->getThresholdKm();
+            $currentKm = $vehicule->getTotalKm();
+            if ($thresholdKm && $currentKm >= $thresholdKm) {
+                $alerts[] = [
+                    'type' => 'pneu',
+                    'message' => __('Pneu ' . $tire->getTirePosition() . ' nécessaire'),
+                    'current_km' => $currentKm,
+                    'threshold_km' => $thresholdKm,
+                    'overdue_km' => $currentKm - $thresholdKm,
+                    'tire_position' => $tire->getTirePosition(),
+                ];
+            }
+        }
+
+        return $alerts;
+    }
 }

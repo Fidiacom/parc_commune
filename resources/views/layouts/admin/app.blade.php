@@ -172,7 +172,20 @@
                                 <a href="{{ route('admin.mission_order.edit', $missionOrder->id) }}" class="text-reset notification-item">
                                     <div class="media">
                                         <div class="media-body">
-                                            <h6 class="mt-0 mb-1">{{ 'Mission Order :'. $missionOrder->driver->full_name.' | '.$missionOrder->vehicule->brand.'-'.$missionOrder->vehicule->model }}</h6>
+                                            <h6 class="mt-0 mb-1">
+                                                {{ __('Ordre de mission') }} : 
+                                                @if($missionOrder->driver)
+                                                    {{ $missionOrder->driver->getFirstNameFr() ?: $missionOrder->driver->getFirstNameAr() }} {{ $missionOrder->driver->getLastNameFr() ?: $missionOrder->driver->getLastNameAr() }}
+                                                @else
+                                                    -
+                                                @endif
+                                                | 
+                                                @if($missionOrder->vehicule)
+                                                    {{ $missionOrder->vehicule->getBrand() }}-{{ $missionOrder->vehicule->getModel() }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </h6>
                                             <p class="font-size-13 mb-1">{{ __('Mission order expired') }}</p>
                                         </div>
                                     </div>

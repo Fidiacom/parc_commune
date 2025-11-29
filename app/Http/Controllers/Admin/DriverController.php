@@ -96,4 +96,54 @@ class DriverController extends Controller
         Alert::success('Driver Deleted Successfully', 'The driver has been soft deleted');
         return redirect(route('admin.drivers'));
     }
+
+    public function dashboard($id)
+    {
+        try {
+            $driver = $this->driverService->getDriverById($id);
+            
+            if (!$driver) {
+                Alert::error('Error', 'Driver not found');
+                return redirect(route('admin.drivers'));
+            }
+        } catch (\Throwable $th) {
+            Alert::error('Error', 'Invalid driver ID');
+            return redirect(route('admin.drivers'));
+        }
+
+        // Get all mission orders for this driver
+        $allMissionOrders = \App\Models\MissionOrder::where('driver_id', $driver->getId())
+            ->with('vehicule')
+            ->latest()
+            ->get();
+
+        // Get active mission orders
+        $activeMissionOrders = $allMissionOrders->whereNull('done_at');
+
+        // Get completed mission orders
+        $completedMissionOrders = $allMissionOrders->whereNotNull('done_at')->take(10);
+
+        // Get statistics
+        $totalMissions = $allMissionOrders->count();
+        $activeMissionsCount = $activeMissionOrders->count();
+        $completedMissionsCount = $allMissionOrders->whereNotNull('done_at')->count();
+
+        // Get vehicles used by this driver
+        $vehiclesUsed = $allMissionOrders->pluck('vehicule')->unique('id')->filter();
+
+        // Get recent activity (last 10 mission orders)
+        $recentMissionOrders = $allMissionOrders->take(10);
+
+        return view('admin.drivers.dashboard', [
+            'driver' => $driver,
+            'allMissionOrders' => $allMissionOrders,
+            'activeMissionOrders' => $activeMissionOrders,
+            'completedMissionOrders' => $completedMissionOrders,
+            'totalMissions' => $totalMissions,
+            'activeMissionsCount' => $activeMissionsCount,
+            'completedMissionsCount' => $completedMissionsCount,
+            'vehiclesUsed' => $vehiclesUsed,
+            'recentMissionOrders' => $recentMissionOrders,
+        ]);
+    }
 }

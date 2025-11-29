@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\VehiculeController;
 use App\Http\Controllers\Admin\DriverController;
 use App\Http\Controllers\Admin\MissionOrderController;

@@ -353,7 +353,7 @@
                                                 </label>
                                                 <select name="fuel_type" id="fuel_type" class="form-control @error('fuel_type') is-invalid @enderror" required>
                                                     <option value="0">{{ __('Sélectionner le type de carburant') }}</option>
-                                                    <option value="Gasoline" @selected($vehicule->getFuelType() == "Gasoline")>{{ __('Essence') }}</option>
+                                                    <option value="Essence" @selected($vehicule->getFuelType() == "Essence")>{{ __('Essence') }}</option>
                                                     <option value="Diesel" @selected($vehicule->getFuelType() == "Diesel")>{{ __('Diesel') }}</option>
                                                     <option value="Eletric" @selected($vehicule->getFuelType() == "Eletric")>{{ __('Électrique') }}</option>
                                                 </select>

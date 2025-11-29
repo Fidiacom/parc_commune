@@ -344,7 +344,7 @@
                                                 </label>
                                                 <select name="fuel_type" id="fuel_type" class="form-control @error('fuel_type') is-invalid @enderror" required>
                                                     <option value="0">{{ __('Sélectionner le type de carburant') }}</option>
-                                                    <option value="Gasoline" @selected(old('fuel_type') == 'Gasoline')>
+                                                    <option value="Essence" @selected(old('fuel_type') == 'Essence')>
                                                         <i class="fas fa-gas-pump"></i> {{ __('Essence') }}
                                                     </option>
                                                     <option value="Diesel" @selected(old('fuel_type') == 'Diesel')>

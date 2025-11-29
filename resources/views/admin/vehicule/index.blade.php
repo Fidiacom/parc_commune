@@ -63,7 +63,7 @@
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
                                 <h5 class="mb-0 text-muted">{{ __('Essence') }}</h5>
-                                <h3 class="mb-0 mt-2">{{ $vehicules->where('fuel_type', 'Gasoline')->count() }}</h3>
+                                <h3 class="mb-0 mt-2">{{ $vehicules->where('fuel_type', 'Essence')->count() }}</h3>
                             </div>
                             <div class="flex-shrink-0">
                                 <div class="avatar-sm rounded-circle bg-soft-warning align-self-center">
@@ -167,14 +167,14 @@
                                         <td>
                                             <span class="text-muted">
                                                 <i class="fas fa-tachometer-alt mr-1"></i>
-                                                {{ number_format($vehicule->getTotalKm(), 0, ',', ' ') }} km
+                                                {{ number_format((int)$vehicule->getTotalKm(), 0, '.', ' ') }} km
                                             </span>
                                         </td>
                                         <td>
                                             @if($vehicule->getTotalHours())
                                                 <span class="text-muted">
                                                     <i class="fas fa-clock mr-1"></i>
-                                                    {{ number_format($vehicule->getTotalHours(), 0, ',', ' ') }} h
+                                                    {{ number_format((int)$vehicule->getTotalHours(), 0, '.', ' ') }} h
                                                 </span>
                                             @else
                                                 <span class="text-muted">-</span>
@@ -183,7 +183,7 @@
                                         <td>
                                             @php
                                                 $fuelColors = [
-                                                    'Gasoline' => 'warning',
+                                                    'Essence' => 'warning',
                                                     'Diesel' => 'info',
                                                     'Eletric' => 'success'
                                                 ];
@@ -217,18 +217,17 @@
                                             <div class="btn-group" role="group">
                                                 <a href="{{ route('admin.vehicule.show', $vehicule->getId()) }}" 
                                                    class="btn btn-sm btn-info" 
+                                                   data-toggle="tooltip" 
+                                                   data-placement="top" 
                                                    title="{{ __('Voir') }}">
                                                     <i class="mdi mdi-eye"></i>
                                                 </a>
                                                 <a href="{{ route('admin.vehicule.edit', $vehicule->getId()) }}" 
                                                    class="btn btn-sm btn-outline-primary" 
+                                                   data-toggle="tooltip" 
+                                                   data-placement="top" 
                                                    title="{{ __('Modifier') }}">
                                                     <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="{{ route('admin.dtt', $vehicule->getId()) }}" 
-                                                   class="btn btn-sm btn-outline-info" 
-                                                   title="{{ __('Maintenance') }}">
-                                                    <i class="fas fa-cogs"></i>
                                                 </a>
                                                 <form action="{{ route('admin.vehicule.delete', $vehicule->getId()) }}" 
                                                       method="POST" 
@@ -238,6 +237,8 @@
                                                     @method('DELETE')
                                                     <button type="submit" 
                                                             class="btn btn-sm btn-outline-danger" 
+                                                            data-toggle="tooltip" 
+                                                            data-placement="top" 
                                                             title="{{ __('Supprimer') }}">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
@@ -326,6 +327,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
             // Search functionality
             const searchInput = document.getElementById('searchInput');
             const table = document.querySelector('table tbody');

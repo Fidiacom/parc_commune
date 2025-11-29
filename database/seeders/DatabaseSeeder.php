@@ -13,20 +13,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
-            UserSeeder::class,
+            UserSeeder::class, // Only admin
             CategoriePermiSeeder::class,
-            UnitieSeeder::class,
-            VehiculeSeeder::class,
-            PneuSeeder::class,
-            VidangeSeeder::class,
-            TimingChaineSeeder::class,
-            DriverSeeder::class,
-            DriverHasPermiSeeder::class,
-            StockSeeder::class,
-            StockHistoriqueSeeder::class,
-            PaymentVoucherSeeder::class,
-            MissionOrderSeeder::class,
+            VehiculeSeeder::class, // 18 vehicles from the document
+            DriverSeeder::class, // 5 drivers
+            DriverHasPermiSeeder::class, // Assign permis to drivers
         ]);
     }
 }
-

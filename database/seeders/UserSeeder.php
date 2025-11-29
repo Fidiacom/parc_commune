@@ -10,32 +10,13 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = [
-            [
-                'name' => 'Admin Principal',
-                'username' => 'admin',
-                'email' => 'admin@jamaycom.ma',
-                'password' => Hash::make('password'),
-                'role_id' => 1,
-            ],
-            [
-                'name' => 'Gestionnaire Parc',
-                'username' => 'gestionnaire',
-                'email' => 'gestionnaire@jamaycom.ma',
-                'password' => Hash::make('password'),
-                'role_id' => 2,
-            ],
-            [
-                'name' => 'Utilisateur Test',
-                'username' => 'user',
-                'email' => 'user@jamaycom.ma',
-                'password' => Hash::make('password'),
-                'role_id' => 3,
-            ],
-        ];
-
-        foreach ($users as $user) {
-            User::create($user);
-        }
+        // Only seed admin user
+        User::create([
+            'name' => 'Admin Principal',
+            'username' => 'admin',
+            'email' => 'admin@jamaycom.ma',
+            'password' => Hash::make('password'),
+            'role_id' => 1,
+        ]);
     }
 }

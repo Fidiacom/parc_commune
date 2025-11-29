@@ -32,23 +32,22 @@ class MissionOrderController extends Controller
 
     public function index()
     {
-        $vehicules = $this->vehiculeService->getAllVehicules();
-        $drivers   = $this->driverService->getAllDrivers();
-
         $missionOrders = $this->missionOrderService->getAllMissionOrders();
 
         return view('admin.mission_order.index', [
-                'drivers'   =>  $drivers,
-                'vehicules' =>  $vehicules,
-                'missionOrders'      =>  $missionOrders
+                'missionOrders' => $missionOrders
             ]);
     }
 
     public function create()
     {
-        // Since the form is on the index page, redirect to index
-        // Alternatively, you can create a separate create view if needed
-        return redirect()->route('admin.mission_order');
+        $vehicules = $this->vehiculeService->getAllVehicules();
+        $drivers   = $this->driverService->getAllDrivers();
+
+        return view('admin.mission_order.create', [
+            'drivers'   => $drivers,
+            'vehicules' => $vehicules,
+        ]);
     }
 
     public function edit($id)
@@ -92,6 +91,7 @@ class MissionOrderController extends Controller
         try {
             $this->missionOrderService->createMissionOrder($request);
             Alert::success('Success', 'Saved Correctly');
+            return redirect()->route('admin.mission_order');
         } catch (\Exception $e) {
             Alert::error('Error', $e->getMessage());
         }

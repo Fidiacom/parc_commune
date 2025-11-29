@@ -44,6 +44,13 @@ class MissionOrderController extends Controller
             ]);
     }
 
+    public function create()
+    {
+        // Since the form is on the index page, redirect to index
+        // Alternatively, you can create a separate create view if needed
+        return redirect()->route('admin.mission_order');
+    }
+
     public function edit($id)
     {
         try {

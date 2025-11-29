@@ -406,6 +406,52 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="min_fuel_consumption_hour">
+                                                    <i class="fas fa-arrow-down mr-1 text-muted"></i>{{ __('Consommation min (L/H)') }}
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value="{{ old('min_fuel_consumption_hour') }}"
+                                                    class="form-control @error('min_fuel_consumption_hour') is-invalid @enderror"
+                                                    name="min_fuel_consumption_hour"
+                                                    id="min_fuel_consumption_hour"
+                                                    placeholder="Ex: 2.5"
+                                                    min="0">
+                                                <small class="form-text text-muted">{{ __('Optionnel - Pour véhicules avec compteur d\'heures') }}</small>
+                                                @error('min_fuel_consumption_hour')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="max_fuel_consumption_hour">
+                                                    <i class="fas fa-arrow-up mr-1 text-muted"></i>{{ __('Consommation max (L/H)') }}
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value="{{ old('max_fuel_consumption_hour') }}"
+                                                    class="form-control @error('max_fuel_consumption_hour') is-invalid @enderror"
+                                                    name="max_fuel_consumption_hour"
+                                                    id="max_fuel_consumption_hour"
+                                                    placeholder="Ex: 4.5"
+                                                    min="0">
+                                                <small class="form-text text-muted">{{ __('Optionnel - Pour véhicules avec compteur d\'heures') }}</small>
+                                                @error('max_fuel_consumption_hour')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

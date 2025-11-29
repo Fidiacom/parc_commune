@@ -26,6 +26,8 @@ class Vehicule extends Model
     public const FUEL_TYPE_COLUMN = 'fuel_type';
     public const MIN_FUEL_CONSUMPTION_100KM_COLUMN = 'min_fuel_consumption_100km';
     public const MAX_FUEL_CONSUMPTION_100KM_COLUMN = 'max_fuel_consumption_100km';
+    public const MIN_FUEL_CONSUMPTION_HOUR_COLUMN = 'min_fuel_consumption_hour';
+    public const MAX_FUEL_CONSUMPTION_HOUR_COLUMN = 'max_fuel_consumption_hour';
     public const AIRBAG_COLUMN = 'airbag';
     public const ABS_COLUMN = 'abs';
     public const INSSURANCE_EXPIRATION_COLUMN = 'inssurance_expiration';
@@ -51,6 +53,8 @@ class Vehicule extends Model
         self::FUEL_TYPE_COLUMN,
         self::MIN_FUEL_CONSUMPTION_100KM_COLUMN,
         self::MAX_FUEL_CONSUMPTION_100KM_COLUMN,
+        self::MIN_FUEL_CONSUMPTION_HOUR_COLUMN,
+        self::MAX_FUEL_CONSUMPTION_HOUR_COLUMN,
         self::AIRBAG_COLUMN,
         self::ABS_COLUMN,
         self::INSSURANCE_EXPIRATION_COLUMN,
@@ -131,6 +135,16 @@ class Vehicule extends Model
     public function getMaxFuelConsumption100km(): ?float
     {
         return $this->getAttribute(self::MAX_FUEL_CONSUMPTION_100KM_COLUMN);
+    }
+
+    public function getMinFuelConsumptionHour(): ?float
+    {
+        return $this->getAttribute(self::MIN_FUEL_CONSUMPTION_HOUR_COLUMN);
+    }
+
+    public function getMaxFuelConsumptionHour(): ?float
+    {
+        return $this->getAttribute(self::MAX_FUEL_CONSUMPTION_HOUR_COLUMN);
     }
 
     public function getAirbag(): bool

@@ -33,7 +33,18 @@
                                 <h5 class="mb-0">
                                     <i class="fas fa-chart-line text-primary mr-2"></i>{{ __('Statistiques de consommation') }}
                                     @if($consumptionStats['exceeds_max_consumption'])
-                                        <span class="badge badge-danger ml-2">{{ __('Consommation élevée!') }}</span>
+                                        <span class="badge badge-danger ml-2">
+                                            @if($consumptionStats['exceeds_max_consumption_km'] && $consumptionStats['exceeds_max_consumption_hour'])
+                                                {{ __('Consommation élevée (KM & H)!') }}
+                                            @elseif($consumptionStats['exceeds_max_consumption_km'])
+                                                {{ __('Consommation élevée (KM)!') }}
+                                            @elseif($consumptionStats['exceeds_max_consumption_hour'])
+                                                {{ __('Consommation élevée (H)!') }}
+                                            @endif
+                                        </span>
+                                    @endif
+                                    @if($consumptionStats['below_min_consumption_hour'] ?? false)
+                                        <span class="badge badge-warning ml-2">{{ __('Consommation faible (H)!') }}</span>
                                     @endif
                                 </h5>
                             </div>
@@ -79,7 +90,12 @@
                                                 {{ $consumptionStats['average_price_per_liter'] ? number_format($consumptionStats['average_price_per_liter'], 2, ',', ' ') : '-' }} {{ __('DH/L') }}
                                             </h4>
                                             @if($consumptionStats['average_consumption_hour'])
-                                                <small class="text-muted">{{ __('Consommation/heure') }}: {{ number_format($consumptionStats['average_consumption_hour'], 2, ',', ' ') }} L/H</small>
+                                                <small class="text-muted {{ ($consumptionStats['exceeds_max_consumption_hour'] ?? false) || ($consumptionStats['below_min_consumption_hour'] ?? false) ? 'text-danger' : '' }}">
+                                                    {{ __('Consommation/heure') }}: {{ number_format($consumptionStats['average_consumption_hour'], 2, ',', ' ') }} L/H
+                                                    @if($vehicule->getMinFuelConsumptionHour() && $vehicule->getMaxFuelConsumptionHour())
+                                                        ({{ __('Normale') }}: {{ $vehicule->getMinFuelConsumptionHour() }} - {{ $vehicule->getMaxFuelConsumptionHour() }} L/H)
+                                                    @endif
+                                                </small>
                                             @endif
                                         </div>
                                     </div>
@@ -386,6 +402,52 @@
                                                     min="0">
                                                 <small class="form-text text-muted">{{ __('Optionnel') }}</small>
                                                 @error('max_fuel_consumption_100km')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="min_fuel_consumption_hour">
+                                                    <i class="fas fa-arrow-down mr-1 text-muted"></i>{{ __('Consommation min (L/H)') }}
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value="{{ $vehicule->getMinFuelConsumptionHour() ?? old('min_fuel_consumption_hour') }}"
+                                                    class="form-control @error('min_fuel_consumption_hour') is-invalid @enderror"
+                                                    name="min_fuel_consumption_hour"
+                                                    id="min_fuel_consumption_hour"
+                                                    placeholder="Ex: 2.5"
+                                                    min="0">
+                                                <small class="form-text text-muted">{{ __('Optionnel - Pour véhicules avec compteur d\'heures') }}</small>
+                                                @error('min_fuel_consumption_hour')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="max_fuel_consumption_hour">
+                                                    <i class="fas fa-arrow-up mr-1 text-muted"></i>{{ __('Consommation max (L/H)') }}
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value="{{ $vehicule->getMaxFuelConsumptionHour() ?? old('max_fuel_consumption_hour') }}"
+                                                    class="form-control @error('max_fuel_consumption_hour') is-invalid @enderror"
+                                                    name="max_fuel_consumption_hour"
+                                                    id="max_fuel_consumption_hour"
+                                                    placeholder="Ex: 4.5"
+                                                    min="0">
+                                                <small class="form-text text-muted">{{ __('Optionnel - Pour véhicules avec compteur d\'heures') }}</small>
+                                                @error('max_fuel_consumption_hour')
                                                 <div class="invalid-feedback d-block">
                                                     {{ $message }}
                                                 </div>

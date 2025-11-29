@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Stock;
 use App\Models\MissionOrder;
 use App\Models\Vehicule;
+use App\Models\PaymentVoucher;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -95,9 +96,84 @@ class NotificationMiddleware
                     }
                 }
             }
+
+            // Consumption Notification
+            $consumptionAlert = $this->checkConsumptionAlert($vehicule);
+            if ($consumptionAlert) {
+                $notification->push($consumptionAlert);
+            }
         }
 
         return $notification;
+    }
+
+    /**
+     * Check if vehicle consumption exceeds limits (both km and hour based).
+     */
+    protected function checkConsumptionAlert($vehicule)
+    {
+        // Get fuel vouchers for consumption calculation
+        $fuelVouchers = PaymentVoucher::where('vehicule_id', $vehicule->getId())
+            ->where('category', 'carburant')
+            ->whereNotNull('fuel_liters')
+            ->orderBy('invoice_date', 'asc')
+            ->get();
+
+        if ($fuelVouchers->count() < 2) {
+            return null;
+        }
+
+        $firstVoucher = $fuelVouchers->first();
+        $lastVoucher = $fuelVouchers->last();
+        $totalKm = $lastVoucher->getVehicleKm() - $firstVoucher->getVehicleKm();
+        $totalHours = null;
+        if ($lastVoucher->getVehicleHours() && $firstVoucher->getVehicleHours()) {
+            $totalHours = $lastVoucher->getVehicleHours() - $firstVoucher->getVehicleHours();
+        }
+        $totalFuelLiters = $fuelVouchers->sum(function($v) { return $v->getFuelLiters() ?? 0; });
+
+        $messages = [];
+        $alertType = null;
+
+        // Check km-based consumption
+        if ($totalKm > 0 && $totalFuelLiters > 0) {
+            $averageConsumptionKm = ($totalFuelLiters / $totalKm) * 100;
+            
+            if ($vehicule->getMaxFuelConsumption100km() && $averageConsumptionKm > $vehicule->getMaxFuelConsumption100km()) {
+                $excess = $averageConsumptionKm - $vehicule->getMaxFuelConsumption100km();
+                $messages[] = 'Consommation élevée (KM): ' . number_format($averageConsumptionKm, 2, ',', ' ') . ' L/100km (max: ' . number_format($vehicule->getMaxFuelConsumption100km(), 2, ',', ' ') . ' L/100km, excès: ' . number_format($excess, 2, ',', ' ') . ' L/100km)';
+                $alertType = 'consumption_km';
+            }
+        }
+
+        // Check hour-based consumption
+        if ($totalHours > 0 && $totalFuelLiters > 0) {
+            $averageConsumptionHour = $totalFuelLiters / $totalHours;
+            
+            if ($vehicule->getMaxFuelConsumptionHour() && $averageConsumptionHour > $vehicule->getMaxFuelConsumptionHour()) {
+                $excess = $averageConsumptionHour - $vehicule->getMaxFuelConsumptionHour();
+                $messages[] = 'Consommation élevée (Heures): ' . number_format($averageConsumptionHour, 2, ',', ' ') . ' L/H (max: ' . number_format($vehicule->getMaxFuelConsumptionHour(), 2, ',', ' ') . ' L/H, excès: ' . number_format($excess, 2, ',', ' ') . ' L/H)';
+                $alertType = $alertType ? 'consumption_both' : 'consumption_hour';
+            }
+
+            // Check if below min hour consumption
+            if ($vehicule->getMinFuelConsumptionHour() && $averageConsumptionHour < $vehicule->getMinFuelConsumptionHour()) {
+                $deficit = $vehicule->getMinFuelConsumptionHour() - $averageConsumptionHour;
+                $messages[] = 'Consommation faible (Heures): ' . number_format($averageConsumptionHour, 2, ',', ' ') . ' L/H (min: ' . number_format($vehicule->getMinFuelConsumptionHour(), 2, ',', ' ') . ' L/H, déficit: ' . number_format($deficit, 2, ',', ' ') . ' L/H)';
+                $alertType = $alertType ? 'consumption_both' : 'consumption_hour_low';
+            }
+        }
+
+        if (!empty($messages)) {
+            return [
+                'vehicule_id'   => $vehicule->id,
+                'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
+                'notif'         => 'Consommation',
+                'message'       => implode(' | ', $messages),
+            ];
+        }
+
+        return null;
     }
 
 

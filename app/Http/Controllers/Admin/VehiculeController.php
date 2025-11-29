@@ -71,6 +71,10 @@ class VehiculeController extends Controller
                 'technical_visit_expiration' => 'nullable|date',
                 'numOfTires' => 'required|integer|min:1',
                 'circulation_date' => 'nullable|date',
+                'min_fuel_consumption_100km' => 'nullable|numeric|min:0',
+                'max_fuel_consumption_100km' => 'nullable|numeric|min:0',
+                'min_fuel_consumption_hour' => 'nullable|numeric|min:0',
+                'max_fuel_consumption_hour' => 'nullable|numeric|min:0',
                 'images.*' => 'nullable|image|max:51200', // 50MB max (51200 KB)
                 'files.*' => 'nullable|file|max:51200', // 50MB max (51200 KB)
                 'tire_positions.*' => 'required|string',
@@ -342,10 +346,28 @@ class VehiculeController extends Controller
             $stats['average_price_per_liter'] = $stats['total_fuel_cost'] / $stats['total_fuel_liters'];
         }
 
-        // Check if exceeds max consumption
+        // Check if exceeds max consumption (km-based)
+        $exceedsKmConsumption = false;
         if ($vehicule->getMaxFuelConsumption100km() && $stats['average_consumption_100km']) {
-            $stats['exceeds_max_consumption'] = $stats['average_consumption_100km'] > $vehicule->getMaxFuelConsumption100km();
+            $exceedsKmConsumption = $stats['average_consumption_100km'] > $vehicule->getMaxFuelConsumption100km();
         }
+
+        // Check if exceeds max consumption (hour-based)
+        $exceedsHourConsumption = false;
+        if ($vehicule->getMaxFuelConsumptionHour() && $stats['average_consumption_hour']) {
+            $exceedsHourConsumption = $stats['average_consumption_hour'] > $vehicule->getMaxFuelConsumptionHour();
+        }
+
+        // Check if below min consumption (hour-based)
+        $belowMinHourConsumption = false;
+        if ($vehicule->getMinFuelConsumptionHour() && $stats['average_consumption_hour']) {
+            $belowMinHourConsumption = $stats['average_consumption_hour'] < $vehicule->getMinFuelConsumptionHour();
+        }
+
+        $stats['exceeds_max_consumption'] = $exceedsKmConsumption || $exceedsHourConsumption;
+        $stats['exceeds_max_consumption_km'] = $exceedsKmConsumption;
+        $stats['exceeds_max_consumption_hour'] = $exceedsHourConsumption;
+        $stats['below_min_consumption_hour'] = $belowMinHourConsumption;
 
         return $stats;
     }
@@ -367,6 +389,8 @@ class VehiculeController extends Controller
             'total_hours' => 'nullable',
             'min_fuel_consumption_100km' => 'nullable|numeric|min:0',
             'max_fuel_consumption_100km' => 'nullable|numeric|min:0',
+            'min_fuel_consumption_hour' => 'nullable|numeric|min:0',
+            'max_fuel_consumption_hour' => 'nullable|numeric|min:0',
             'tire_size' => 'nullable|string|max:255',
             'images.*' => 'nullable|image|max:51200', // 50MB max
             'files.*' => 'nullable|file|max:51200', // 50MB max

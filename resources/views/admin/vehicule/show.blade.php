@@ -74,9 +74,17 @@
                         
                         @if($vehicule->getMinFuelConsumption100km() && $vehicule->getMaxFuelConsumption100km())
                         <div class="mb-3">
-                            <label class="text-muted">{{ __('Consommation normale') }}</label>
+                            <label class="text-muted">{{ __('Consommation normale (KM)') }}</label>
                             <p class="mb-0 font-weight-semibold">
                                 {{ $vehicule->getMinFuelConsumption100km() }} - {{ $vehicule->getMaxFuelConsumption100km() }} L/100km
+                            </p>
+                        </div>
+                        @endif
+                        @if($vehicule->getMinFuelConsumptionHour() && $vehicule->getMaxFuelConsumptionHour())
+                        <div class="mb-3">
+                            <label class="text-muted">{{ __('Consommation normale (H)') }}</label>
+                            <p class="mb-0 font-weight-semibold">
+                                {{ $vehicule->getMinFuelConsumptionHour() }} - {{ $vehicule->getMaxFuelConsumptionHour() }} L/H
                             </p>
                         </div>
                         @endif

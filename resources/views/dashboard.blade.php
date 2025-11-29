@@ -96,17 +96,33 @@
                                                 <small class="text-muted">{{ $item['vehicule']->getMatricule() }}</small>
                                             </td>
                                             <td>
-                                                <span class="badge badge-danger">
-                                                    {{ number_format($item['average_consumption'], 2, ',', ' ') }} L/100km
-                                                </span>
+                                                @if($item['exceeds_km'])
+                                                    <span class="badge badge-danger">
+                                                        {{ number_format($item['average_consumption_km'], 2, ',', ' ') }} L/100km
+                                                    </span>
+                                                @elseif($item['exceeds_hour'])
+                                                    <span class="badge badge-danger">
+                                                        {{ number_format($item['average_consumption_hour'], 2, ',', ' ') }} L/H
+                                                    </span>
+                                                @endif
                                             </td>
                                             <td>
-                                                {{ number_format($item['max_consumption'], 2, ',', ' ') }} L/100km
+                                                @if($item['exceeds_km'])
+                                                    {{ number_format($item['max_consumption_km'], 2, ',', ' ') }} L/100km
+                                                @elseif($item['exceeds_hour'])
+                                                    {{ number_format($item['max_consumption_hour'], 2, ',', ' ') }} L/H
+                                                @endif
                                             </td>
                                             <td>
-                                                <span class="text-danger font-weight-bold">
-                                                    +{{ number_format($item['excess'], 2, ',', ' ') }} L/100km
-                                                </span>
+                                                @if($item['excess_km'])
+                                                    <span class="text-danger font-weight-bold">
+                                                        +{{ number_format($item['excess_km'], 2, ',', ' ') }} L/100km
+                                                    </span>
+                                                @elseif($item['excess_hour'])
+                                                    <span class="text-danger font-weight-bold">
+                                                        +{{ number_format($item['excess_hour'], 2, ',', ' ') }} L/H
+                                                    </span>
+                                                @endif
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.vehicule.show', $item['vehicule']->getId()) }}" class="btn btn-sm btn-danger">

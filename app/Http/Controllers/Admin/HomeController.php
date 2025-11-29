@@ -38,11 +38,16 @@ class HomeController extends Controller
     }
 
     /**
-     * Get vehicles that exceed max fuel consumption.
+     * Get vehicles that exceed max fuel consumption (both km and hour based).
      */
     protected function getVehiclesExceedingMaxConsumption()
     {
-        $vehicles = Vehicule::whereNotNull('max_fuel_consumption_100km')->get();
+        // Get vehicles with either km or hour consumption limits
+        $vehicles = Vehicule::where(function($query) {
+            $query->whereNotNull('max_fuel_consumption_100km')
+                  ->orWhereNotNull('max_fuel_consumption_hour');
+        })->get();
+        
         $exceedingVehicles = [];
 
         foreach ($vehicles as $vehicule) {
@@ -59,19 +64,41 @@ class HomeController extends Controller
             $firstVoucher = $fuelVouchers->first();
             $lastVoucher = $fuelVouchers->last();
             $totalKm = $lastVoucher->getVehicleKm() - $firstVoucher->getVehicleKm();
+            $totalHours = null;
+            if ($lastVoucher->getVehicleHours() && $firstVoucher->getVehicleHours()) {
+                $totalHours = $lastVoucher->getVehicleHours() - $firstVoucher->getVehicleHours();
+            }
             $totalFuelLiters = $fuelVouchers->sum(function($v) { return $v->getFuelLiters() ?? 0; });
 
-            if ($totalKm > 0 && $totalFuelLiters > 0) {
-                $averageConsumption = ($totalFuelLiters / $totalKm) * 100;
-                
-                if ($averageConsumption > $vehicule->getMaxFuelConsumption100km()) {
-                    $exceedingVehicles[] = [
-                        'vehicule' => $vehicule,
-                        'average_consumption' => $averageConsumption,
-                        'max_consumption' => $vehicule->getMaxFuelConsumption100km(),
-                        'excess' => $averageConsumption - $vehicule->getMaxFuelConsumption100km()
-                    ];
-                }
+            $exceedsKm = false;
+            $exceedsHour = false;
+            $averageConsumptionKm = null;
+            $averageConsumptionHour = null;
+
+            // Check km-based consumption
+            if ($totalKm > 0 && $totalFuelLiters > 0 && $vehicule->getMaxFuelConsumption100km()) {
+                $averageConsumptionKm = ($totalFuelLiters / $totalKm) * 100;
+                $exceedsKm = $averageConsumptionKm > $vehicule->getMaxFuelConsumption100km();
+            }
+
+            // Check hour-based consumption
+            if ($totalHours > 0 && $totalFuelLiters > 0 && $vehicule->getMaxFuelConsumptionHour()) {
+                $averageConsumptionHour = $totalFuelLiters / $totalHours;
+                $exceedsHour = $averageConsumptionHour > $vehicule->getMaxFuelConsumptionHour();
+            }
+
+            if ($exceedsKm || $exceedsHour) {
+                $exceedingVehicles[] = [
+                    'vehicule' => $vehicule,
+                    'average_consumption_km' => $averageConsumptionKm,
+                    'average_consumption_hour' => $averageConsumptionHour,
+                    'max_consumption_km' => $vehicule->getMaxFuelConsumption100km(),
+                    'max_consumption_hour' => $vehicule->getMaxFuelConsumptionHour(),
+                    'exceeds_km' => $exceedsKm,
+                    'exceeds_hour' => $exceedsHour,
+                    'excess_km' => $exceedsKm ? ($averageConsumptionKm - $vehicule->getMaxFuelConsumption100km()) : null,
+                    'excess_hour' => $exceedsHour ? ($averageConsumptionHour - $vehicule->getMaxFuelConsumptionHour()) : null,
+                ];
             }
         }
 

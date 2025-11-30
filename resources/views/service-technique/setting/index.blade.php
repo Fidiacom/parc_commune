@@ -83,19 +83,14 @@
 
                     <div class="form-group">
                         <label for="main_color">{{ __('Main Color') }}</label>
-                        <div class="input-group colorpicker-component">
-                            <input 
-                                type="text" 
-                                class="form-control @error('main_color') is-invalid @enderror" 
-                                id="main_color" 
-                                name="main_color" 
-                                placeholder="#397D3C"
-                                value="{{ old('main_color', $setting->getMainColor() ?? '#397D3C') }}">
-                            <span class="input-group-append">
-                                <span class="input-group-text colorpicker-input-addon"><i></i></span>
-                            </span>
-                        </div>
-                        <small class="form-text text-muted">{{ __('Select the main color for the application theme') }}</small>
+                        <input 
+                            type="color" 
+                            class="form-control @error('main_color') is-invalid @enderror" 
+                            id="main_color" 
+                            name="main_color" 
+                            value="{{ old('main_color', $setting->getMainColor() ?? '#397D3C') }}"
+                            style="width: 100px; height: 50px; cursor: pointer;">
+                        <small class="form-text text-muted">{{ __('Select the main color for the application theme. This color will be used for primary buttons, links, and active states.') }}</small>
                         @error('main_color')
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -104,20 +99,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="second_color">{{ __('Second Color') }}</label>
-                        <div class="input-group colorpicker-component">
-                            <input 
-                                type="text" 
-                                class="form-control @error('second_color') is-invalid @enderror" 
-                                id="second_color" 
-                                name="second_color" 
-                                placeholder="#000000"
-                                value="{{ old('second_color', $setting->getSecondColor() ?? '') }}">
-                            <span class="input-group-append">
-                                <span class="input-group-text colorpicker-input-addon"><i></i></span>
-                            </span>
-                        </div>
-                        <small class="form-text text-muted">{{ __('Select the second color for the application theme (optional)') }}</small>
+                        <label for="second_color">{{ __('Second Color') }} <span class="text-muted">({{ __('Optional') }})</span></label>
+                        <input 
+                            type="color" 
+                            class="form-control @error('second_color') is-invalid @enderror" 
+                            id="second_color" 
+                            name="second_color" 
+                            value="{{ old('second_color', $setting->getSecondColor() ?? '#6c757d') }}"
+                            style="width: 100px; height: 50px; cursor: pointer;">
+                        <small class="form-text text-muted">{{ __('Select the second color for the application theme (optional). This color will be used for secondary buttons and badges.') }}</small>
                         @error('second_color')
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -133,11 +123,4 @@
 
     </div> <!-- end col -->
 
-    <script>
-        $(document).ready(function() {
-            $('.colorpicker-component').colorpicker({
-                format: 'hex'
-            });
-        });
-    </script>
 </x-serviceTechnique.app>

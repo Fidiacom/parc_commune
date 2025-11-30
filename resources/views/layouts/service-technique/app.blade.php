@@ -17,28 +17,195 @@
         <link href="{{ asset('assets/css/theme.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/plugins/bootstrap-colorpicker/bootstrap-colorpicker.min.css') }}" rel="stylesheet" type="text/css" />
         <style>
+            :root {
+                --main-color: {{ $mainColor }};
+                @if($secondColor)
+                --second-color: {{ $secondColor }};
+                @endif
+            }
+
             .logo img {
                 width: 6rem !important;
                 margin: 2rem !important;
                 height: auto !important;
             }
 
-            .btn-primary{
+            /* Primary Color Styles */
+            .btn-primary,
+            .btn-primary:focus {
                 background-color: {{ $mainColor }} !important;
                 border-color: {{ $mainColor }} !important;
             }
 
-            .page-item.active .page-link{
+            .btn-primary:hover,
+            .btn-primary:active,
+            .btn-primary.active {
+                background-color: {{ $mainColor }} !important;
+                border-color: {{ $mainColor }} !important;
+                opacity: 0.9;
+            }
+
+            .btn-outline-primary {
+                color: {{ $mainColor }} !important;
+                border-color: {{ $mainColor }} !important;
+            }
+
+            .btn-outline-primary:hover,
+            .btn-outline-primary:active,
+            .btn-outline-primary.active {
+                background-color: {{ $mainColor }} !important;
+                border-color: {{ $mainColor }} !important;
+                color: #fff !important;
+            }
+
+            .text-primary {
+                color: {{ $mainColor }} !important;
+            }
+
+            .bg-primary {
+                background-color: {{ $mainColor }} !important;
+            }
+
+            .border-primary {
+                border-color: {{ $mainColor }} !important;
+            }
+
+            .badge-primary {
+                background-color: {{ $mainColor }} !important;
+                color: #fff !important;
+            }
+
+            .page-item.active .page-link {
                 background-color: {{ $mainColor }} !important;
                 border-color: {{ $mainColor }} !important;
             }
+
+            .pagination .page-link:hover {
+                color: {{ $mainColor }} !important;
+            }
+
+            a {
+                color: {{ $mainColor }};
+            }
+
+            a:hover {
+                color: {{ $mainColor }};
+                opacity: 0.8;
+            }
+
+            .progress-bar {
+                background-color: {{ $mainColor }} !important;
+            }
+
+            .nav-pills .nav-link.active,
+            .nav-pills .show > .nav-link {
+                background-color: {{ $mainColor }} !important;
+            }
+
+            .nav-tabs .nav-link.active {
+                color: {{ $mainColor }} !important;
+                border-bottom-color: {{ $mainColor }} !important;
+            }
+
+            .nav-tabs .nav-link:hover {
+                border-color: {{ $mainColor }} !important;
+            }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: {{ $mainColor }} !important;
+                box-shadow: 0 0 0 0.2rem rgba({{ $mainColorRgb }}, 0.25) !important;
+            }
+
+            .custom-control-input:checked ~ .custom-control-label::before {
+                background-color: {{ $mainColor }} !important;
+                border-color: {{ $mainColor }} !important;
+            }
+
+            .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+                background-color: {{ $mainColor }} !important;
+            }
+
+            .dropdown-item.active,
+            .dropdown-item:active {
+                background-color: {{ $mainColor }} !important;
+            }
+
+            .list-group-item.active {
+                background-color: {{ $mainColor }} !important;
+                border-color: {{ $mainColor }} !important;
+            }
+
+            /* Sidebar Active Menu Item */
+            .metismenu .mm-active > a,
+            .metismenu a:hover,
+            .metismenu a:focus,
+            .metismenu a:active {
+                color: {{ $mainColor }} !important;
+            }
+
+            .metismenu .mm-active > a {
+                background-color: rgba({{ $mainColorRgb }}, 0.1) !important;
+            }
+
+            /* Secondary Color Styles */
             @if($secondColor)
             .btn-secondary,
-            .badge-secondary{
+            .btn-secondary:focus {
                 background-color: {{ $secondColor }} !important;
                 border-color: {{ $secondColor }} !important;
             }
+
+            .btn-secondary:hover,
+            .btn-secondary:active,
+            .btn-secondary.active {
+                background-color: {{ $secondColor }} !important;
+                border-color: {{ $secondColor }} !important;
+                opacity: 0.9;
+            }
+
+            .btn-outline-secondary {
+                color: {{ $secondColor }} !important;
+                border-color: {{ $secondColor }} !important;
+            }
+
+            .btn-outline-secondary:hover,
+            .btn-outline-secondary:active,
+            .btn-outline-secondary.active {
+                background-color: {{ $secondColor }} !important;
+                border-color: {{ $secondColor }} !important;
+                color: #fff !important;
+            }
+
+            .text-secondary {
+                color: {{ $secondColor }} !important;
+            }
+
+            .bg-secondary {
+                background-color: {{ $secondColor }} !important;
+            }
+
+            .border-secondary {
+                border-color: {{ $secondColor }} !important;
+            }
+
+            .badge-secondary {
+                background-color: {{ $secondColor }} !important;
+                color: #fff !important;
+            }
             @endif
+
+            /* Alert with primary color */
+            .alert-primary {
+                background-color: rgba({{ $mainColorRgb }}, 0.1) !important;
+                border-color: {{ $mainColor }} !important;
+                color: {{ $mainColor }} !important;
+            }
+
+            /* Table row hover */
+            .table-hover tbody tr:hover {
+                background-color: rgba({{ $mainColorRgb }}, 0.05) !important;
+            }
         </style>
     </head>
 

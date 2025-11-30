@@ -81,8 +81,8 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-line">ROYAUME DU MAROC</div>
-        <div class="header-line">MINISTERE DE L'INTERIEUR</div>
+        <div class="header-line">{{ config('settings.royaume_fr') }}</div>
+        <div class="header-line">{{ config('settings.ministere_fr') }}</div>
         <div class="header-line">REGION DE {{ strtoupper(config('settings.region_name_fr')) }}</div>
         <div class="header-line">PROVINCE DE {{ strtoupper(config('settings.province_name_fr')) }}</div>
         <div class="header-line">PACHALIKE DE {{ strtoupper(config('settings.pachalike_name_fr')) }}</div>

@@ -124,11 +124,16 @@
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item noti-icon waves-effect"
                             id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true"
+                            style="width: 40px;"
                             aria-expanded="false">
-                            <i class="mdi mdi-bell"></i>
-                            <span class="badge badge-danger badge-pill">
-                                {{ $numberOfNotification }}
-                            </span>
+                            @if($numberOfNotification > 0)
+                                <i class="mdi mdi-bell"></i>
+                                <span class="badge badge-danger badge-pill">
+                                    {{ $numberOfNotification }}
+                                </span>
+                            @else
+                                <i class="mdi mdi-bell-off"></i>
+                            @endif
                         </button>
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
                             aria-labelledby="page-header-notifications-dropdown">

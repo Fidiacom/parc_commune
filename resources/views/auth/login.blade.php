@@ -48,7 +48,10 @@
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="index.html">
                                                     <span class="h4">
-                                                        <img src="{{ asset('assets/images/base-logo.png') }}" style="width: 8rem" alt="">
+                                                        @php
+                                                            $fallbackLogo = asset('assets/images/base-logo.png');
+                                                        @endphp
+                                                        <img src="{{ $logoUrl ?? $fallbackLogo }}" style="width: 8rem" alt="" onerror="this.onerror=null;this.src='{{ $fallbackLogo }}';">
                                                     </span>
                                                 </a>
                                             </div>

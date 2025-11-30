@@ -147,28 +147,28 @@
 <body>
     <table class="header-table">
         <tr>
-            <td class="header-left">ROYAUME DU MAROC</td>
-            <td class="header-right">المملكة المغربية</td>
+            <td class="header-left">{{ config('settings.royaume_fr') }}</td>
+            <td class="header-right">{{ config('settings.royaume_ar') }}</td>
         </tr>
         <tr>
-            <td class="header-left">MINISTRE DE L'INTERIEURE</td>
-            <td class="header-right">وزارة الداخلية</td>
+            <td class="header-left">{{ config('settings.ministre_fr') }}</td>
+            <td class="header-right">{{ config('settings.ministre_ar') }}</td>
         </tr>
         <tr>
-            <td class="header-left">WILAYA GHARB CHRARDA BNI HSSEN</td>
-            <td class="header-right">ولاية الغرب الشراردة بني احسن</td>
+            <td class="header-left">{{ config('settings.wilaya_fr') }}</td>
+            <td class="header-right">{{ config('settings.wilaya_ar') }}</td>
         </tr>
         <tr>
-            <td class="header-left">PROVINCE DE SIDI SLIMANE</td>
-            <td class="header-right">عمالة اقليم سيدي سليمان</td>
+            <td class="header-left">{{ config('settings.province_name_fr') }}</td>
+            <td class="header-right">{{ config('settings.province_name_ar') }}</td>
         </tr>
         <tr>
-            <td class="header-left">PACHALIK DE SIDI YAHIA DU GHARB</td>
-            <td class="header-right">باشاوية سيدي يحيى الغرب</td>
+            <td class="header-left">{{ config('settings.pachalike_name_fr') }}</td>
+            <td class="header-right">{{ config('settings.pachalike_name_ar') }}</td>
         </tr>
         <tr>
-            <td class="header-left">MUNIPALITE DE SIDI YAHIA GHARB</td>
-            <td class="header-right">بلدية سيدي يحيى الغرب</td>
+            <td class="header-left">{{ config('settings.commune_name_fr') }}</td>
+            <td class="header-right">{{ config('settings.commune_name_ar') }}</td>
         </tr>
     </table>
 

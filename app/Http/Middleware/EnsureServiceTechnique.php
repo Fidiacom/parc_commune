@@ -23,11 +23,11 @@ class EnsureServiceTechnique
         $user = Auth::user();
         $role = \App\Models\Role::find($user->getRoleId());
 
-        if (!$role || $role->label !== 'Service Technique') {
-            abort(403, 'Unauthorized access. This page is only accessible to Service Technique users.');
+        if ($role && ($role->getLabel() !== 'Service Technique' || $role->getLabel() !== 'Administrateur')) {
+            return $next($request);
         }
 
-        return $next($request);
+        abort(403, 'Unauthorized access. This page is only accessible to Service Technique users.');
     }
 }
 

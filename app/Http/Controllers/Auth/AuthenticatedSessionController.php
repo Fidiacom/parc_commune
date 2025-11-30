@@ -28,6 +28,7 @@ class AuthenticatedSessionController extends Controller
         return view('auth.login', [
             'mainColor' => $this->settingService->getMainColor(),
             'secondColor' => $this->settingService->getSecondColor(),
+            'logoUrl' => $this->settingService->getLogoUrl(),
         ]);
     }
 

@@ -61,7 +61,7 @@ class SettingService
     /**
      * Get the logo URL or return placeholder.
      */
-    public function getLogoUrl(): string
+    public function getLogoUrl(): ?string
     {
         return $this->manager->getLogoUrl();
     }

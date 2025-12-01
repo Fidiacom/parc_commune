@@ -20,7 +20,8 @@ class App extends Component
      */
     public function __construct(SettingService $settingService)
     {
-        $this->logoUrl = $settingService->getLogoUrl();
+        $logoUrl = $settingService->getLogoUrl();
+        $this->logoUrl = $logoUrl ?: asset('assets/jamarc.png');
         $this->mainColor = $settingService->getMainColor();
         $this->secondColor = $settingService->getSecondColor();
         $this->mainColorRgb = $this->hexToRgb($this->mainColor);

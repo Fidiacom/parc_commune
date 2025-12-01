@@ -9,7 +9,7 @@ use Illuminate\View\Component;
 
 class App extends Component
 {
-    public string $logoUrl;
+    public ?string $logoUrl;
     public string $communeName;
     public string $mainColor;
     public ?string $secondColor;
@@ -21,7 +21,8 @@ class App extends Component
      */
     public function __construct(SettingService $settingService)
     {
-        $this->logoUrl = $settingService->getLogoUrl();
+        $logoUrl = $settingService->getLogoUrl();
+        $this->logoUrl = $logoUrl ?: asset('assets/jamarc.png');
         $this->communeName = $settingService->getCommuneName();
         $this->mainColor = $settingService->getMainColor();
         $this->secondColor = $settingService->getSecondColor();

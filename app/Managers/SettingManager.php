@@ -36,15 +36,15 @@ class SettingManager
     /**
      * Get the logo URL or return placeholder.
      */
-    public function getLogoUrl(): string
+    public function getLogoUrl(): ?string
     {
         $setting = $this->repository->getFirst();
         
-        if ($setting && $setting->getLogo()) {
+        if($setting->getLogo()) {
             return asset($setting->getLogo());
         }
         
-        return asset('assets/images/logo.png');
+        return null;
     }
 
     /**

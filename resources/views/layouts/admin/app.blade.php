@@ -401,7 +401,7 @@
 
             <div data-simplebar class="h-100">
 
-                <div class="navbar-brand-box">
+                <div class="navbar-brand-box" style="ba">
                     <a href="{{ route('dashboard') }}" class="logo">
                         @php
                             $placeholderLogo = asset('assets/images/logo.png');

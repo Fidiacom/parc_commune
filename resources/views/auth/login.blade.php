@@ -165,12 +165,19 @@
                                         <div class="card-body">
                                             <div class="text-center mb-4 mt-3">
                                                 <a href="index.html">
-                                                    <span class="h4">
-                                                        @php
-                                                            $fallbackLogo = asset('assets/images/base-logo.png');
-                                                        @endphp
-                                                        <img src="{{ $logoUrl ?? $fallbackLogo }}" style="width: 8rem" alt="" onerror="this.onerror=null;this.src='{{ $fallbackLogo }}';">
-                                                    </span>
+                                                    <div class="h4 d-flex justify-content-center align-items-center">
+                                                        @if($logoUrl)
+                                                            <img src="{{ $logoUrl }}" style="width: 8rem" alt="jamarc logo">
+                                                        @else
+                                                            <img src="{{ asset('assets/jamaycom.png') }}" style="width: 8rem" alt="jamarc logo">
+                                                        @endif
+                                                        <img 
+                                                            src="{{ asset('assets/jamarc.png') }}" 
+                                                            style="width: 8rem; margin-right: 3rem;"
+                                                            alt="jamarc logo"
+                                                        >
+                                                        
+                                                    </div>
                                                 </a>
                                             </div>
                                             <form action="{{ route('login') }}" method="POST" class="p-2">

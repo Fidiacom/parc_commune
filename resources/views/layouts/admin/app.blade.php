@@ -450,14 +450,14 @@
                             </a>
                         </li>
 
-                        <li>
+                        <!-- <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="mdi mdi-package"></i></i><span>{{ __('Stock') }}</span></a>
                             <ul class="sub-menu" aria-expanded="true">
                                 <li><a href="{{ route('admin.stock-entry') }}">{{ __('Entree de stock') }}</a></li>
                                 <li><a href="{{ route('admin.stock') }}">{{ __('Gestion du stock') }}</a></li>
                                 <li><a href="{{ route('admin.stockHistorie') }}">{{ __('Historique Stock') }}</a></li>
                             </ul>
-                        </li>
+                        </li> -->
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="mdi mdi-receipt"></i><span>{{ __('Bon de paiement') }}</span></a>

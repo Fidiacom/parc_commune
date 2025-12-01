@@ -112,11 +112,64 @@
                             <!-- Amount -->
                             <div class="form-group">
                                 <label class="font-weight-semibold">{{ __('Montant') }} <span class="text-danger">*</span></label>
-                                <input type="text" name="amount" class="form-control @error('amount') is-invalid @enderror" 
-                                       value="{{ old('amount', number_format($voucher->getAmount(), 2, '.', '')) }}" required>
+                                <input type="text" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" 
+                                       value="{{ old('amount', number_format($voucher->getAmount(), 2, '.', '')) }}" required onchange="calculateDenominations()" onkeyup="calculateDenominations()">
                                 @error('amount')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div>
+
+                            <!-- Denominations -->
+                            <div class="card mb-3">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0"><i class="fas fa-money-bill-wave mr-2"></i>{{ __('Dénominations') }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted">{{ __('Entrez le nombre de billets pour chaque dénomination') }}</p>
+                                    @php
+                                        $denominations = $voucher->getDenominations() ?: [];
+                                    @endphp
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('20 DH') }}</label>
+                                            <input type="number" name="denominations[20]" id="denomination_20" class="form-control" 
+                                                   value="{{ old('denominations.20', $denominations[20] ?? 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('50 DH') }}</label>
+                                            <input type="number" name="denominations[50]" id="denomination_50" class="form-control" 
+                                                   value="{{ old('denominations.50', $denominations[50] ?? 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('100 DH') }}</label>
+                                            <input type="number" name="denominations[100]" id="denomination_100" class="form-control" 
+                                                   value="{{ old('denominations.100', $denominations[100] ?? 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('200 DH') }}</label>
+                                            <input type="number" name="denominations[200]" id="denomination_200" class="form-control" 
+                                                   value="{{ old('denominations.200', $denominations[200] ?? 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('300 DH') }}</label>
+                                            <input type="number" name="denominations[300]" id="denomination_300" class="form-control" 
+                                                   value="{{ old('denominations.300', $denominations[300] ?? 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('400 DH') }}</label>
+                                            <input type="number" name="denominations[400]" id="denomination_400" class="form-control" 
+                                                   value="{{ old('denominations.400', $denominations[400] ?? 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('500 DH') }}</label>
+                                            <input type="number" name="denominations[500]" id="denomination_500" class="form-control" 
+                                                   value="{{ old('denominations.500', $denominations[500] ?? 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-info mt-3">
+                                        <strong>{{ __('Total calculé') }}:</strong> <span id="calculated_total">0</span> DH
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Fuel Liters (for carburant) -->
@@ -223,7 +276,7 @@
                             </div>
 
                             <!-- Document Upload -->
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="font-weight-semibold">{{ __('Document (Bon ou Facture)') }}</label>
                                 @if($voucher->getDocumentPath())
                                 <div class="mb-2">
@@ -242,6 +295,54 @@
                                 @error('document')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
+                            </div> -->
+
+                            {{-- Documents Section in Main Form --}}
+                            <div class="card mt-3 mb-3">
+                                <div class="card-header bg-secondary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-file-upload mr-2"></i>{{ __('Documents supplémentaires') }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    {{-- Voucher (Bon) Upload --}}
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold">{{ __('Bon') }} ({{ __('Voucher') }})</label>
+                                        <input type="file" class="form-control-file" name="voucher_files[]" id="voucher_files" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                        @error('voucher_files.*')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    {{-- Invoice (Facture) Upload --}}
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold">{{ __('Facture') }} ({{ __('Invoice') }})</label>
+                                        <input type="file" class="form-control-file" name="invoice_files[]" id="invoice_files" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                        @error('invoice_files.*')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    {{-- Vignette Upload --}}
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold">{{ __('Vignette') }}</label>
+                                        <input type="file" class="form-control-file" name="vignette_files[]" id="vignette_files" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                        @error('vignette_files.*')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    {{-- Other Documents Upload --}}
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold">{{ __('Autres Documents') }} ({{ __('Other Documents') }})</label>
+                                        <input type="file" class="form-control-file" name="other_files[]" id="other_files" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                        @error('other_files.*')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group mb-0">
@@ -253,6 +354,202 @@
                                 </a>
                             </div>
                         </form>
+                    </div>
+                </div>
+
+                {{-- Existing Documents Section (for viewing/deleting) --}}
+                <div class="card mt-3">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-file-upload mr-2"></i>{{ __('Documents') }}</h5>
+                    </div>
+                    <div class="card-body">
+                        {{-- Voucher (Bon) Upload --}}
+                        <div class="card mb-3">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">{{ __('Bon') }} ({{ __('Voucher') }})</h6>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('admin.payment_voucher.attachments.add') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="payment_voucher_id" value="{{ $voucher->getId() }}">
+                                    <input type="hidden" name="document_type" value="voucher">
+                                    <div class="form-group">
+                                        <input type="file" class="form-control-file" name="files[]" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-info waves-effect waves-light">
+                                        <i class="fas fa-upload"></i> {{ __('Télécharger') }}
+                                    </button>
+                                </form>
+                                @if($voucher->attachments)
+                                    @php
+                                        $vouchers = $voucher->attachments->where('document_type', 'voucher');
+                                    @endphp
+                                    @if($vouchers->count() > 0)
+                                        <div class="mt-3">
+                                            <h6>{{ __('Fichiers téléchargés') }}:</h6>
+                                            <ul class="list-group">
+                                                @foreach($vouchers as $attachment)
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <a href="{{ asset($attachment->getFilePath()) }}" target="_blank">
+                                                            <i class="fas fa-file"></i> {{ $attachment->getFileName() ?: __('Fichier') }}
+                                                        </a>
+                                                        <form action="{{ route('admin.payment_voucher.attachments.delete', $attachment->getId()) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer ce fichier?') }}')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Invoice (Facture) Upload --}}
+                        <div class="card mb-3">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">{{ __('Facture') }} ({{ __('Invoice') }})</h6>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('admin.payment_voucher.attachments.add') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="payment_voucher_id" value="{{ $voucher->getId() }}">
+                                    <input type="hidden" name="document_type" value="invoice">
+                                    <div class="form-group">
+                                        <input type="file" class="form-control-file" name="files[]" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-success waves-effect waves-light">
+                                        <i class="fas fa-upload"></i> {{ __('Télécharger') }}
+                                    </button>
+                                </form>
+                                @if($voucher->attachments)
+                                    @php
+                                        $invoices = $voucher->attachments->where('document_type', 'invoice');
+                                    @endphp
+                                    @if($invoices->count() > 0)
+                                        <div class="mt-3">
+                                            <h6>{{ __('Fichiers téléchargés') }}:</h6>
+                                            <ul class="list-group">
+                                                @foreach($invoices as $attachment)
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <a href="{{ asset($attachment->getFilePath()) }}" target="_blank">
+                                                            <i class="fas fa-file"></i> {{ $attachment->getFileName() ?: __('Fichier') }}
+                                                        </a>
+                                                        <form action="{{ route('admin.payment_voucher.attachments.delete', $attachment->getId()) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer ce fichier?') }}')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Vignette Upload --}}
+                        <div class="card mb-3">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0">{{ __('Vignette') }}</h6>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('admin.payment_voucher.attachments.add') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="payment_voucher_id" value="{{ $voucher->getId() }}">
+                                    <input type="hidden" name="document_type" value="vignette">
+                                    <div class="form-group">
+                                        <input type="file" class="form-control-file" name="files[]" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-warning waves-effect waves-light">
+                                        <i class="fas fa-upload"></i> {{ __('Télécharger') }}
+                                    </button>
+                                </form>
+                                @if($voucher->attachments)
+                                    @php
+                                        $vignettes = $voucher->attachments->where('document_type', 'vignette');
+                                    @endphp
+                                    @if($vignettes->count() > 0)
+                                        <div class="mt-3">
+                                            <h6>{{ __('Fichiers téléchargés') }}:</h6>
+                                            <ul class="list-group">
+                                                @foreach($vignettes as $attachment)
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <a href="{{ asset($attachment->getFilePath()) }}" target="_blank">
+                                                            <i class="fas fa-file"></i> {{ $attachment->getFileName() ?: __('Fichier') }}
+                                                        </a>
+                                                        <form action="{{ route('admin.payment_voucher.attachments.delete', $attachment->getId()) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer ce fichier?') }}')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Other Documents Upload --}}
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">{{ __('Autres Documents') }} ({{ __('Other Documents') }})</h6>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('admin.payment_voucher.attachments.add') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="payment_voucher_id" value="{{ $voucher->getId() }}">
+                                    <input type="hidden" name="document_type" value="other">
+                                    <div class="form-group">
+                                        <input type="file" class="form-control-file" name="files[]" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-primary waves-effect waves-light">
+                                        <i class="fas fa-upload"></i> {{ __('Télécharger') }}
+                                    </button>
+                                </form>
+                                @if($voucher->attachments)
+                                    @php
+                                        $others = $voucher->attachments->where('document_type', 'other');
+                                    @endphp
+                                    @if($others->count() > 0)
+                                        <div class="mt-3">
+                                            <h6>{{ __('Fichiers téléchargés') }}:</h6>
+                                            <ul class="list-group">
+                                                @foreach($others as $attachment)
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <a href="{{ asset($attachment->getFilePath()) }}" target="_blank">
+                                                            <i class="fas fa-file"></i> {{ $attachment->getFileName() ?: __('Fichier') }}
+                                                        </a>
+                                                        <form action="{{ route('admin.payment_voucher.attachments.delete', $attachment->getId()) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Êtes-vous sûr de vouloir supprimer ce fichier?') }}')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -322,7 +619,67 @@
                 const fileName = e.target.files[0]?.name || '{{ __('Choisir un fichier') }}';
                 e.target.nextElementSibling.textContent = fileName;
             });
+
+            // Initialize denominations calculation
+            updateTotal();
         });
+
+        // Calculate total from denominations
+        function updateTotal() {
+            const denominations = [20, 50, 100, 200, 300, 400, 500];
+            let total = 0;
+            
+            denominations.forEach(denom => {
+                const input = document.getElementById('denomination_' + denom);
+                if (input) {
+                    const quantity = parseInt(input.value) || 0;
+                    total += denom * quantity;
+                }
+            });
+            
+            const totalElement = document.getElementById('calculated_total');
+            if (totalElement) {
+                totalElement.textContent = total.toLocaleString('fr-FR');
+            }
+        }
+
+        // Calculate denominations from total amount
+        function calculateDenominations() {
+            const amountField = document.getElementById('amount');
+            if (!amountField) return;
+            
+            let amount = parseFloat(amountField.value) || 0;
+            if (amount <= 0) {
+                // Clear all denominations
+                [20, 50, 100, 200, 300, 400, 500].forEach(denom => {
+                    const input = document.getElementById('denomination_' + denom);
+                    if (input) input.value = 0;
+                });
+                updateTotal();
+                return;
+            }
+            
+            // Calculate denominations (greedy algorithm)
+            const denominations = [500, 400, 300, 200, 100, 50, 20];
+            const result = {};
+            let remaining = amount;
+            
+            denominations.forEach(denom => {
+                const count = Math.floor(remaining / denom);
+                result[denom] = count;
+                remaining = remaining % denom;
+            });
+            
+            // Update input fields
+            Object.keys(result).forEach(denom => {
+                const input = document.getElementById('denomination_' + denom);
+                if (input) {
+                    input.value = result[denom];
+                }
+            });
+            
+            updateTotal();
+        }
     </script>
 </x-admin.app>
 

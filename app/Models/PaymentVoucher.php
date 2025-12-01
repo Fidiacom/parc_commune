@@ -15,6 +15,7 @@ class PaymentVoucher extends Model
     public const INVOICE_NUMBER_COLUMN = 'invoice_number';
     public const INVOICE_DATE_COLUMN = 'invoice_date';
     public const AMOUNT_COLUMN = 'amount';
+    public const DENOMINATIONS_COLUMN = 'denominations';
     public const VEHICULE_ID_COLUMN = 'vehicule_id';
     public const VEHICLE_KM_COLUMN = 'vehicle_km';
     public const VEHICLE_HOURS_COLUMN = 'vehicle_hours';
@@ -38,6 +39,7 @@ class PaymentVoucher extends Model
         self::INVOICE_NUMBER_COLUMN,
         self::INVOICE_DATE_COLUMN,
         self::AMOUNT_COLUMN,
+        self::DENOMINATIONS_COLUMN,
         self::VEHICULE_ID_COLUMN,
         self::VEHICLE_KM_COLUMN,
         self::VEHICLE_HOURS_COLUMN,
@@ -76,6 +78,12 @@ class PaymentVoucher extends Model
     public function getAmount(): float
     {
         return $this->getAttribute(self::AMOUNT_COLUMN);
+    }
+
+    public function getDenominations(): ?array
+    {
+        $denominations = $this->getAttribute(self::DENOMINATIONS_COLUMN);
+        return $denominations ? json_decode($denominations, true) : null;
     }
 
     public function getVehiculeId(): int
@@ -161,5 +169,15 @@ class PaymentVoucher extends Model
     public function timingChaine()
     {
         return $this->belongsTo(TimingChaine::class, self::TIMING_CHAINE_ID_COLUMN);
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(PaymentVoucherAttachment::class, 'payment_voucher_id');
+    }
+
+    public function getAttachments(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->attachments;
     }
 }

@@ -207,6 +207,10 @@ class PaymentVoucherController extends Controller
             'additional_info' => 'nullable|string',
             'category' => 'required|in:carburant,entretien,vidange,lavage,lubrifiant,reparation,achat_pieces_recharges,rechange_pneu,frais_immatriculation,visite_technique,insurance,other',
             'document' => 'nullable|file|max:51200', // 50MB max
+            'voucher_files.*' => 'nullable|file|max:51200',
+            'invoice_files.*' => 'nullable|file|max:51200',
+            'vignette_files.*' => 'nullable|file|max:51200',
+            'other_files.*' => 'nullable|file|max:51200',
             'fuel_liters' => 'nullable|required_if:category,carburant|numeric|min:0',
             'tire_id' => 'nullable|required_if:category,rechange_pneu|exists:pneus,id',
             'vidange_id' => 'nullable|exists:vidanges,id',
@@ -225,8 +229,24 @@ class PaymentVoucherController extends Controller
         ]);
 
         try {
-            $this->paymentVoucherService->createPaymentVoucher($request);
+            $voucher = $this->paymentVoucherService->createPaymentVoucher($request);
+            
+            // Handle file uploads during creation
+            if ($request->hasFile('voucher_files')) {
+                $this->paymentVoucherService->addAttachments($voucher, $request->file('voucher_files'), 'voucher');
+            }
+            if ($request->hasFile('invoice_files')) {
+                $this->paymentVoucherService->addAttachments($voucher, $request->file('invoice_files'), 'invoice');
+            }
+            if ($request->hasFile('vignette_files')) {
+                $this->paymentVoucherService->addAttachments($voucher, $request->file('vignette_files'), 'vignette');
+            }
+            if ($request->hasFile('other_files')) {
+                $this->paymentVoucherService->addAttachments($voucher, $request->file('other_files'), 'other');
+            }
+            
             Alert::success(__('Succès'), __('Bon de paiement créé avec succès'));
+            return redirect()->route('admin.payment_voucher.show', $voucher->getId());
         } catch (\Exception $e) {
             Alert::error(__('Erreur'), __('Échec de la création du bon de paiement: ') . $e->getMessage());
         }
@@ -252,6 +272,9 @@ class PaymentVoucherController extends Controller
             return redirect()->route('admin.payment_voucher.index');
         }
 
+        // Load attachments
+        $voucher->load('attachments');
+
         return view('admin.payment_voucher.show', [
             'voucher' => $voucher,
         ]);
@@ -273,6 +296,9 @@ class PaymentVoucherController extends Controller
             Alert::error(__('Erreur'), __('ID de bon de paiement invalide'));
             return redirect()->route('admin.payment_voucher.index');
         }
+
+        // Load attachments
+        $voucher->load('attachments');
 
         $vehicules = $this->vehiculeService->getAllVehicules();
         $categories = [
@@ -330,6 +356,10 @@ class PaymentVoucherController extends Controller
             'additional_info' => 'nullable|string',
             'category' => 'required|in:carburant,entretien,vidange,lavage,lubrifiant,reparation,achat_pieces_recharges,rechange_pneu,frais_immatriculation,visite_technique,insurance,other',
             'document' => 'nullable|file|max:51200', // 50MB max
+            'voucher_files.*' => 'nullable|file|max:51200',
+            'invoice_files.*' => 'nullable|file|max:51200',
+            'vignette_files.*' => 'nullable|file|max:51200',
+            'other_files.*' => 'nullable|file|max:51200',
             'fuel_liters' => 'nullable|required_if:category,carburant|numeric|min:0',
             'tire_id' => 'nullable|required_if:category,rechange_pneu|exists:pneus,id',
             'vidange_id' => 'nullable|exists:vidanges,id',
@@ -349,6 +379,21 @@ class PaymentVoucherController extends Controller
 
         try {
             $this->paymentVoucherService->updatePaymentVoucher($voucher, $request);
+            
+            // Handle file uploads during update
+            if ($request->hasFile('voucher_files')) {
+                $this->paymentVoucherService->addAttachments($voucher, $request->file('voucher_files'), 'voucher');
+            }
+            if ($request->hasFile('invoice_files')) {
+                $this->paymentVoucherService->addAttachments($voucher, $request->file('invoice_files'), 'invoice');
+            }
+            if ($request->hasFile('vignette_files')) {
+                $this->paymentVoucherService->addAttachments($voucher, $request->file('vignette_files'), 'vignette');
+            }
+            if ($request->hasFile('other_files')) {
+                $this->paymentVoucherService->addAttachments($voucher, $request->file('other_files'), 'other');
+            }
+            
             Alert::success(__('Succès'), __('Bon de paiement mis à jour avec succès'));
         } catch (\Exception $e) {
             Alert::error(__('Erreur'), __('Échec de la mise à jour du bon de paiement: ') . $e->getMessage());
@@ -494,5 +539,53 @@ class PaymentVoucherController extends Controller
                 'message' => __('Erreur lors de la récupération du kilométrage du véhicule')
             ], 500);
         }
+    }
+
+    /**
+     * Add attachments to payment voucher.
+     */
+    public function addAttachments(Request $request)
+    {
+        $validated = $request->validate([
+            'payment_voucher_id' => 'required|exists:payment_vouchers,id',
+            'document_type' => 'required|in:voucher,invoice,vignette,other',
+            'files.*' => 'required|file|max:51200', // 50MB max
+        ]);
+
+        try {
+            $voucher = $this->paymentVoucherService->getPaymentVoucherById($request->payment_voucher_id);
+            
+            if (!$voucher) {
+                Alert::error(__('Erreur'), __('Bon de paiement introuvable'));
+                return back();
+            }
+
+            $this->paymentVoucherService->addAttachments(
+                $voucher,
+                $request->file('files'),
+                $request->document_type
+            );
+            
+            Alert::success(__('Succès'), __('Fichiers téléchargés avec succès'));
+        } catch (\Throwable $th) {
+            Alert::error(__('Erreur'), __('Échec du téléchargement des fichiers: ') . $th->getMessage());
+        }
+
+        return back();
+    }
+
+    /**
+     * Delete an attachment.
+     */
+    public function deleteAttachment($id)
+    {
+        try {
+            $this->paymentVoucherService->deleteAttachment($id);
+            Alert::success(__('Succès'), __('Fichier supprimé avec succès'));
+        } catch (\Throwable $th) {
+            Alert::error(__('Erreur'), __('Échec de la suppression du fichier'));
+        }
+        
+        return back();
     }
 }

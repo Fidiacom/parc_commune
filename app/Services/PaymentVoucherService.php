@@ -59,6 +59,20 @@ class PaymentVoucherService
             PaymentVoucher::CATEGORY_COLUMN => $request->category,
         ];
 
+        // Handle denominations
+        if ($request->has('denominations') && is_array($request->denominations)) {
+            $denominations = [];
+            foreach ($request->denominations as $denom => $quantity) {
+                $quantity = intval($quantity);
+                if ($quantity > 0) {
+                    $denominations[intval($denom)] = $quantity;
+                }
+            }
+            $data[PaymentVoucher::DENOMINATIONS_COLUMN] = !empty($denominations) ? json_encode($denominations) : null;
+        } else {
+            $data[PaymentVoucher::DENOMINATIONS_COLUMN] = null;
+        }
+
         // Handle vehicle hours
         if ($request->has('vehicle_hours') && $request->vehicle_hours) {
             $data[PaymentVoucher::VEHICLE_HOURS_COLUMN] = intval(str_replace(['.', ','], '', $request->vehicle_hours));
@@ -160,6 +174,20 @@ class PaymentVoucherService
             PaymentVoucher::CATEGORY_COLUMN => $request->category,
         ];
 
+        // Handle denominations
+        if ($request->has('denominations') && is_array($request->denominations)) {
+            $denominations = [];
+            foreach ($request->denominations as $denom => $quantity) {
+                $quantity = intval($quantity);
+                if ($quantity > 0) {
+                    $denominations[intval($denom)] = $quantity;
+                }
+            }
+            $data[PaymentVoucher::DENOMINATIONS_COLUMN] = !empty($denominations) ? json_encode($denominations) : null;
+        } else {
+            $data[PaymentVoucher::DENOMINATIONS_COLUMN] = null;
+        }
+
         // Handle vehicle hours
         if ($request->has('vehicle_hours') && $request->vehicle_hours) {
             $data[PaymentVoucher::VEHICLE_HOURS_COLUMN] = intval(str_replace(['.', ','], '', $request->vehicle_hours));
@@ -242,6 +270,22 @@ class PaymentVoucherService
     public function deletePaymentVoucher(PaymentVoucher $voucher): bool
     {
         return $this->manager->deletePaymentVoucher($voucher);
+    }
+
+    /**
+     * Add attachments to payment voucher.
+     */
+    public function addAttachments(PaymentVoucher $voucher, array $files, string $documentType): void
+    {
+        $this->manager->addAttachments($voucher, $files, $documentType);
+    }
+
+    /**
+     * Delete an attachment.
+     */
+    public function deleteAttachment(int $attachmentId): bool
+    {
+        return $this->manager->deleteAttachment($attachmentId);
     }
 }
 

@@ -110,11 +110,61 @@
                             <!-- Amount -->
                             <div class="form-group">
                                 <label class="font-weight-semibold">{{ __('Montant') }} <span class="text-danger">*</span></label>
-                                <input type="text" name="amount" class="form-control @error('amount') is-invalid @enderror" 
-                                       value="{{ old('amount') }}" required placeholder="{{ __('Montant en DH') }}">
+                                <input type="text" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" 
+                                       value="{{ old('amount') }}" required placeholder="{{ __('Montant en DH') }}" onchange="calculateDenominations()" onkeyup="calculateDenominations()">
                                 @error('amount')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div>
+
+                            <!-- Denominations -->
+                            <div class="card mb-3">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0"><i class="fas fa-money-bill-wave mr-2"></i>{{ __('Dénominations') }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted">{{ __('Entrez le nombre de billets pour chaque dénomination') }}</p>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('20 DH') }}</label>
+                                            <input type="number" name="denominations[20]" id="denomination_20" class="form-control" 
+                                                   value="{{ old('denominations.20', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('50 DH') }}</label>
+                                            <input type="number" name="denominations[50]" id="denomination_50" class="form-control" 
+                                                   value="{{ old('denominations.50', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('100 DH') }}</label>
+                                            <input type="number" name="denominations[100]" id="denomination_100" class="form-control" 
+                                                   value="{{ old('denominations.100', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('200 DH') }}</label>
+                                            <input type="number" name="denominations[200]" id="denomination_200" class="form-control" 
+                                                   value="{{ old('denominations.200', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('300 DH') }}</label>
+                                            <input type="number" name="denominations[300]" id="denomination_300" class="form-control" 
+                                                   value="{{ old('denominations.300', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('400 DH') }}</label>
+                                            <input type="number" name="denominations[400]" id="denomination_400" class="form-control" 
+                                                   value="{{ old('denominations.400', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-semibold">{{ __('500 DH') }}</label>
+                                            <input type="number" name="denominations[500]" id="denomination_500" class="form-control" 
+                                                   value="{{ old('denominations.500', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-info mt-3">
+                                        <strong>{{ __('Total calculé') }}:</strong> <span id="calculated_total">0</span> DH
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Fuel Liters (for carburant) -->
@@ -241,7 +291,7 @@
                             </div>
 
                             <!-- Document Upload -->
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="font-weight-semibold">{{ __('Document (Bon ou Facture)') }}</label>
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" name="document" id="document" accept="image/*,application/pdf">
@@ -253,6 +303,54 @@
                                 @error('document')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
+                            </div> -->
+
+                            {{-- Documents Section in Main Form --}}
+                            <div class="card mt-3 mb-3">
+                                <div class="card-header bg-secondary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-file-upload mr-2"></i>{{ __('Documents supplémentaires') }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    {{-- Voucher (Bon) Upload --}}
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold">{{ __('Bon') }} ({{ __('Voucher') }})</label>
+                                        <input type="file" class="form-control-file" name="voucher_files[]" id="voucher_files" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                        @error('voucher_files.*')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    {{-- Invoice (Facture) Upload --}}
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold">{{ __('Facture') }} ({{ __('Invoice') }})</label>
+                                        <input type="file" class="form-control-file" name="invoice_files[]" id="invoice_files" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                        @error('invoice_files.*')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    {{-- Vignette Upload --}}
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold">{{ __('Vignette') }}</label>
+                                        <input type="file" class="form-control-file" name="vignette_files[]" id="vignette_files" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                        @error('vignette_files.*')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    {{-- Other Documents Upload --}}
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold">{{ __('Autres Documents') }} ({{ __('Other Documents') }})</label>
+                                        <input type="file" class="form-control-file" name="other_files[]" id="other_files" multiple accept="image/*,.pdf,.doc,.docx">
+                                        <small class="form-text text-muted">{{ __('Vous pouvez sélectionner plusieurs fichiers. Taille maximum: 50MB par fichier') }}</small>
+                                        @error('other_files.*')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group mb-0">
@@ -565,7 +663,73 @@
                     }
                 });
             }
+
+            // Initialize denominations calculation
+            updateTotal();
         });
+
+        // Calculate total from denominations
+        function updateTotal() {
+            const denominations = [20, 50, 100, 200, 300, 400, 500];
+            let total = 0;
+            
+            denominations.forEach(denom => {
+                const input = document.getElementById('denomination_' + denom);
+                if (input) {
+                    const quantity = parseInt(input.value) || 0;
+                    total += denom * quantity;
+                }
+            });
+            
+            const totalElement = document.getElementById('calculated_total');
+            if (totalElement) {
+                totalElement.textContent = total.toLocaleString('fr-FR');
+            }
+            
+            // Update amount field if it's empty or user wants to sync
+            const amountField = document.getElementById('amount');
+            if (amountField && !amountField.value) {
+                amountField.value = total;
+            }
+        }
+
+        // Calculate denominations from total amount
+        function calculateDenominations() {
+            const amountField = document.getElementById('amount');
+            if (!amountField) return;
+            
+            let amount = parseFloat(amountField.value) || 0;
+            if (amount <= 0) {
+                // Clear all denominations
+                [20, 50, 100, 200, 300, 400, 500].forEach(denom => {
+                    const input = document.getElementById('denomination_' + denom);
+                    if (input) input.value = 0;
+                });
+                updateTotal();
+                return;
+            }
+            
+            // Calculate denominations (greedy algorithm)
+            const denominations = [500, 400, 300, 200, 100, 50, 20];
+            const result = {};
+            let remaining = amount;
+            
+            denominations.forEach(denom => {
+                const count = Math.floor(remaining / denom);
+                result[denom] = count;
+                remaining = remaining % denom;
+            });
+            
+            // Update input fields
+            Object.keys(result).forEach(denom => {
+                const input = document.getElementById('denomination_' + denom);
+                if (input) {
+                    input.value = result[denom];
+                }
+            });
+            
+            updateTotal();
+        }
     </script>
 </x-admin.app>
 

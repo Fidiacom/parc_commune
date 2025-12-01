@@ -108,6 +108,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/payment-voucher/{id}/edit', [PaymentVoucherController::class, 'edit'])->name('admin.payment_voucher.edit');
         Route::put('/payment-voucher/{id}', [PaymentVoucherController::class, 'update'])->name('admin.payment_voucher.update');
         Route::delete('/payment-voucher/{id}', [PaymentVoucherController::class, 'destroy'])->name('admin.payment_voucher.delete');
+        Route::post('/payment-voucher/attachments/add', [PaymentVoucherController::class, 'addAttachments'])->name('admin.payment_voucher.attachments.add');
+        Route::delete('/payment-voucher/attachments/delete/{id}', [PaymentVoucherController::class, 'deleteAttachment'])->name('admin.payment_voucher.attachments.delete');
 
         //Vehicle KM/Hours Update - PUT route (already moved GET route above)
         Route::put('/vehicule/update-km-hours/{id}', [VehiculeUpdateController::class, 'update'])->name('admin.vehicule.update.km_hours');

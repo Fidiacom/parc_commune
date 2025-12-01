@@ -10,7 +10,9 @@ use App\Models\Vidange;
 use App\Models\VidangeHistorique;
 use App\Models\TimingChaine;
 use App\Models\TimingChaineHistorique;
+use App\Models\PaymentVoucherAttachment;
 use App\Repositories\PaymentVoucherRepository;
+use App\Repositories\PaymentVoucherAttachmentRepository;
 use App\Services\FileUploadService;
 use Illuminate\Http\UploadedFile;
 
@@ -18,13 +20,16 @@ class PaymentVoucherManager
 {
     protected PaymentVoucherRepository $repository;
     protected FileUploadService $fileUploadService;
+    protected PaymentVoucherAttachmentRepository $attachmentRepository;
 
     public function __construct(
         PaymentVoucherRepository $repository,
-        FileUploadService $fileUploadService
+        FileUploadService $fileUploadService,
+        PaymentVoucherAttachmentRepository $attachmentRepository
     ) {
         $this->repository = $repository;
         $this->fileUploadService = $fileUploadService;
+        $this->attachmentRepository = $attachmentRepository;
     }
 
     /**
@@ -260,7 +265,49 @@ class PaymentVoucherManager
             $this->fileUploadService->deleteFile($voucher->getDocumentPath());
         }
 
+        // Delete all attachments
+        $attachments = $this->attachmentRepository->getByPaymentVoucherId($voucher->getId());
+        foreach ($attachments as $attachment) {
+            $this->deleteAttachment($attachment->getId());
+        }
+
         return $this->repository->delete($voucher);
+    }
+
+    /**
+     * Add attachments to payment voucher.
+     */
+    public function addAttachments(PaymentVoucher $voucher, array $files, string $documentType): void
+    {
+        foreach ($files as $file) {
+            $filePath = $this->fileUploadService->uploadFile($file, 'payment_vouchers/attachments');
+            $fileInfo = $this->fileUploadService->getFileInfo($file);
+            $this->attachmentRepository->create([
+                PaymentVoucherAttachment::PAYMENT_VOUCHER_ID_COLUMN => $voucher->getId(),
+                PaymentVoucherAttachment::DOCUMENT_TYPE_COLUMN => $documentType,
+                PaymentVoucherAttachment::FILE_PATH_COLUMN => $filePath,
+                PaymentVoucherAttachment::FILE_NAME_COLUMN => $fileInfo['name'],
+                PaymentVoucherAttachment::FILE_TYPE_COLUMN => $fileInfo['type'],
+                PaymentVoucherAttachment::FILE_SIZE_COLUMN => $fileInfo['size'],
+            ]);
+        }
+    }
+
+    /**
+     * Delete an attachment.
+     */
+    public function deleteAttachment(int $attachmentId): bool
+    {
+        $attachment = $this->attachmentRepository->findById($attachmentId);
+        if ($attachment) {
+            // Delete file from storage
+            $filePath = $attachment->getFilePath();
+            if ($filePath) {
+                $this->fileUploadService->deleteFile($filePath);
+            }
+            return $this->attachmentRepository->delete($attachmentId);
+        }
+        return false;
     }
 }
 

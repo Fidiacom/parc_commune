@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateDriverRequest;
 use App\Models\CategoriePermi;
 use App\Services\DriverService;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {
@@ -43,7 +44,7 @@ class DriverController extends Controller
         $permis = CategoriePermi::all();
 
         try {
-            $driver = $this->driverService->getDriverById($id);
+            $driver = $this->driverService->getDriverById($id, ['permis', 'missionOrders']);
             
             if (!$driver) {
                 Alert::error('Error', 'Driver not found');
@@ -54,7 +55,27 @@ class DriverController extends Controller
             return redirect(route('admin.drivers'));
         }
 
-        return view('admin.drivers.edit', ['driver' => $driver, 'permis' => $permis]);
+        // Get active mission orders (not completed)
+        $activeMissionOrders = \App\Models\MissionOrder::where('driver_id', $driver->getId())
+            ->whereNull('done_at')
+            ->with('vehicule')
+            ->orderBy('start', 'asc')
+            ->get();
+
+        // Get upcoming mission orders (future dates)
+        $upcomingMissionOrders = \App\Models\MissionOrder::where('driver_id', $driver->getId())
+            ->whereNull('done_at')
+            ->where('start', '>=', now()->toDateString())
+            ->with('vehicule')
+            ->orderBy('start', 'asc')
+            ->get();
+
+        return view('admin.drivers.edit', [
+            'driver' => $driver, 
+            'permis' => $permis,
+            'activeMissionOrders' => $activeMissionOrders,
+            'upcomingMissionOrders' => $upcomingMissionOrders,
+        ]);
     }
 
     public function update(UpdateDriverRequest $request, $id)
@@ -144,6 +165,47 @@ class DriverController extends Controller
             'completedMissionsCount' => $completedMissionsCount,
             'vehiclesUsed' => $vehiclesUsed,
             'recentMissionOrders' => $recentMissionOrders,
+        ]);
+    }
+
+    /**
+     * Show availability check page.
+     */
+    public function checkAvailability()
+    {
+        return view('admin.drivers.check_availability');
+    }
+
+    /**
+     * Get available drivers for a given period.
+     */
+    public function getAvailableDrivers(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+
+        $availableDrivers = $this->driverService->getAvailableDrivers(
+            $request->start_date,
+            $request->end_date
+        );
+
+        return response()->json([
+            'success' => true,
+            'drivers' => $availableDrivers->map(function ($driver) {
+                return [
+                    'id' => $driver->getId(),
+                    'first_name_fr' => $driver->getFirstNameFr(),
+                    'last_name_fr' => $driver->getLastNameFr(),
+                    'first_name_ar' => $driver->getFirstNameAr(),
+                    'last_name_ar' => $driver->getLastNameAr(),
+                    'cin' => $driver->getCin(),
+                    'phone' => $driver->getPhone(),
+                    'role_fr' => $driver->getRoleFr(),
+                    'role_ar' => $driver->getRoleAr(),
+                ];
+            }),
         ]);
     }
 }

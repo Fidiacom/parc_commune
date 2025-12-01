@@ -63,6 +63,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/driver/{id}/dashboard', [DriverController::class, 'dashboard'])->name('admin.driver.dashboard');
         Route::post('/driver/update/{id}', [DriverController::class, 'update'])->name('admin.driver.update');
         Route::delete('/driver/{id}', [DriverController::class, 'destroy'])->name('admin.driver.delete');
+        Route::get('/driver/check-availability', [DriverController::class, 'checkAvailability'])->name('admin.driver.check_availability');
+        Route::post('/driver/get-available', [DriverController::class, 'getAvailableDrivers'])->name('admin.driver.get_available');
 
 
         //Mission Order (Ordre de Mission)

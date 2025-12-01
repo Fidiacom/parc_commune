@@ -7,6 +7,14 @@
             <div class="col-8 mx-auto">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
                     <h4 class="mb-0 font-size-18">{{ __('edit condicteur') }}</h4>
+                    <div>
+                        <a href="{{ route('admin.driver.check_availability') }}" class="btn btn-outline-info btn-sm mr-2">
+                            <i class="fas fa-calendar-check mr-2"></i>{{ __('Vérifier disponibilité') }}
+                        </a>
+                        <a href="{{ route('admin.drivers') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-arrow-left mr-2"></i>{{ __('Retour') }}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -220,6 +228,80 @@
                     <!-- end card-body-->
                 </div>
                 <!-- end card -->
+
+                {{-- Availability Section --}}
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-check mr-2"></i>{{ __('Disponibilité du conducteur') }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if($activeMissionOrders->count() > 0)
+                            <div class="alert alert-warning">
+                                <strong>{{ __('Mission(s) active(s)') }}:</strong> {{ $activeMissionOrders->count() }}
+                            </div>
+                            
+                            <h6 class="mb-3">{{ __('Missions actives et à venir') }}:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('Date début') }}</th>
+                                            <th>{{ __('Date fin') }}</th>
+                                            <th>{{ __('Type') }}</th>
+                                            <th>{{ __('Véhicule') }}</th>
+                                            <th>{{ __('Mission') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($activeMissionOrders as $mission)
+                                            <tr>
+                                                <td>{{ \Carbon\Carbon::parse($mission->getStart())->format('d/m/Y') }}</td>
+                                                <td>
+                                                    @if($mission->isPermanent())
+                                                        <span class="badge badge-danger">{{ __('Permanent') }}</span>
+                                                    @elseif($mission->getEnd())
+                                                        {{ \Carbon\Carbon::parse($mission->getEnd())->format('d/m/Y') }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($mission->isPermanent())
+                                                        <span class="badge badge-danger">{{ __('Permanent') }}</span>
+                                                    @else
+                                                        <span class="badge badge-info">{{ __('Temporaire') }}</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($mission->getVehicule())
+                                                        {{ $mission->getVehicule()->getMatricule() ?? '-' }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($mission->getMissionFr())
+                                                        {{ $mission->getMissionFr() }}
+                                                    @elseif($mission->getMissionAr())
+                                                        {{ $mission->getMissionAr() }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle mr-2"></i>{{ __('Aucune mission active. Le conducteur est disponible.') }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
 
 
 

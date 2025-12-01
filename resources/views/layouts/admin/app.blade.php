@@ -8,6 +8,7 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="MyraStudio" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- App favicon -->
     <link rel="shortcut icon" href="assets/images/favicon.ico">
@@ -371,8 +372,8 @@
                     <div class="dropdown d-inline-block ml-2">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="{{ asset('assets/images/users/avatar-3.jpg') }}"
-                                alt="Header Avatar">
+                            <!-- <img class="rounded-circle header-profile-user" src="{{ asset('assets/images/users/avatar-3.jpg') }}"
+                                alt="Header Avatar"> -->
                             <span class="d-none d-sm-inline-block ml-1">{{ auth()->user()->name }}</span>
                             <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
                         </button>
@@ -430,10 +431,11 @@
                             </ul>
                         </li>
                         <li>
-                            <a href="{{ route('admin.drivers') }}" class="wwaves-effect"><i
-                                    class="bx bx-user"></i>
-                                    <span>{{ __('Conducteur') }}</span>
-                            </a>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect"><i class="bx bx-user"></i><span>{{ __('Conducteur') }}</span></a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li><a href="{{ route('admin.drivers') }}">{{ __('Liste des conducteurs') }}</a></li>
+                                <li><a href="{{ route('admin.driver.check_availability') }}">{{ __('Vérifier la disponibilité') }}</a></li>
+                            </ul>
                         </li>
 
                         <li>

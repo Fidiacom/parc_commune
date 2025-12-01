@@ -4,6 +4,10 @@
             <form action="">
 
                 <div class="text-right">
+                    <a href="{{ route('admin.driver.check_availability') }}" type="button"
+                        class="btn btn-info waves-effect waves-light mr-2">
+                        <i class="fas fa-calendar-check mr-2"></i>{{ __('Vérifier la disponibilité') }}
+                    </a>
                     <a href="{{ route('admin.drivers.create') }}" type="button"
                         class="btn btn-primary waves-effect waves-light">{{ ('Add new Driver') }}</a>
                 </div>

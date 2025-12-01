@@ -86,5 +86,77 @@ class DriverService
     {
         return $this->manager->deleteDriver($driver);
     }
+
+    /**
+     * Check if a driver is available in a given period.
+     * A driver is available if they don't have any active mission orders that overlap with the period.
+     */
+    public function isDriverAvailable(int $driverId, string $startDate, ?string $endDate = null): bool
+    {
+        $driver = $this->getDriverById($driverId, ['missionOrders']);
+        
+        if (!$driver) {
+            return false;
+        }
+
+        // Get all active mission orders (not done yet)
+        $activeMissionOrders = \App\Models\MissionOrder::where('driver_id', $driverId)
+            ->whereNull('done_at')
+            ->get();
+
+        $start = \Carbon\Carbon::parse($startDate);
+        $end = $endDate ? \Carbon\Carbon::parse($endDate) : null;
+
+        foreach ($activeMissionOrders as $missionOrder) {
+            $missionStart = \Carbon\Carbon::parse($missionOrder->getStart());
+            $missionEnd = $missionOrder->getEnd() ? \Carbon\Carbon::parse($missionOrder->getEnd()) : null;
+
+            // If mission is permanent (no end date), it blocks all dates from its start onwards
+            if ($missionOrder->isPermanent()) {
+                // Permanent mission blocks if requested start is on or after mission start
+                if ($start->greaterThanOrEqualTo($missionStart)) {
+                    return false;
+                }
+                // Also check if requested period overlaps with permanent mission
+                if ($end && $end->greaterThanOrEqualTo($missionStart)) {
+                    return false;
+                }
+            } else {
+                // Mission has an end date - check for overlap
+                if ($end) {
+                    // Both have end dates - check for overlap
+                    // Overlap occurs if: start <= missionEnd AND end >= missionStart
+                    if ($start->lessThanOrEqualTo($missionEnd) && $end->greaterThanOrEqualTo($missionStart)) {
+                        return false;
+                    }
+                } else {
+                    // Requested period has no end (permanent) - check if it starts before or during existing mission
+                    // If requested start is before or equal to mission end, there's overlap
+                    if ($start->lessThanOrEqualTo($missionEnd)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get all available drivers for a given period.
+     */
+    public function getAvailableDrivers(string $startDate, ?string $endDate = null)
+    {
+        $allDrivers = $this->getAllDrivers();
+        $availableDrivers = [];
+
+        foreach ($allDrivers as $driver) {
+            if ($this->isDriverAvailable($driver->getId(), $startDate, $endDate)) {
+                $availableDrivers[] = $driver;
+            }
+        }
+
+        return collect($availableDrivers);
+    }
 }
 

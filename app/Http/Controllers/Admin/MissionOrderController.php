@@ -39,14 +39,22 @@ class MissionOrderController extends Controller
             ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $vehicules = $this->vehiculeService->getAllVehicules();
         $drivers   = $this->driverService->getAllDrivers();
 
+        // Get pre-filled values from query parameters
+        $selectedDriverId = $request->query('driver_id');
+        $selectedStartDate = $request->query('start_date');
+        $selectedEndDate = $request->query('end_date');
+
         return view('admin.mission_order.create', [
             'drivers'   => $drivers,
             'vehicules' => $vehicules,
+            'selectedDriverId' => $selectedDriverId,
+            'selectedStartDate' => $selectedStartDate,
+            'selectedEndDate' => $selectedEndDate,
         ]);
     }
 

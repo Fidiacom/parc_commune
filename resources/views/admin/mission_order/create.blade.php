@@ -27,10 +27,12 @@
 
                         <div class="form-group">
                             <label for="">{{ __('Select Driver') }}</label>
-                            <select class="form-control @error('driver') is-invalid @enderror" data-toggle="select2" style="width: 100%" name="driver">
+                            <select class="form-control @error('driver') is-invalid @enderror" data-toggle="select2" style="width: 100%" name="driver" id="driver_select">
                                 <option value="0">{{ __('Select') }}</option>
                                 @foreach ($drivers as $d)
-                                    <option value="{{ $d->id }}">{{ $d->getFirstNameFr().' '.$d->getLastNameFr().' | '.$d->getCin() }}</option>
+                                    <option value="{{ $d->id }}" @if(isset($selectedDriverId) && $selectedDriverId == $d->id) selected @endif>
+                                        {{ $d->getFirstNameFr().' '.$d->getLastNameFr().' | '.$d->getCin() }}
+                                    </option>
                                 @endforeach
                             </select>
                             @error('driver')
@@ -50,7 +52,11 @@
 
                         <div class="form-group mb-3">
                             <label>{{ __('Date start') }}</label>
-                            <input type="date" class="form-control date @error('start_date') is-invalid @enderror" name="start_date">
+                            <input type="date" 
+                                   class="form-control date @error('start_date') is-invalid @enderror" 
+                                   name="start_date" 
+                                   id="start_date"
+                                   value="{{ old('start_date', $selectedStartDate ?? '') }}">
                             @error('start_date')
                             <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                 {{ $message }}
@@ -60,7 +66,11 @@
 
                         <div class="form-group mb-3" id="end_date_group">
                             <label>{{ __('Date End') }}</label>
-                            <input type="date" class="form-control date @error('end_date') is-invalid @enderror" name="end_date" id="end_date">
+                            <input type="date" 
+                                   class="form-control date @error('end_date') is-invalid @enderror" 
+                                   name="end_date" 
+                                   id="end_date"
+                                   value="{{ old('end_date', $selectedEndDate ?? '') }}">
                             @error('end_date')
                             <div id="validationServerUsernameFeedback" class="invalid-feedback">
                                 {{ $message }}

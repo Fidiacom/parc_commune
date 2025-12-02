@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
     <meta charset="utf-8" />
@@ -227,6 +227,52 @@
         .table-hover tbody tr:hover {
             background-color: rgba({{ $mainColorRgb }}, 0.05) !important;
         }
+
+        /* RTL Support for DataTables in Arabic */
+        @if(app()->getLocale() === 'ar')
+        .rtl-datatable .dataTables_filter {
+            text-align: right !important;
+        }
+        .rtl-datatable .dataTables_filter label {
+            text-align: right !important;
+            direction: rtl !important;
+        }
+        .rtl-datatable .dataTables_filter input {
+            margin-right: 0.5em !important;
+            margin-left: 0 !important;
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        .rtl-datatable .dataTables_length {
+            text-align: left !important;
+        }
+        .rtl-datatable .dataTables_length label {
+            text-align: left !important;
+            direction: rtl !important;
+        }
+        .rtl-datatable .dataTables_length select {
+            direction: rtl !important;
+        }
+        .rtl-datatable .dataTables_info {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        .rtl-datatable .dataTables_paginate {
+            text-align: left !important;
+        }
+        .rtl-datatable table.dataTable thead > tr > th.sorting_asc,
+        .rtl-datatable table.dataTable thead > tr > th.sorting_desc,
+        .rtl-datatable table.dataTable thead > tr > th.sorting {
+            padding-left: 30px !important;
+            padding-right: 8px !important;
+        }
+        .rtl-datatable table.dataTable thead > tr > th.sorting_asc:before,
+        .rtl-datatable table.dataTable thead > tr > th.sorting_desc:before,
+        .rtl-datatable table.dataTable thead > tr > th.sorting:before {
+            left: 8px !important;
+            right: auto !important;
+        }
+        @endif
     </style>
 </head>
 

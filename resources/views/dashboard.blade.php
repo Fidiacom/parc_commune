@@ -616,20 +616,83 @@
             }
 
             // Initialize basic-datatable
-            $('#basic-datatable').DataTable({
+            var table1 = $('#basic-datatable').DataTable({
                 "language": dtLanguage,
                 "drawCallback": function () {
                     $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                    // Apply RTL styles for Arabic
+                    if (locale === 'ar') {
+                        applyRTLStyles('#basic-datatable');
+                    }
                 }
             });
             
+            // Apply RTL styles immediately for Arabic
+            if (locale === 'ar') {
+                setTimeout(function() {
+                    applyRTLStyles('#basic-datatable');
+                }, 100);
+            }
+            
             // Initialize basic-datatable2
-            $('#basic-datatable2').DataTable({
+            var table2 = $('#basic-datatable2').DataTable({
                 "language": dtLanguage,
                 "drawCallback": function () {
                     $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                    // Apply RTL styles for Arabic
+                    if (locale === 'ar') {
+                        applyRTLStyles('#basic-datatable2');
+                    }
                 }
             });
+            
+            // Apply RTL styles immediately for Arabic
+            if (locale === 'ar') {
+                setTimeout(function() {
+                    applyRTLStyles('#basic-datatable2');
+                }, 100);
+            }
+            
+            // Function to apply RTL styles to DataTables
+            function applyRTLStyles(tableId) {
+                var wrapper = $(tableId + '_wrapper');
+                var filter = $(tableId + '_filter');
+                var length = $(tableId + '_length');
+                var info = $(tableId + '_info');
+                
+                wrapper.addClass('rtl-datatable');
+                
+                if (filter.length) {
+                    filter.addClass('text-right');
+                    filter.find('label').css({
+                        'text-align': 'right',
+                        'direction': 'rtl',
+                        'float': 'right'
+                    });
+                    filter.find('input').css({
+                        'margin-right': '0.5em',
+                        'margin-left': '0',
+                        'direction': 'rtl',
+                        'text-align': 'right'
+                    });
+                }
+                
+                if (length.length) {
+                    length.addClass('text-left');
+                    length.find('label').css({
+                        'text-align': 'left',
+                        'direction': 'rtl'
+                    });
+                    length.find('select').css('direction', 'rtl');
+                }
+                
+                if (info.length) {
+                    info.css({
+                        'direction': 'rtl',
+                        'text-align': 'right'
+                    });
+                }
+            }
         });
     </script>
 

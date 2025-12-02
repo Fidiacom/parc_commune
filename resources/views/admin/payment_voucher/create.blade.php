@@ -111,7 +111,8 @@
                             <div class="form-group">
                                 <label class="font-weight-semibold">{{ __('Montant') }} <span class="text-danger">*</span></label>
                                 <input type="text" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" 
-                                       value="{{ old('amount') }}" required placeholder="{{ __('Montant en DH') }}" onchange="calculateDenominations()" onkeyup="calculateDenominations()">
+                                       value="{{ old('amount') }}" required placeholder="{{ __('Montant en DH') }}" 
+                                       onchange="calculateDenominations(); calculateFuelAmount('amount');" onkeyup="calculateDenominations(); calculateFuelAmount('amount');">
                                 @error('amount')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -169,12 +170,27 @@
 
                             <!-- Fuel Liters (for carburant) -->
                             <div class="form-group" id="fuel_liters_group" style="display: none;">
-                                <label class="font-weight-semibold">{{ __('Litres de carburant') }} <span class="text-danger">*</span></label>
-                                <input type="text" name="fuel_liters" id="fuel_liters" class="form-control @error('fuel_liters') is-invalid @enderror" 
-                                       value="{{ old('fuel_liters') }}" placeholder="{{ __('Quantité en litres') }}">
-                                @error('fuel_liters')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="font-weight-semibold">{{ __('Litres de carburant') }} <span class="text-danger">*</span></label>
+                                        <input type="text" name="fuel_liters" id="fuel_liters" class="form-control @error('fuel_liters') is-invalid @enderror" 
+                                               value="{{ old('fuel_liters') }}" placeholder="{{ __('Quantité en litres') }}"
+                                               onchange="calculateFuelAmount('fuel_liters')" onkeyup="calculateFuelAmount('fuel_liters')">
+                                        @error('fuel_liters')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="font-weight-semibold">{{ __('Prix par litre (DH)') }}</label>
+                                        <input type="text" name="price_per_liter" id="price_per_liter" class="form-control" 
+                                               value="{{ old('price_per_liter') }}" placeholder="{{ __('Prix par litre') }}"
+                                               onchange="calculateFuelAmount('price_per_liter')" onkeyup="calculateFuelAmount('price_per_liter')">
+                                        <small class="form-text text-muted">{{ __('Le montant total sera calculé automatiquement') }}</small>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info mt-2" id="fuel_calculation_info" style="display: none;">
+                                    <strong>{{ __('Résultat') }}:</strong> <span id="calculated_fuel_amount">0</span>
+                                </div>
                             </div>
 
                             <!-- Tire Selection (for rechange_pneu) -->
@@ -402,6 +418,8 @@
                 if (fuelGroup) fuelGroup.style.display = 'block';
                 const fuelLitersElement = document.getElementById('fuel_liters');
                 if (fuelLitersElement) fuelLitersElement.required = true;
+                // Calculate fuel amount if values exist
+                setTimeout(calculateFuelAmount, 100);
             } else {
                 const fuelLitersElement = document.getElementById('fuel_liters');
                 if (fuelLitersElement) fuelLitersElement.required = false;
@@ -652,6 +670,11 @@
                 }
             }
 
+            // Calculate fuel amount if category is carburant and values exist
+            if (category === 'carburant') {
+                setTimeout(calculateFuelAmount, 200);
+            }
+
             // File input label update
             var documentInput = document.getElementById('document');
             if (documentInput) {
@@ -729,6 +752,109 @@
             });
             
             updateTotal();
+        }
+
+        // Track which field triggered the calculation
+        let lastEditedField = null;
+
+        // Calculate fuel amount or liters based on what's entered
+        function calculateFuelAmount(triggeredBy = null) {
+            const fuelLitersInput = document.getElementById('fuel_liters');
+            const pricePerLiterInput = document.getElementById('price_per_liter');
+            const amountInput = document.getElementById('amount');
+            const calculationInfo = document.getElementById('fuel_calculation_info');
+            const calculatedAmountSpan = document.getElementById('calculated_fuel_amount');
+            
+            if (!fuelLitersInput || !pricePerLiterInput || !amountInput) {
+                return;
+            }
+            
+            // Track which field was last edited
+            if (triggeredBy) {
+                lastEditedField = triggeredBy;
+            }
+            
+            // Get values and clean them (remove spaces, commas)
+            let fuelLiters = fuelLitersInput.value.toString().replace(/[\s,]/g, '').replace(',', '.');
+            let pricePerLiter = pricePerLiterInput.value.toString().replace(/[\s,]/g, '').replace(',', '.');
+            let amount = amountInput.value.toString().replace(/[\s,]/g, '').replace(',', '.');
+            
+            // Convert to numbers
+            fuelLiters = parseFloat(fuelLiters) || 0;
+            pricePerLiter = parseFloat(pricePerLiter) || 0;
+            amount = parseFloat(amount) || 0;
+            
+            // Need price per liter for any calculation
+            if (pricePerLiter <= 0) {
+                if (calculationInfo) {
+                    calculationInfo.style.display = 'none';
+                }
+                return;
+            }
+            
+            // Case 1: If Amount and Price per Liter are entered, calculate Liters
+            // (Only if amount was just edited, or liters is empty)
+            if (lastEditedField === 'amount' && amount > 0 && pricePerLiter > 0) {
+                const calculatedLiters = amount / pricePerLiter;
+                fuelLitersInput.value = calculatedLiters.toFixed(2);
+                
+                // Show calculation info
+                if (calculationInfo) {
+                    calculationInfo.style.display = 'block';
+                }
+                if (calculatedAmountSpan) {
+                    calculatedAmountSpan.textContent = calculatedLiters.toFixed(2) + ' {{ __("litres") }}';
+                }
+            }
+            // Case 2: If Liters and Price per Liter are entered, calculate Amount
+            // (Only if liters was just edited, or amount is empty/zero)
+            else if (lastEditedField === 'fuel_liters' && fuelLiters > 0 && pricePerLiter > 0) {
+                const calculatedAmount = fuelLiters * pricePerLiter;
+                amountInput.value = calculatedAmount.toFixed(2);
+                
+                // Show calculation info
+                if (calculationInfo) {
+                    calculationInfo.style.display = 'block';
+                }
+                if (calculatedAmountSpan) {
+                    calculatedAmountSpan.textContent = calculatedAmount.toFixed(2) + ' {{ __("MAD") }}';
+                }
+                
+                // Trigger denominations calculation
+                calculateDenominations();
+            }
+            // Case 3: If price per liter was edited, calculate based on what's available
+            else if (lastEditedField === 'price_per_liter' && pricePerLiter > 0) {
+                if (fuelLiters > 0) {
+                    // Calculate amount from liters
+                    const calculatedAmount = fuelLiters * pricePerLiter;
+                    amountInput.value = calculatedAmount.toFixed(2);
+                    
+                    if (calculationInfo) {
+                        calculationInfo.style.display = 'block';
+                    }
+                    if (calculatedAmountSpan) {
+                        calculatedAmountSpan.textContent = calculatedAmount.toFixed(2) + ' {{ __("MAD") }}';
+                    }
+                    calculateDenominations();
+                } else if (amount > 0) {
+                    // Calculate liters from amount
+                    const calculatedLiters = amount / pricePerLiter;
+                    fuelLitersInput.value = calculatedLiters.toFixed(2);
+                    
+                    if (calculationInfo) {
+                        calculationInfo.style.display = 'block';
+                    }
+                    if (calculatedAmountSpan) {
+                        calculatedAmountSpan.textContent = calculatedLiters.toFixed(2) + ' {{ __("litres") }}';
+                    }
+                }
+            } else {
+                // Hide calculation info if values are not valid
+                if (calculationInfo) {
+                    calculationInfo.style.display = 'none';
+                }
+            }
         }
     </script>
 </x-admin.app>

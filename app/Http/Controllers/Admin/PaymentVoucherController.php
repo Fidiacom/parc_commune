@@ -304,6 +304,7 @@ class PaymentVoucherController extends Controller
         $categories = [
             'carburant' => __('Bon pour Carburant'),
             'entretien' => __('Entretien'),
+            'vidange' => __('Vidange'),
             'lavage' => __('Lavage'),
             'lubrifiant' => __('Lubrifiant'),
             'reparation' => __('Reparation'),
@@ -311,6 +312,8 @@ class PaymentVoucherController extends Controller
             'rechange_pneu' => __('Rechange pneu'),
             'frais_immatriculation' => __('Frais d\'immatriculation'),
             'visite_technique' => __('Visite technique'),
+            'insurance' => __('Assurance'),
+            'other' => __('Autre'),
         ];
 
         $selectedVehicule = Vehicule::with(['pneu', 'vidange', 'timing_chaine'])->find($voucher->getVehiculeId());

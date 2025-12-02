@@ -396,42 +396,80 @@
             <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">{{ __('Historique De stock') }}</h4>
-                        <table id="basic-datatable2" class="table dt-responsive nowrap">
-                            <thead>
-                                <tr>
-                                    <th>{{ __('Stock') }}</th>
-                                    <th>{{ __('Type') }}</th>
-                                    <th>{{ __('Quantite') }}</th>
-                                    <th>{{ __('Qte actuel') }}</th>
-                                    <th>{{ __('Cree le') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($historiques as $h)
-                                <tr>
-                                    <td>{{ isset($h->stock) ? $h->stock->name : __('Supprimé') }}</td>
-                                    <td>
-                                        @if($h->type == 'entree')
-                                            {{ __('Entrée') }}
-                                        @elseif($h->type == 'sortie')
-                                            {{ __('Sortie') }}
-                                        @else
-                                            {{ $h->type }}
-                                        @endif
-                                        @if ($h->type == 'sortie')
-                                        <a href="{{ route('admin.vehicule.edit', $h->vehicule_id) }}">
-                                            {{ '('.$h->matricule.')' }}
-                                        </a>
-                                        @endif
-                                    </td>
-                                    <td>{{ $h->quantite }}</td>
-                                    <td>{{ isset($h->stock) ? $h->stock->stock_actuel : '-----' }}</td>
-                                    <td>{{ $h->created_at }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                        <h4 class="card-title mb-4">{{ __('Résumé des activités') }}</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="avatar-sm rounded-circle bg-soft-primary text-primary d-flex align-items-center justify-content-center">
+                                            <i class="bx bx-car font-size-20"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1 text-muted">{{ __('Véhicules actifs') }}</h6>
+                                        <h4 class="mb-0">{{ $vehiculesCount }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="avatar-sm rounded-circle bg-soft-info text-info d-flex align-items-center justify-content-center">
+                                            <i class="bx bx-user font-size-20"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1 text-muted">{{ __('Conducteurs') }}</h6>
+                                        <h4 class="mb-0">{{ $driverCount }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="avatar-sm rounded-circle bg-soft-warning text-warning d-flex align-items-center justify-content-center">
+                                            <i class="bx bx-analyse font-size-20"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1 text-muted">{{ __('Missions actives') }}</h6>
+                                        <h4 class="mb-0">{{ isset($activeMissionOrders) ? count($activeMissionOrders) : 0 }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="avatar-sm rounded-circle bg-soft-success text-success d-flex align-items-center justify-content-center">
+                                            <i class="bx bx-receipt font-size-20"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1 text-muted">{{ __('Bons de paiement') }}</h6>
+                                        <h4 class="mb-0">{{ isset($recentPaymentVouchers) ? count($recentPaymentVouchers) : 0 }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        @if(isset($totalCosts))
+                        <hr>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6 class="text-muted mb-3">{{ __('Coûts ce mois') }}</h6>
+                                <h3 class="text-primary mb-0">
+                                    {{ number_format($totalCosts['total_this_month'], 2, ',', ' ') }} {{ __('MAD') }}
+                                </h3>
+                                <p class="text-muted mb-0 mt-2">
+                                    <small>{{ __('Total cette année') }}: {{ number_format($totalCosts['total_this_year'], 2, ',', ' ') }} {{ __('MAD') }}</small>
+                                </p>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -534,6 +572,25 @@
 
     </div> <!-- container-fluid -->
 
+    <style>
+        .avatar-sm {
+            width: 48px;
+            height: 48px;
+        }
+        .bg-soft-primary {
+            background-color: rgba(52, 86, 122, 0.1);
+        }
+        .bg-soft-info {
+            background-color: rgba(23, 162, 184, 0.1);
+        }
+        .bg-soft-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+        .bg-soft-success {
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+    </style>
+
     <script>
         $(document).ready(function() {
             // DataTables language configuration based on current locale
@@ -634,24 +691,6 @@
                 }, 100);
             }
             
-            // Initialize basic-datatable2
-            var table2 = $('#basic-datatable2').DataTable({
-                "language": dtLanguage,
-                "drawCallback": function () {
-                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
-                    // Apply RTL styles for Arabic
-                    if (locale === 'ar') {
-                        applyRTLStyles('#basic-datatable2');
-                    }
-                }
-            });
-            
-            // Apply RTL styles immediately for Arabic
-            if (locale === 'ar') {
-                setTimeout(function() {
-                    applyRTLStyles('#basic-datatable2');
-                }, 100);
-            }
             
             // Function to apply RTL styles to DataTables
             function applyRTLStyles(tableId) {

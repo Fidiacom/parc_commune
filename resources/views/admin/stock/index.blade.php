@@ -20,7 +20,7 @@
                             </div>
 
                             <div class="w-50 mx-2">
-                                <label for="">{{ __('Seille alert') }}</label>
+                                <label for="">{{ __('Seuile alert') }}</label>
                                 <input
                                     type="number"
                                     step="any"
@@ -161,13 +161,14 @@
             function deleteStock(id)
             {
                 Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
+                    title: "{{ __('Êtes-vous sûr?') }}",
+                    text: "{{ __('Vous ne pourrez pas annuler cette action!') }}",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes, delete it!"
+                    confirmButtonText: "{{ __('Oui, supprimer!') }}",
+                    cancelButtonText: "{{ __('Annuler') }}"
                 }).then(function (result) {
                     if (result.value) {
                         document.getElementById("stockId").value = id;

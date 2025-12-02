@@ -9,7 +9,7 @@
                         <i class="fas fa-calendar-check mr-2"></i>{{ __('Vérifier la disponibilité') }}
                     </a>
                     <a href="{{ route('admin.drivers.create') }}" type="button"
-                        class="btn btn-primary waves-effect waves-light">{{ ('Add new Driver') }}</a>
+                        class="btn btn-primary waves-effect waves-light">{{ __('Add new Driver') }}</a>
                 </div>
             </form>
         </div>

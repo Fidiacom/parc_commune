@@ -37,7 +37,7 @@
                                 <td>{{ $missionOrder->driver->getCin() ?: '-' }}</td>
                                 <td>{{ $missionOrder->vehicule->getBrand().' - '.$missionOrder->vehicule->getModel() }}</td>
                                 <td>{{ $missionOrder->vehicule->getMatricule() }}</td>
-                                <td>{{ $missionOrder->getPermanent() ? 'permanent' : 'temporaire' }}</td>
+                                <td>{{ $missionOrder->getPermanent() ? __('permanent') : __('temporaire') }}</td>
                                 <td>{{ $missionOrder->getStart().' | ' }} {{ $missionOrder->getPermanent() ? '-----' : ($missionOrder->getEnd() ?: '-') }}</td>
                                 <td>
                                     {{ $missionOrder->getDoneAt() ?? '--------'  }}

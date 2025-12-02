@@ -263,6 +263,13 @@
                             <span class="d-none d-sm-inline-block ml-1">{{ __('العربية') }}</span>
                             <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
                         </button>
+                        @elseif(app()->getLocale() == 'en')
+                        <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="" src="{{ asset('assets/images/flags/uk.png') }}" alt="Header Language" height="16" onerror="this.style.display='none'">
+                            <span class="d-none d-sm-inline-block ml-1">English</span>
+                            <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
+                        </button>
                         @else
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -282,6 +289,11 @@
                             <a href="{{ route('changelang', 'fr') }}" class="dropdown-item notify-item">
                                 <img src="{{ asset('assets/images/flags/french.jpg') }}" alt="user-image" class="mr-1" height="12">
                                 <span class="align-middle">{{ __('Français') }}</span>
+                            </a>
+
+                            <a href="{{ route('changelang', 'en') }}" class="dropdown-item notify-item">
+                                <img src="{{ asset('assets/images/flags/uk.png') }}" alt="user-image" class="mr-1" height="12" onerror="this.style.display='none'">
+                                <span class="align-middle">English</span>
                             </a>
 
                         </div>
@@ -307,7 +319,7 @@
                             <div class="p-3">
                                 <div class="row align-items-center">
                                     <div class="col">
-                                        <h6 class="m-0"> Notifications </h6>
+                                        <h6 class="m-0">{{ __('Notifications') }}</h6>
                                     </div>
 
                                 </div>
@@ -522,7 +534,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-right d-none d-sm-block">
-                                Design & Develop by Jamaycom
+                                {{ __('Design & Develop by Jamaycom') }}
                             </div>
                         </div>
                     </div>

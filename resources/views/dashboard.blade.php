@@ -410,9 +410,15 @@
                             <tbody>
                                 @foreach ($historiques as $h)
                                 <tr>
-                                    <td>{{ isset($h->stock) ? $h->stock->name : 'deleted' }}</td>
+                                    <td>{{ isset($h->stock) ? $h->stock->name : __('Supprimé') }}</td>
                                     <td>
-                                        {{ $h->type }}
+                                        @if($h->type == 'entree')
+                                            {{ __('Entrée') }}
+                                        @elseif($h->type == 'sortie')
+                                            {{ __('Sortie') }}
+                                        @else
+                                            {{ $h->type }}
+                                        @endif
                                         @if ($h->type == 'sortie')
                                         <a href="{{ route('admin.vehicule.edit', $h->vehicule_id) }}">
                                             {{ '('.$h->matricule.')' }}
@@ -527,5 +533,104 @@
         </div>
 
     </div> <!-- container-fluid -->
+
+    <script>
+        $(document).ready(function() {
+            // DataTables language configuration based on current locale
+            var locale = '{{ app()->getLocale() }}';
+            var dtLanguage = {};
+            
+            if (locale === 'ar') {
+                dtLanguage = {
+                    "sEmptyTable": "لا توجد بيانات متاحة في الجدول",
+                    "sLoadingRecords": "جارٍ التحميل...",
+                    "sProcessing": "جارٍ المعالجة...",
+                    "sLengthMenu": "أظهر _MENU_ مدخلات",
+                    "sZeroRecords": "لم يعثر على أية سجلات",
+                    "sInfo": "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+                    "sInfoEmpty": "يعرض 0 إلى 0 من أصل 0 سجل",
+                    "sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
+                    "sInfoPostFix": "",
+                    "sSearch": "ابحث:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "الأول",
+                        "sPrevious": "السابق",
+                        "sNext": "التالي",
+                        "sLast": "الأخير"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": تفعيل لترتيب العمود تصاعدياً",
+                        "sSortDescending": ": تفعيل لترتيب العمود تنازلياً"
+                    }
+                };
+            } else if (locale === 'en') {
+                dtLanguage = {
+                    "sEmptyTable": "No data available in table",
+                    "sLoadingRecords": "Loading...",
+                    "sProcessing": "Processing...",
+                    "sLengthMenu": "Show _MENU_ entries",
+                    "sZeroRecords": "No matching records found",
+                    "sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "sInfoEmpty": "Showing 0 to 0 of 0 entries",
+                    "sInfoFiltered": "(filtered from _MAX_ total entries)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Search:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "First",
+                        "sPrevious": "Previous",
+                        "sNext": "Next",
+                        "sLast": "Last"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": activate to sort column ascending",
+                        "sSortDescending": ": activate to sort column descending"
+                    }
+                };
+            } else {
+                // French (default)
+                dtLanguage = {
+                    "sEmptyTable": "Aucune donnée disponible dans le tableau",
+                    "sLoadingRecords": "Chargement...",
+                    "sProcessing": "Traitement en cours...",
+                    "sLengthMenu": "Afficher _MENU_ entrées",
+                    "sZeroRecords": "Aucun enregistrement correspondant trouvé",
+                    "sInfo": "Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments",
+                    "sInfoEmpty": "Affichage de l'élément 0 à 0 sur 0 élément",
+                    "sInfoFiltered": "(filtré de _MAX_ éléments au total)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Rechercher :",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Premier",
+                        "sPrevious": "Précédent",
+                        "sNext": "Suivant",
+                        "sLast": "Dernier"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
+                        "sSortDescending": ": activer pour trier la colonne par ordre décroissant"
+                    }
+                };
+            }
+
+            // Initialize basic-datatable
+            $('#basic-datatable').DataTable({
+                "language": dtLanguage,
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                }
+            });
+            
+            // Initialize basic-datatable2
+            $('#basic-datatable2').DataTable({
+                "language": dtLanguage,
+                "drawCallback": function () {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                }
+            });
+        });
+    </script>
 
 </x-admin.app>

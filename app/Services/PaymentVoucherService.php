@@ -121,8 +121,17 @@ class PaymentVoucherService
             $data[PaymentVoucher::FUEL_LITERS_COLUMN] = floatval(str_replace(['.', ','], '', $request->fuel_liters));
         }
 
-        if ($request->category === 'rechange_pneu' && $request->has('tire_id')) {
-            $data[PaymentVoucher::TIRE_ID_COLUMN] = $request->tire_id;
+        if ($request->category === 'rechange_pneu') {
+            // Handle multiple tire IDs - store first one for backward compatibility
+            if ($request->has('tire_ids') && is_array($request->tire_ids) && count($request->tire_ids) > 0) {
+                $data[PaymentVoucher::TIRE_ID_COLUMN] = $request->tire_ids[0];
+                // Store all tire data for processing in manager
+                $data['tire_ids'] = $request->tire_ids;
+                $data['tire_thresholds'] = $request->tire_thresholds ?? [];
+            } elseif ($request->has('tire_id')) {
+                // Backward compatibility with single tire_id
+                $data[PaymentVoucher::TIRE_ID_COLUMN] = $request->tire_id;
+            }
         }
 
         if ($request->category === 'entretien') {
@@ -235,8 +244,19 @@ class PaymentVoucherService
             $data[PaymentVoucher::FUEL_LITERS_COLUMN] = null;
         }
 
-        if ($request->category === 'rechange_pneu' && $request->has('tire_id')) {
-            $data[PaymentVoucher::TIRE_ID_COLUMN] = $request->tire_id;
+        if ($request->category === 'rechange_pneu') {
+            // Handle multiple tire IDs - store first one for backward compatibility
+            if ($request->has('tire_ids') && is_array($request->tire_ids) && count($request->tire_ids) > 0) {
+                $data[PaymentVoucher::TIRE_ID_COLUMN] = $request->tire_ids[0];
+                // Store all tire data for processing in manager
+                $data['tire_ids'] = $request->tire_ids;
+                $data['tire_thresholds'] = $request->tire_thresholds ?? [];
+            } elseif ($request->has('tire_id')) {
+                // Backward compatibility with single tire_id
+                $data[PaymentVoucher::TIRE_ID_COLUMN] = $request->tire_id;
+            } else {
+                $data[PaymentVoucher::TIRE_ID_COLUMN] = null;
+            }
         } else {
             $data[PaymentVoucher::TIRE_ID_COLUMN] = null;
         }

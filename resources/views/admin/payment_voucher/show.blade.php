@@ -152,13 +152,57 @@
                                         </td>
                                     </tr>
                                     @endif
-                                    @if($voucher->getCategory() === 'rechange_pneu' && $voucher->tire)
+                                    @if($voucher->getCategory() === 'rechange_pneu')
                                     <tr>
-                                        <td class="font-weight-semibold">{{ __('Pneu changé') }}:</td>
+                                        <td class="font-weight-semibold">{{ __('Pneus changés') }}:</td>
                                         <td>
-                                            <strong>{{ $voucher->tire->getTirePosition() }}</strong>
-                                            <br>
-                                            <small class="text-muted">{{ __('Seuil') }}: {{ number_format($voucher->tire->getThresholdKm(), 0, ',', ' ') }} {{ __('KM') }}</small>
+                                            @if($tireChanges && $tireChanges->count() > 0)
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-bordered mb-0">
+                                                        <thead class="thead-light">
+                                                            <tr>
+                                                                <th>{{ __('Position') }}</th>
+                                                                <th>{{ __('Seuil (KM)') }}</th>
+                                                                <th>{{ __('KM actuel') }}</th>
+                                                                <th>{{ __('Prochain changement (KM)') }}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach($tireChanges as $tireChange)
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>{{ $tireChange->pneu->getTirePosition() }}</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ number_format($tireChange->pneu->getThresholdKm(), 0, ',', ' ') }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ number_format($tireChange->getCurrentKm(), 0, ',', ' ') }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="badge badge-info">
+                                                                            {{ number_format($tireChange->getNextKmForChange(), 0, ',', ' ') }}
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <small class="text-muted mt-2 d-block">
+                                                    <i class="fas fa-info-circle"></i> 
+                                                    {{ __('Total') }}: <strong>{{ $tireChanges->count() }}</strong> {{ __('pneu(s) changé(s)') }}
+                                                </small>
+                                            @elseif($voucher->tire)
+                                                {{-- Fallback for old single tire records --}}
+                                                <div>
+                                                    <strong>{{ $voucher->tire->getTirePosition() }}</strong>
+                                                    <br>
+                                                    <small class="text-muted">{{ __('Seuil') }}: {{ number_format($voucher->tire->getThresholdKm(), 0, ',', ' ') }} {{ __('KM') }}</small>
+                                                </div>
+                                            @else
+                                                <span class="text-muted">{{ __('Aucune information disponible') }}</span>
+                                            @endif
                                         </td>
                                     </tr>
                                     @endif

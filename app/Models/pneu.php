@@ -19,6 +19,12 @@ class pneu extends Model
 
     protected $table = self::TABLE;
 
+    protected $fillable = [
+        self::CAR_ID_COLUMN,
+        self::THRESHOLD_KM_COLUMN,
+        self::TIRE_POSITION_COLUMN,
+    ];
+
     public function getId(): int
     {
         return $this->getAttribute(self::ID_COLUMN);

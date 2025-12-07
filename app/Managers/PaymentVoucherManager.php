@@ -129,18 +129,7 @@ class PaymentVoucherManager
      */
     protected function handleTireChange(PaymentVoucher $voucher, Vehicule $vehicule, array $data): void
     {
-        if (!isset($data[PaymentVoucher::TIRE_ID_COLUMN]) || !$data[PaymentVoucher::TIRE_ID_COLUMN]) {
-            return;
-        }
-
-        $tireId = $data[PaymentVoucher::TIRE_ID_COLUMN];
-        $tire = pneu::find($tireId);
-
-        if (!$tire || $tire->getCarId() !== $vehicule->getId()) {
-            return;
-        }
-
-        // Update vehicle KM and Hours
+        // Update vehicle KM and Hours (only once, regardless of number of tires)
         $vehicleKm = $voucher->getVehicleKm();
         $updateData = [Vehicule::TOTAL_KM_COLUMN => $vehicleKm];
         if ($voucher->getVehicleHours() !== null) {
@@ -148,12 +137,50 @@ class PaymentVoucherManager
         }
         $vehicule->update($updateData);
 
-        // Create tire history entry
-        $historique = new PneuHistorique();
-        $historique->pneu_id = $tireId;
-        $historique->current_km = $vehicleKm;
-        $historique->next_km_for_change = $vehicleKm + $tire->getThresholdKm();
-        $historique->save();
+        // Handle multiple tire changes
+        if (isset($data['tire_ids']) && is_array($data['tire_ids']) && count($data['tire_ids']) > 0) {
+            $tireIds = $data['tire_ids'];
+            $tireThresholds = $data['tire_thresholds'] ?? [];
+            
+            foreach ($tireIds as $tireId) {
+                $tire = pneu::find($tireId);
+                
+                if (!$tire || $tire->getCarId() !== $vehicule->getId()) {
+                    continue;
+                }
+                
+                // Get threshold from input or use tire's default threshold
+                $thresholdKm = isset($tireThresholds[$tireId]) 
+                    ? intval(preg_replace('/[^0-9]/', '', $tireThresholds[$tireId]))
+                    : $tire->getThresholdKm();
+                
+                // Update tire threshold if a new one was provided
+                if (isset($tireThresholds[$tireId]) && $thresholdKm > 0) {
+                    $tire->update([pneu::THRESHOLD_KM_COLUMN => $thresholdKm]);
+                }
+                
+                // Create tire history entry
+                $historique = new PneuHistorique();
+                $historique->pneu_id = $tireId;
+                $historique->current_km = $vehicleKm;
+                $historique->next_km_for_change = $vehicleKm + $thresholdKm;
+                $historique->save();
+            }
+        } 
+        // Backward compatibility: handle single tire_id
+        elseif (isset($data[PaymentVoucher::TIRE_ID_COLUMN]) && $data[PaymentVoucher::TIRE_ID_COLUMN]) {
+            $tireId = $data[PaymentVoucher::TIRE_ID_COLUMN];
+            $tire = pneu::find($tireId);
+
+            if ($tire && $tire->getCarId() === $vehicule->getId()) {
+                // Create tire history entry
+                $historique = new PneuHistorique();
+                $historique->pneu_id = $tireId;
+                $historique->current_km = $vehicleKm;
+                $historique->next_km_for_change = $vehicleKm + $tire->getThresholdKm();
+                $historique->save();
+            }
+        }
     }
 
     /**

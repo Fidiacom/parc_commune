@@ -224,7 +224,11 @@ class PaymentVoucherController extends Controller
             'vignette_files.*' => 'nullable|file|max:51200',
             'other_files.*' => 'nullable|file|max:51200',
             'fuel_liters' => 'nullable|required_if:category,carburant|numeric|min:0',
-            'tire_id' => 'nullable|required_if:category,rechange_pneu|exists:pneus,id',
+            'tire_id' => 'nullable|exists:pneus,id',
+            'tire_ids' => 'nullable|required_if:category,rechange_pneu|array',
+            'tire_ids.*' => 'required|exists:pneus,id',
+            'tire_thresholds' => 'nullable|array',
+            'tire_thresholds.*' => 'nullable|integer|min:1',
             'vidange_id' => 'nullable|exists:vidanges,id',
             'vidange_threshold_km' => 'nullable|required_if:category,vidange|integer|min:1',
             'timing_chaine_id' => 'nullable|exists:timing_chaines,id',
@@ -238,6 +242,10 @@ class PaymentVoucherController extends Controller
             'category.required' => __('La catégorie est requise'),
             'fuel_liters.required_if' => __('Les litres de carburant sont requis pour les bons de carburant'),
             'tire_id.required_if' => __('Le pneu est requis pour les changements de pneu'),
+            'tire_ids.required_if' => __('Au moins un pneu doit être sélectionné pour les changements de pneu'),
+            'tire_ids.*.required' => __('Tous les pneus sélectionnés doivent être valides'),
+            'tire_thresholds.*.integer' => __('Le seuil doit être un nombre entier'),
+            'tire_thresholds.*.min' => __('Le seuil doit être supérieur à 0'),
         ]);
 
         try {
@@ -284,11 +292,32 @@ class PaymentVoucherController extends Controller
             return redirect()->route('admin.payment_voucher.index');
         }
 
-        // Load attachments
-        $voucher->load('attachments');
+        // Load attachments and vehicule with pneus
+        $voucher->load(['attachments', 'vehicule.pneu']);
+
+        // Get all tire changes for this voucher (if category is rechange_pneu)
+        $tireChanges = collect();
+        if ($voucher->getCategory() === 'rechange_pneu' && $voucher->vehicule) {
+            // Get all tires for this vehicle
+            $vehicleTireIds = $voucher->vehicule->pneu->pluck('id')->toArray();
+            
+            if (!empty($vehicleTireIds)) {
+                // Get PneuHistorique entries that match:
+                // - Vehicle's tires
+                // - Same vehicle_km as voucher
+                // - Created on the same date as voucher
+                $tireChanges = \App\Models\PneuHistorique::whereIn('pneu_id', $vehicleTireIds)
+                    ->where('current_km', $voucher->getVehicleKm())
+                    ->whereDate('created_at', $voucher->created_at->toDateString())
+                    ->with('pneu')
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+            }
+        }
 
         return view('admin.payment_voucher.show', [
             'voucher' => $voucher,
+            'tireChanges' => $tireChanges,
         ]);
     }
 
@@ -376,7 +405,11 @@ class PaymentVoucherController extends Controller
             'vignette_files.*' => 'nullable|file|max:51200',
             'other_files.*' => 'nullable|file|max:51200',
             'fuel_liters' => 'nullable|required_if:category,carburant|numeric|min:0',
-            'tire_id' => 'nullable|required_if:category,rechange_pneu|exists:pneus,id',
+            'tire_id' => 'nullable|exists:pneus,id',
+            'tire_ids' => 'nullable|required_if:category,rechange_pneu|array',
+            'tire_ids.*' => 'required|exists:pneus,id',
+            'tire_thresholds' => 'nullable|array',
+            'tire_thresholds.*' => 'nullable|integer|min:1',
             'vidange_id' => 'nullable|exists:vidanges,id',
             'vidange_threshold_km' => 'nullable|required_if:category,vidange|integer|min:1',
             'timing_chaine_id' => 'nullable|exists:timing_chaines,id',
@@ -390,6 +423,10 @@ class PaymentVoucherController extends Controller
             'category.required' => __('La catégorie est requise'),
             'fuel_liters.required_if' => __('Les litres de carburant sont requis pour les bons de carburant'),
             'tire_id.required_if' => __('Le pneu est requis pour les changements de pneu'),
+            'tire_ids.required_if' => __('Au moins un pneu doit être sélectionné pour les changements de pneu'),
+            'tire_ids.*.required' => __('Tous les pneus sélectionnés doivent être valides'),
+            'tire_thresholds.*.integer' => __('Le seuil doit être un nombre entier'),
+            'tire_thresholds.*.min' => __('Le seuil doit être supérieur à 0'),
         ]);
 
         try {

@@ -195,19 +195,21 @@
 
                             <!-- Tire Selection (for rechange_pneu) -->
                             <div class="form-group" id="tire_group" style="display: none;">
-                                <label class="font-weight-semibold">{{ __('Pneu à changer') }} <span class="text-danger">*</span></label>
-                                <select name="tire_id" id="tire_id" class="form-control @error('tire_id') is-invalid @enderror">
-                                    <option value="">{{ __('Sélectionner un pneu') }}</option>
-                                    @if($selectedVehicule && $tires)
-                                        @foreach($tires as $tire)
-                                        <option value="{{ $tire->getId() }}" {{ old('tire_id') == $tire->getId() ? 'selected' : '' }}>
-                                            {{ $tire->getTirePosition() }} (Seuil: {{ number_format($tire->getThresholdKm(), 0, ',', ' ') }} KM)
-                                        </option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                @error('tire_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <label class="font-weight-semibold mb-3">{{ __('Pneus à changer') }} <span class="text-danger">*</span></label>
+                                <div id="tires_container">
+                                    <p class="text-muted">{{ __('Sélectionnez un véhicule pour voir les pneus disponibles') }}</p>
+                                </div>
+                                @error('tire_ids')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                @error('tire_ids.*')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                @error('tire_thresholds')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                @error('tire_thresholds.*')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -427,16 +429,11 @@
 
             if (category === 'rechange_pneu') {
                 if (tireGroup) tireGroup.style.display = 'block';
-                const tireIdElement = document.getElementById('tire_id');
-                if (tireIdElement) tireIdElement.required = true;
                 // Load tires via AJAX if vehicle is already selected
                 const vehiculeId = document.getElementById('vehicule_id').value;
                 if (vehiculeId) {
                     loadVehicleTires(vehiculeId);
                 }
-            } else {
-                const tireIdElement = document.getElementById('tire_id');
-                if (tireIdElement) tireIdElement.required = false;
             }
 
             if (category === 'entretien') {
@@ -540,10 +537,10 @@
         }
 
         function loadVehicleTires(vehiculeId) {
+            const tiresContainer = document.getElementById('tires_container');
             if (!vehiculeId) {
-                const tireSelect = document.getElementById('tire_id');
-                if (tireSelect) {
-                    tireSelect.innerHTML = '<option value="">{{ __("Sélectionner un pneu") }}</option>';
+                if (tiresContainer) {
+                    tiresContainer.innerHTML = '<p class="text-muted">{{ __("Sélectionnez un véhicule pour voir les pneus disponibles") }}</p>';
                 }
                 return;
             }
@@ -558,29 +555,86 @@
             })
             .then(response => response.json())
             .then(data => {
-                const tireSelect = document.getElementById('tire_id');
-                if (tireSelect && data.success && data.tires) {
-                    // Clear existing options except the first one
-                    tireSelect.innerHTML = '<option value="">{{ __("Sélectionner un pneu") }}</option>';
+                if (tiresContainer && data.success && data.tires && data.tires.length > 0) {
+                    // Clear existing content
+                    tiresContainer.innerHTML = '';
                     
-                    // Add tire options
-                    data.tires.forEach(tire => {
-                        const option = document.createElement('option');
-                        option.value = tire.id;
-                        option.textContent = tire.position + ' (Seuil: ' + tire.threshold_km.toLocaleString('fr-FR') + ' KM)';
-                        tireSelect.appendChild(option);
+                    // Create checkboxes for each tire with threshold input
+                    data.tires.forEach((tire, index) => {
+                        const tireCard = document.createElement('div');
+                        tireCard.className = 'card mb-2';
+                        const nouveauSeuilLabel = '{{ __("Nouveau seuil (KM)") }}';
+                        const entrerSeuilPlaceholder = '{{ __("Entrer le nouveau seuil") }}';
+                        const seuilActuelLabel = '{{ __("Seuil actuel") }}';
+                        tireCard.innerHTML = `
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" 
+                                                   class="custom-control-input tire-checkbox" 
+                                                   id="tire_checkbox_${tire.id}" 
+                                                   name="tire_ids[]" 
+                                                   value="${tire.id}"
+                                                   data-tire-id="${tire.id}"
+                                                   data-default-threshold="${tire.threshold_km}"
+                                                   onchange="toggleTireThreshold(${tire.id})">
+                                            <label class="custom-control-label" for="tire_checkbox_${tire.id}">
+                                                <strong>${tire.position}</strong>
+                                                <small class="text-muted d-block">Seuil actuel: ${tire.threshold_km.toLocaleString('fr-FR')} KM</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group mb-0 tire-threshold-group" id="tire_threshold_group_${tire.id}" style="display: none;">
+                                            <label for="tire_threshold_${tire.id}">${nouveauSeuilLabel} <span class="text-danger">*</span></label>
+                                            <input type="number" 
+                                                   class="form-control tire-threshold-input" 
+                                                   id="tire_threshold_${tire.id}" 
+                                                   name="tire_thresholds[${tire.id}]" 
+                                                   value="${tire.threshold_km}"
+                                                   step="1"
+                                                   min="1"
+                                                   placeholder="${entrerSeuilPlaceholder}">
+                                            <small class="form-text text-muted">${seuilActuelLabel}: ${tire.threshold_km.toLocaleString('fr-FR')} KM</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        tiresContainer.appendChild(tireCard);
                     });
-                } else if (tireSelect) {
-                    tireSelect.innerHTML = '<option value="">{{ __("Aucun pneu disponible pour ce véhicule") }}</option>';
+                } else if (tiresContainer) {
+                    tiresContainer.innerHTML = '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i> {{ __("Aucun pneu disponible pour ce véhicule") }}</div>';
                 }
             })
             .catch(error => {
                 console.error('Error loading vehicle tires:', error);
-                const tireSelect = document.getElementById('tire_id');
-                if (tireSelect) {
-                    tireSelect.innerHTML = '<option value="">{{ __("Erreur lors du chargement des pneus") }}</option>';
+                if (tiresContainer) {
+                    tiresContainer.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle"></i> {{ __("Erreur lors du chargement des pneus") }}</div>';
                 }
             });
+        }
+
+        function toggleTireThreshold(tireId) {
+            const checkbox = document.getElementById('tire_checkbox_' + tireId);
+            const thresholdGroup = document.getElementById('tire_threshold_group_' + tireId);
+            const thresholdInput = document.getElementById('tire_threshold_' + tireId);
+            
+            if (checkbox && thresholdGroup && thresholdInput) {
+                if (checkbox.checked) {
+                    thresholdGroup.style.display = 'block';
+                    thresholdInput.required = true;
+                    // Set default value if empty
+                    if (!thresholdInput.value) {
+                        thresholdInput.value = checkbox.getAttribute('data-default-threshold');
+                    }
+                } else {
+                    thresholdGroup.style.display = 'none';
+                    thresholdInput.required = false;
+                    thresholdInput.value = checkbox.getAttribute('data-default-threshold');
+                }
+            }
         }
 
         function handleVehiculeChange() {
@@ -730,6 +784,41 @@
                 if (vehiculeId) {
                     loadVehicleTires(vehiculeId);
                 }
+            }
+
+            // Validate tire selection on form submit
+            const voucherForm = document.getElementById('voucherForm');
+            if (voucherForm) {
+                voucherForm.addEventListener('submit', function(e) {
+                    const category = document.getElementById('category').value;
+                    if (category === 'rechange_pneu') {
+                        const checkedTires = document.querySelectorAll('.tire-checkbox:checked');
+                        if (checkedTires.length === 0) {
+                            e.preventDefault();
+                            alert('{{ __("Veuillez sélectionner au moins un pneu à changer") }}');
+                            return false;
+                        }
+                        
+                        // Validate that all selected tires have thresholds
+                        let allValid = true;
+                        checkedTires.forEach(checkbox => {
+                            const tireId = checkbox.getAttribute('data-tire-id');
+                            const thresholdInput = document.getElementById('tire_threshold_' + tireId);
+                            if (thresholdInput && (!thresholdInput.value || thresholdInput.value <= 0)) {
+                                allValid = false;
+                                thresholdInput.classList.add('is-invalid');
+                            } else if (thresholdInput) {
+                                thresholdInput.classList.remove('is-invalid');
+                            }
+                        });
+                        
+                        if (!allValid) {
+                            e.preventDefault();
+                            alert('{{ __("Veuillez entrer un seuil valide pour tous les pneus sélectionnés") }}');
+                            return false;
+                        }
+                    }
+                });
             }
 
             // File input label update

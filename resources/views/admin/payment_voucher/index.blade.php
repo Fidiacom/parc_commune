@@ -16,22 +16,61 @@
             </div>
         </div>
 
-        <!-- Category Filter -->
+        <!-- Category & Date Filter -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="btn-group" role="group">
-                            <a href="{{ route('admin.payment_voucher.index') }}" 
-                               class="btn btn-sm {{ !$currentCategory ? 'btn-primary' : 'btn-outline-primary' }}">
-                                {{ __('Tous') }}
-                            </a>
-                            @foreach($categories as $key => $label)
-                            <a href="{{ route('admin.payment_voucher.index.category', $key) }}" 
-                               class="btn btn-sm {{ $currentCategory === $key ? 'btn-primary' : 'btn-outline-primary' }}">
-                                {{ $label }}
-                            </a>
-                            @endforeach
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="mb-2">
+                                <div class="btn-group" role="group">
+                                    <a href="{{ route('admin.payment_voucher.index', request()->only(['date_from', 'date_to', 'sort'])) }}" 
+                                       class="btn btn-sm {{ !$currentCategory ? 'btn-primary' : 'btn-outline-primary' }}">
+                                        {{ __('Tous') }}
+                                    </a>
+                                    @foreach($categories as $key => $label)
+                                        <a href="{{ route('admin.payment_voucher.index.category', array_merge(['category' => $key], request()->only(['date_from', 'date_to', 'sort']))) }}" 
+                                           class="btn btn-sm {{ $currentCategory === $key ? 'btn-primary' : 'btn-outline-primary' }}">
+                                            {{ $label }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <form method="GET" action="{{ $currentCategory ? route('admin.payment_voucher.index.category', $currentCategory) : route('admin.payment_voucher.index') }}" class="form-inline">
+                                    <div class="form-group mb-2 mr-2">
+                                        <label for="date_from" class="mr-1">{{ __('Du') }}</label>
+                                        <input type="date" name="date_from" id="date_from"
+                                               class="form-control form-control-sm"
+                                               value="{{ $dateFrom ?? request('date_from') }}">
+                                    </div>
+                                    <div class="form-group mb-2 mr-2">
+                                        <label for="date_to" class="mr-1">{{ __('Au') }}</label>
+                                        <input type="date" name="date_to" id="date_to"
+                                               class="form-control form-control-sm"
+                                               value="{{ $dateTo ?? request('date_to') }}">
+                                    </div>
+                                    <div class="form-group mb-2 mr-2">
+                                        <label for="sort" class="mr-1">{{ __('Tri par date') }}</label>
+                                        <select name="sort" id="sort" class="form-control form-control-sm">
+                                            <option value="desc" {{ ($sortDirection ?? request('sort', 'desc')) === 'desc' ? 'selected' : '' }}>
+                                                {{ __('Plus récent d\'abord') }}
+                                            </option>
+                                            <option value="asc" {{ ($sortDirection ?? request('sort', 'desc')) === 'asc' ? 'selected' : '' }}>
+                                                {{ __('Plus ancien d\'abord') }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-primary mb-2 mr-2">
+                                        <i class="mdi mdi-filter mr-1"></i>{{ __('Filtrer') }}
+                                    </button>
+                                    <a href="{{ $currentCategory ? route('admin.payment_voucher.index.category', $currentCategory) : route('admin.payment_voucher.index') }}"
+                                       class="btn btn-sm btn-secondary mb-2">
+                                        <i class="mdi mdi-refresh mr-1"></i>{{ __('Réinitialiser') }}
+                                    </a>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

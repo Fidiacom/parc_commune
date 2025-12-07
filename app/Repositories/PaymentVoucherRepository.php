@@ -8,23 +8,62 @@ class PaymentVoucherRepository
 {
     /**
      * Get all payment vouchers.
+     *
+     * @param array<string, mixed> $filters
      */
-    public function getAll()
+    public function getAll(array $filters = [])
     {
-        return PaymentVoucher::with(['vehicule', 'tire', 'vidange', 'timingChaine'])
-            ->latest()
-            ->get();
+        $query = PaymentVoucher::with(['vehicule', 'tire', 'vidange', 'timingChaine']);
+
+        $this->applyDateFilters($query, $filters);
+
+        return $this->applyDateSorting($query, $filters)->get();
+    }
+    
+    /**
+     * Get payment vouchers by category.
+     *
+     * @param array<string, mixed> $filters
+     */
+    public function getByCategory(string $category, array $filters = [])
+    {
+        $query = PaymentVoucher::with(['vehicule', 'tire', 'vidange', 'timingChaine'])
+            ->where(PaymentVoucher::CATEGORY_COLUMN, $category);
+
+        $this->applyDateFilters($query, $filters);
+
+        return $this->applyDateSorting($query, $filters)->get();
     }
 
     /**
-     * Get payment vouchers by category.
+     * Get payment vouchers filtered by optional category and invoice date range,
+     * sorted by invoice date.
      */
-    public function getByCategory(string $category)
-    {
-        return PaymentVoucher::with(['vehicule', 'tire', 'vidange', 'timingChaine'])
-            ->where(PaymentVoucher::CATEGORY_COLUMN, $category)
-            ->latest()
-            ->get();
+    public function getByFilters(
+        ?string $category = null,
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+        string $sortDirection = 'desc'
+    ) {
+        $query = PaymentVoucher::with(['vehicule', 'tire', 'vidange', 'timingChaine']);
+
+        if ($category !== null) {
+            $query->where(PaymentVoucher::CATEGORY_COLUMN, $category);
+        }
+
+        if ($dateFrom) {
+            $query->whereDate(PaymentVoucher::INVOICE_DATE_COLUMN, '>=', $dateFrom);
+        }
+
+        if ($dateTo) {
+            $query->whereDate(PaymentVoucher::INVOICE_DATE_COLUMN, '<=', $dateTo);
+        }
+
+        $direction = strtolower($sortDirection) === 'asc' ? 'asc' : 'desc';
+
+        $query->orderBy(PaymentVoucher::INVOICE_DATE_COLUMN, $direction);
+
+        return $query->get();
     }
 
     /**
@@ -93,6 +132,41 @@ class PaymentVoucherRepository
         }
         
         return 'BON-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Apply date range filters to the query.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array<string, mixed> $filters
+     */
+    protected function applyDateFilters($query, array $filters): void
+    {
+        if (!empty($filters['from_date'])) {
+            $query->whereDate(PaymentVoucher::INVOICE_DATE_COLUMN, '>=', $filters['from_date']);
+        }
+
+        if (!empty($filters['to_date'])) {
+            $query->whereDate(PaymentVoucher::INVOICE_DATE_COLUMN, '<=', $filters['to_date']);
+        }
+    }
+
+    /**
+     * Apply date sorting to the query.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array<string, mixed> $filters
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function applyDateSorting($query, array $filters)
+    {
+        $direction = 'desc';
+
+        if (!empty($filters['sort_date']) && in_array(strtolower($filters['sort_date']), ['asc', 'desc'], true)) {
+            $direction = strtolower($filters['sort_date']);
+        }
+
+        return $query->orderBy(PaymentVoucher::INVOICE_DATE_COLUMN, $direction);
     }
 }
 

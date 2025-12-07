@@ -31,6 +31,10 @@ class PaymentVoucherController extends Controller
      */
     public function index(Request $request, $category = null)
     {
+        $dateFrom = $request->query('date_from');
+        $dateTo = $request->query('date_to');
+        $sortDirection = $request->query('sort', 'desc');
+
         $categories = [
             'carburant' => __('Bon pour Carburant'),
             'entretien' => __('Entretien'),
@@ -46,17 +50,25 @@ class PaymentVoucherController extends Controller
             'other' => __('Autre'),
         ];
 
-        if ($category && isset($categories[$category])) {
-            $vouchers = $this->paymentVoucherService->getPaymentVouchersByCategory($category);
-        } else {
-            $vouchers = $this->paymentVoucherService->getAllPaymentVouchers();
+        // If the provided category is invalid, ignore it
+        if (!$category || !isset($categories[$category])) {
             $category = null;
         }
+
+        $vouchers = $this->paymentVoucherService->getPaymentVouchersByFilters(
+            $category,
+            $dateFrom,
+            $dateTo,
+            $sortDirection
+        );
 
         return view('admin.payment_voucher.index', [
             'vouchers' => $vouchers,
             'categories' => $categories,
             'currentCategory' => $category,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+            'sortDirection' => $sortDirection,
         ]);
     }
 

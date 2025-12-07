@@ -19,19 +19,38 @@ class PaymentVoucherService
     /**
      * Get all payment vouchers.
      */
-    public function getAllPaymentVouchers()
+    public function getAllPaymentVouchers(array $filters = [])
     {
         $repository = $this->manager->getRepository();
-        return $repository->getAll();
+        return $repository->getAll($filters);
     }
 
     /**
      * Get payment vouchers by category.
      */
-    public function getPaymentVouchersByCategory(string $category)
+    public function getPaymentVouchersByCategory(string $category, array $filters = [])
     {
         $repository = $this->manager->getRepository();
-        return $repository->getByCategory($category);
+        return $repository->getByCategory($category, $filters);
+    }
+
+    /**
+     * Get payment vouchers by optional category and date range filters.
+     */
+    public function getPaymentVouchersByFilters(
+        ?string $category = null,
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+        ?string $sortDirection = null
+    ) {
+        $repository = $this->manager->getRepository();
+
+        return $repository->getByFilters(
+            $category,
+            $dateFrom,
+            $dateTo,
+            $sortDirection ?? 'desc'
+        );
     }
 
     /**

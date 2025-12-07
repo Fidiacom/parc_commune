@@ -557,6 +557,41 @@ class PaymentVoucherController extends Controller
     }
 
     /**
+     * Get vehicle tires (AJAX).
+     */
+    public function getVehicleTires($vehiculeId)
+    {
+        try {
+            $vehicule = Vehicule::with('pneu')->find($vehiculeId);
+            
+            if (!$vehicule) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('Véhicule introuvable')
+                ], 404);
+            }
+
+            $tires = $vehicule->pneu->map(function($tire) {
+                return [
+                    'id' => $tire->getId(),
+                    'position' => $tire->getTirePosition(),
+                    'threshold_km' => $tire->getThresholdKm(),
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'tires' => $tires
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => __('Erreur lors de la récupération des pneus')
+            ], 500);
+        }
+    }
+
+    /**
      * Add attachments to payment voucher.
      */
     public function addAttachments(Request $request)

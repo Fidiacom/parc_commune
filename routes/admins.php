@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/payment-voucher/get-insurance-expiration/{vehiculeId}', [PaymentVoucherController::class, 'getInsuranceExpiration'])->name('admin.payment_voucher.get_insurance_expiration');
         Route::get('/payment-voucher/get-technical-visit-expiration/{vehiculeId}', [PaymentVoucherController::class, 'getTechnicalVisitExpiration'])->name('admin.payment_voucher.get_technical_visit_expiration');
         Route::get('/payment-voucher/get-vehicle-km/{vehiculeId}', [PaymentVoucherController::class, 'getVehicleKm'])->name('admin.payment_voucher.get_vehicle_km');
+        Route::get('/payment-voucher/get-vehicle-tires/{vehiculeId}', [PaymentVoucherController::class, 'getVehicleTires'])->name('admin.payment_voucher.get_vehicle_tires');
         Route::post('/payment-voucher/store', [PaymentVoucherController::class, 'store'])->name('admin.payment_voucher.store');
         Route::get('/payment-voucher/{id}', [PaymentVoucherController::class, 'show'])->name('admin.payment_voucher.show');
         Route::get('/payment-voucher/{id}/edit', [PaymentVoucherController::class, 'edit'])->name('admin.payment_voucher.edit');

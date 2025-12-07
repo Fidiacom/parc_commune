@@ -429,10 +429,10 @@
                 if (tireGroup) tireGroup.style.display = 'block';
                 const tireIdElement = document.getElementById('tire_id');
                 if (tireIdElement) tireIdElement.required = true;
-                // Reload page with vehicule selection if needed
+                // Load tires via AJAX if vehicle is already selected
                 const vehiculeId = document.getElementById('vehicule_id').value;
                 if (vehiculeId) {
-                    handleVehiculeChange();
+                    loadVehicleTires(vehiculeId);
                 }
             } else {
                 const tireIdElement = document.getElementById('tire_id');
@@ -539,17 +539,66 @@
             });
         }
 
+        function loadVehicleTires(vehiculeId) {
+            if (!vehiculeId) {
+                const tireSelect = document.getElementById('tire_id');
+                if (tireSelect) {
+                    tireSelect.innerHTML = '<option value="">{{ __("Sélectionner un pneu") }}</option>';
+                }
+                return;
+            }
+            
+            // Use AJAX to fetch tires for the selected vehicle
+            fetch("{{ route('admin.payment_voucher.get_vehicle_tires', '') }}/" + vehiculeId, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tireSelect = document.getElementById('tire_id');
+                if (tireSelect && data.success && data.tires) {
+                    // Clear existing options except the first one
+                    tireSelect.innerHTML = '<option value="">{{ __("Sélectionner un pneu") }}</option>';
+                    
+                    // Add tire options
+                    data.tires.forEach(tire => {
+                        const option = document.createElement('option');
+                        option.value = tire.id;
+                        option.textContent = tire.position + ' (Seuil: ' + tire.threshold_km.toLocaleString('fr-FR') + ' KM)';
+                        tireSelect.appendChild(option);
+                    });
+                } else if (tireSelect) {
+                    tireSelect.innerHTML = '<option value="">{{ __("Aucun pneu disponible pour ce véhicule") }}</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading vehicle tires:', error);
+                const tireSelect = document.getElementById('tire_id');
+                if (tireSelect) {
+                    tireSelect.innerHTML = '<option value="">{{ __("Erreur lors du chargement des pneus") }}</option>';
+                }
+            });
+        }
+
         function handleVehiculeChange() {
             const vehiculeId = document.getElementById('vehicule_id').value;
             const category = document.getElementById('category').value;
             
-            // Only reload for categories that need vehicle-specific data loaded from server
+            // Load tires via AJAX for rechange_pneu category
             if (category === 'rechange_pneu' && vehiculeId) {
-                // Reload page with vehicule selection to load tires
-                window.location.href = "{{ route('admin.payment_voucher.create.category', 'rechange_pneu') }}?vehicule_id=" + vehiculeId;
+                loadVehicleTires(vehiculeId);
+            } else if (category === 'rechange_pneu') {
+                // Clear tires if no vehicle selected
+                const tireSelect = document.getElementById('tire_id');
+                if (tireSelect) {
+                    tireSelect.innerHTML = '<option value="">{{ __("Sélectionner un pneu") }}</option>';
+                }
             } else if (category === 'entretien' && vehiculeId) {
-                // Reload page with vehicule selection to load maintenance options
-                window.location.href = "{{ route('admin.payment_voucher.create.category', 'entretien') }}?vehicule_id=" + vehiculeId;
+                // For entretien, we can also use AJAX if needed, but it's commented out in the view
+                // For now, keep the redirect behavior or implement AJAX similarly
             } else if (category === 'vidange' && vehiculeId) {
                 // No need to reload, just enable the threshold input
                 // The calculation will happen when user enters the threshold
@@ -673,6 +722,14 @@
             // Calculate fuel amount if category is carburant and values exist
             if (category === 'carburant') {
                 setTimeout(calculateFuelAmount, 200);
+            }
+
+            // Load tires if category is rechange_pneu and vehicle is already selected
+            if (category === 'rechange_pneu') {
+                const vehiculeId = document.getElementById('vehicule_id').value;
+                if (vehiculeId) {
+                    loadVehicleTires(vehiculeId);
+                }
             }
 
             // File input label update

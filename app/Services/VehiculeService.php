@@ -100,9 +100,9 @@ class VehiculeService
             'matricule' => $request->matricule,
             'num_chassis' => $request->chassis,
             'circulation_date' => $request->circulation_date,
-            'total_km' => intval(str_replace(['.', ','], '', $request->km_actuel)),
-            'total_hours' => $request->has('total_hours') && $request->total_hours ? intval(str_replace(['.', ','], '', $request->total_hours)) : null,
-            'horses' => intval(str_replace(['.', ','], '', $request->horses)),
+            'total_km' => intval(preg_replace('/[^0-9]/', '', $request->km_actuel)),
+            'total_hours' => $request->has('total_hours') && $request->total_hours ? intval(preg_replace('/[^0-9]/', '', $request->total_hours)) : null,
+            'horses' => intval(preg_replace('/[^0-9]/', '', $request->horses)),
             'fuel_type' => $request->fuel_type,
             'min_fuel_consumption_100km' => $request->has('min_fuel_consumption_100km') && $request->min_fuel_consumption_100km ? $request->min_fuel_consumption_100km : null,
             'max_fuel_consumption_100km' => $request->has('max_fuel_consumption_100km') && $request->max_fuel_consumption_100km ? $request->max_fuel_consumption_100km : null,
@@ -125,6 +125,7 @@ class VehiculeService
         if ($request->has('tire_positions') && is_array($request->tire_positions)) {
             $tirePositions = $request->tire_positions;
             $tireThresholds = $request->tire_thresholds ?? [];
+            $tireNextKMs = $request->tire_nextKMs ?? [];
             $tireIds = $request->tire_ids ?? [];
             
             // Update existing tires
@@ -133,20 +134,24 @@ class VehiculeService
                     'tire_ids' => $tireIds,
                     'positions' => $tirePositions,
                     'thresholds' => $tireThresholds,
+                    'nextKMs' => $tireNextKMs,
                 ];
-                $this->manager->updateTires($vehicule, $tireData);
+                $this->manager->updateTires($vehicule, $tireData, intval(preg_replace('/[^0-9]/', '', $request->km_actuel)));
             }
             
             // Create new tires for positions without IDs
             foreach ($tirePositions as $index => $position) {
                 $tireId = $tireIds[$index] ?? null;
                 $threshold = $tireThresholds[$index] ?? null;
+                $nextKm = $tireNextKMs[$index] ?? null;
                 
                 // If no tire ID for this position, create a new tire
                 if (!$tireId && $position && $threshold) {
                     $this->manager->createTire($vehicule, [
                         'position' => $position,
                         'threshold' => $threshold,
+                        'nextKm' => $nextKm,
+                        'currentKm' => intval(preg_replace('/[^0-9]/', '', $request->km_actuel)),
                     ]);
                 }
             }
@@ -157,11 +162,11 @@ class VehiculeService
 
         // Handle threshold updates for vidange and timing chaine
         if ($request->has('threshold_vidange') && $request->threshold_vidange) {
-            $this->manager->updateVidangeThreshold($vehicule, intval(str_replace(['.', ','], '', $request->threshold_vidange)));
+            $this->manager->updateVidangeThreshold($vehicule, intval(preg_replace('/[^0-9]/', '', $request->threshold_vidange)));
         }
 
         if ($request->has('threshold_timing_chaine') && $request->threshold_timing_chaine) {
-            $this->manager->updateTimingChaineThreshold($vehicule, intval(str_replace(['.', ','], '', $request->threshold_timing_chaine)));
+            $this->manager->updateTimingChaineThreshold($vehicule, intval(preg_replace('/[^0-9]/', '', $request->threshold_timing_chaine)));
         }
 
         return $updatedVehicule;

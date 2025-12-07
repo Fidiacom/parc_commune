@@ -271,13 +271,13 @@
                                                 <label for="km_actuel">
                                                     <i class="fas fa-road mr-1 text-muted"></i>{{ __('Kilométrage actuel') }} <span class="text-danger">*</span>
                                                 </label>
-                                                <input type="text"
+                                                <input type="number"
                                                     value="{{ $vehicule->getTotalKm() }}"
-                                                    class="form-control autonumber @error('km_actuel') is-invalid @enderror"
+                                                    class="form-control @error('km_actuel') is-invalid @enderror"
                                                     name="km_actuel"
                                                     id="km_actuel"
-                                                    data-a-sep="."
-                                                    data-a-dec=","
+                                                    step="1"
+                                                    min="0"
                                                     required
                                                 >
                                                 @error('km_actuel')
@@ -293,14 +293,14 @@
                                                     <i class="fas fa-clock mr-1 text-muted"></i>{{ __('Heures totales') }}
                                                 </label>
                                                 <input
-                                                    type="text"
+                                                    type="number"
                                                     value="{{ $vehicule->getTotalHours() }}"
-                                                    class="form-control autonumber @error('total_hours') is-invalid @enderror"
+                                                    class="form-control @error('total_hours') is-invalid @enderror"
                                                     name="total_hours"
                                                     id="total_hours"
                                                     placeholder="{{ __('Optionnel') }}"
-                                                    data-a-sep="."
-                                                    data-a-dec=","
+                                                    step="1"
+                                                    min="0"
                                                 >
                                                 <small class="form-text text-muted">{{ __('Pour véhicules fonctionnant aux heures') }}</small>
                                                 @error('total_hours')
@@ -318,13 +318,13 @@
                                                     <i class="fas fa-horse mr-1 text-muted"></i>{{ __('Puissance (CV)') }} <span class="text-danger">*</span>
                                                 </label>
                                                 <input
-                                                    type="text"
-                                                    class="form-control autonumber @error('horses') is-invalid @enderror"
+                                                    type="number"
+                                                    class="form-control @error('horses') is-invalid @enderror"
                                                     name="horses"
                                                     id="horses"
                                                     value="{{ $vehicule->getHorses() }}"
-                                                    data-a-sep="."
-                                                    data-a-dec=","
+                                                    step="1"
+                                                    min="0"
                                                     required>
                                                 @error('horses')
                                                 <div class="invalid-feedback d-block">
@@ -519,14 +519,14 @@
                                                     <i class="fas fa-oil-can mr-1 text-muted"></i>{{ __('Seuil KM vidange') }}
                                                 </label>
                                                 <input
-                                                    type="text"
+                                                    type="number"
                                                     placeholder=""
-                                                    class="form-control autonumber @error('threshold_vidange') is-invalid @enderror"
+                                                    class="form-control @error('threshold_vidange') is-invalid @enderror"
                                                     name="threshold_vidange"
                                                     id="threshold_vidange"
                                                     value="{{ $vehicule->getThresholdVidange() ?? '' }}"
-                                                    data-a-sep="." 
-                                                    data-a-dec=",">
+                                                    step="1"
+                                                    min="0">
                                                 <small class="form-text text-muted">{{ __('Kilométrage entre chaque vidange') }}</small>
                                                 @error('threshold_vidange')
                                                 <div class="invalid-feedback d-block">
@@ -541,13 +541,13 @@
                                                     <i class="fas fa-link mr-1 text-muted"></i>{{ __('Seuil KM chaîne de distribution') }}
                                                 </label>
                                                 <input
-                                                    type="text"
+                                                    type="number"
                                                     value="{{ $vehicule->getThresholdTimingChaine() ?? '' }}"
-                                                    class="form-control autonumber @error('threshold_timing_chaine') is-invalid @enderror"
+                                                    class="form-control @error('threshold_timing_chaine') is-invalid @enderror"
                                                     name="threshold_timing_chaine"
                                                     id="threshold_timing_chaine"
-                                                    data-a-sep="."
-                                                    data-a-dec=",">
+                                                    step="1"
+                                                    min="0">
                                                 <small class="form-text text-muted">{{ __('Kilométrage pour changement de chaîne') }}</small>
                                                 @error('threshold_timing_chaine')
                                                 <div class="invalid-feedback d-block">
@@ -666,49 +666,74 @@
                             </div>
 
                             {{-- Tires Information Section --}}
-                            <div class="form-group mt-4">
-                                <label class="mb-3">{{ __('Informations des pneus') }}</label>
-                                <div id="tireFieldsContainer">
-                                    @if($vehicule->pneu && $vehicule->pneu->count() > 0)
-                                        @foreach($vehicule->pneu as $index => $tire)
-                                        <div class="card mb-3">
-                                            <div class="card-header">
-                                                <h5 class="mb-0">{{ __('Pneu') }} {{ $index + 1 }}</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <input type="hidden" name="tire_ids[]" value="{{ $tire->getId() }}">
-                                                <div class="form-group">
-                                                    <label for="tire_position_{{ $index }}">{{ __('Position du pneu') }}</label>
-                                                    <input 
-                                                        type="text" 
-                                                        id="tire_position_{{ $index }}" 
-                                                        class="form-control" 
-                                                        name="tire_positions[]" 
-                                                        placeholder="{{ __('Ex: Avant Gauche, Avant Droit, Arrière Gauche, Arrière Droit') }}"
-                                                        value="{{ old("tire_positions.{$index}", $tire->getTirePosition()) }}"
-                                                        required>
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-circle-notch text-primary mr-2"></i>{{ __('Informations détaillées des pneus') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="tireFieldsContainer">
+                                        @if($vehicule->pneu && $vehicule->pneu->count() > 0)
+                                            @foreach($vehicule->pneu as $index => $tire)
+                                            @php
+                                                // Get the latest historique for this tire
+                                                $latestHistorique = $tire->pneu_historique->sortByDesc('created_at')->first();
+                                                $nextKmForChange = $latestHistorique ? $latestHistorique->getNextKmForChange() : ($vehicule->getTotalKm() + $tire->getThresholdKm());
+                                            @endphp
+                                            <div class="card mb-3 tire-card" data-tire-index="{{ $index }}">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">{{ __('Pneu') }} {{ $index + 1 }}</h5>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="tire_threshold_{{ $index }}">{{ __('Seuil km') }}</label>
-                                                    <input 
-                                                        type="text" 
-                                                        id="tire_threshold_{{ $index }}" 
-                                                        class="form-control autonumber" 
-                                                        name="tire_thresholds[]" 
-                                                        data-a-sep="." 
-                                                        data-a-dec=","
-                                                        placeholder=""
-                                                        value="{{ old("tire_thresholds.{$index}", $tire->getThresholdKm()) }}"
-                                                        required>
+                                                <div class="card-body">
+                                                    <input type="hidden" name="tire_ids[]" value="{{ $tire->getId() }}">
+                                                    <div class="form-group">
+                                                        <label for="tire_position_{{ $index }}">{{ __('Position du pneu') }}</label>
+                                                        <input 
+                                                            type="text" 
+                                                            id="tire_position_{{ $index }}" 
+                                                            class="form-control" 
+                                                            name="tire_positions[]" 
+                                                            placeholder="{{ __('Ex: Avant Gauche, Avant Droit, Arrière Gauche, Arrière Droit') }}"
+                                                            value="{{ old("tire_positions.{$index}", $tire->getTirePosition()) }}"
+                                                            required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="tire_threshold_{{ $index }}">{{ __('Seuil km') }}</label>
+                                                        <input 
+                                                            type="number" 
+                                                            id="tire_threshold_{{ $index }}" 
+                                                            class="form-control" 
+                                                            name="tire_thresholds[]" 
+                                                            placeholder=""
+                                                            value="{{ old("tire_thresholds.{$index}", $tire->getThresholdKm()) }}"
+                                                            step="1"
+                                                            min="0"
+                                                            required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="tire_nextKM_{{ $index }}">{{ __('Prochain km pour changement') }}</label>
+                                                        <input 
+                                                            type="number" 
+                                                            id="tire_nextKM_{{ $index }}" 
+                                                            class="form-control" 
+                                                            name="tire_nextKMs[]" 
+                                                            placeholder=""
+                                                            value="{{ old("tire_nextKMs.{$index}", $nextKmForChange) }}"
+                                                            step="1"
+                                                            min="0"
+                                                            required>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        @endforeach
-                                    @else
-                                        <div class="alert alert-info">
-                                            <i class="fas fa-info-circle"></i> {{ __('Aucun pneu enregistré. Les pneus seront créés lors de la mise à jour.') }}
-                                        </div>
-                                    @endif
+                                            @endforeach
+                                        @else
+                                            {{-- Tires will be generated dynamically via JavaScript based on numOfTires --}}
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle"></i> {{ __('Les champs de pneus seront générés automatiquement selon le nombre de pneus.') }}
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 
@@ -751,29 +776,13 @@
                 return false;
             }
             
-            // Process AutoNumeric fields - get raw values without destroying
-            if (typeof AutoNumeric !== 'undefined') {
-                const autonumberFields = form.querySelectorAll('.autonumber');
-                console.log('Processing', autonumberFields.length, 'AutoNumeric fields');
-                autonumberFields.forEach(function(field) {
-                    try {
-                        const autoNumericInstance = AutoNumeric.getAutoNumericElement(field);
-                        if (autoNumericInstance) {
-                            // Get the raw unformatted value
-                            const rawValue = autoNumericInstance.getNumber();
-                            // Set value directly without destroying (will be destroyed on submit)
-                            if (rawValue !== null) {
-                                // Temporarily remove AutoNumeric to set raw value
-                                autoNumericInstance.destroy();
-                                field.value = rawValue.toString();
-                                console.log('Processed field:', field.name, '=', field.value);
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error processing AutoNumeric field:', error);
-                    }
-                });
-            }
+            // Ensure all number inputs are integers
+            const numberInputs = form.querySelectorAll('input[type="number"]');
+            numberInputs.forEach(function(field) {
+                if (field.value && !isNaN(field.value)) {
+                    field.value = Math.floor(parseFloat(field.value)).toString();
+                }
+            });
             
             // Log all form data before submission
             const formData = new FormData(form);
@@ -854,15 +863,140 @@
                 });
             }
 
-            // Initialize autonumber for all autonumber fields
-            if (typeof AutoNumeric !== 'undefined') {
-                document.querySelectorAll('.autonumber').forEach(function(el) {
-                    // Check if already initialized
-                    if (!AutoNumeric.getAutoNumericElement(el)) {
-                        new AutoNumeric(el, {
-                            digitGroupSeparator: '.',
-                            decimalCharacter: ','
-                        });
+            // Ensure number inputs only accept integers
+            document.querySelectorAll('input[type="number"][step="1"]').forEach(function(el) {
+                // Prevent decimal input
+                el.addEventListener('input', function(e) {
+                    if (this.value && this.value.includes('.')) {
+                        this.value = Math.floor(parseFloat(this.value)).toString();
+                    }
+                });
+                
+                // Clean paste events to ensure integers only
+                el.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const paste = (e.clipboardData || window.clipboardData).getData('text');
+                    const cleaned = Math.floor(parseFloat(paste.replace(/[^0-9.]/g, '')) || 0);
+                    if (cleaned >= 0) {
+                        this.value = cleaned.toString();
+                    }
+                });
+            });
+
+            // Tire fields generation
+            const numOfTiresInput = document.getElementById('numOfTires');
+            const tireFieldsContainer = document.getElementById('tireFieldsContainer');
+            const kmActuelInput = document.getElementById('km_actuel');
+            
+            // Check if tires exist in DB
+            const existingTires = tireFieldsContainer.querySelectorAll('.tire-card');
+            const hasExistingTires = existingTires.length > 0;
+            
+            // Pass old values from PHP to JavaScript
+            const oldTirePositions = @json(old('tire_positions', []));
+            const oldTireThresholds = @json(old('tire_thresholds', []));
+            const oldTireNextKMs = @json(old('tire_nextKMs', []));
+            
+            // Generate tire fields based on number of tires (if no existing tires)
+            function generateTireFields() {
+                // Only generate if no existing tires in DB
+                if (hasExistingTires) {
+                    return;
+                }
+                
+                const numOfTires = parseInt(numOfTiresInput.value) || 4;
+                tireFieldsContainer.innerHTML = '';
+
+                for (let i = 0; i < numOfTires; i++) {
+                    const tireIndex = i + 1;
+                    const oldPosition = oldTirePositions[i] || tireIndex;
+                    const oldThreshold = oldTireThresholds[i] || '';
+                    const oldNextKM = oldTireNextKMs[i] || '';
+                    
+                    const tireCard = document.createElement('div');
+                    tireCard.className = 'card mb-3 tire-card';
+                    tireCard.setAttribute('data-tire-index', i);
+                    tireCard.innerHTML = `
+                        <div class="card-header">
+                            <h5 class="mb-0">{{ __('Pneu') }} ${tireIndex}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="tire_position_${i}">{{ __('Position du pneu') }}</label>
+                                <input 
+                                    type="text" 
+                                    id="tire_position_${i}" 
+                                    class="form-control" 
+                                    name="tire_positions[]" 
+                                    placeholder="{{ __('Ex: Avant Gauche, Avant Droit, Arrière Gauche, Arrière Droit') }}"
+                                    value="${oldPosition}"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tire_threshold_${i}">{{ __('Seuil km') }}</label>
+                                <input 
+                                    type="number" 
+                                    id="tire_threshold_${i}" 
+                                    class="form-control" 
+                                    name="tire_thresholds[]" 
+                                    placeholder=""
+                                    value="${oldThreshold}"
+                                    step="1"
+                                    min="0"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tire_nextKM_${i}">{{ __('Prochain km pour changement') }}</label>
+                                <input 
+                                    type="number" 
+                                    id="tire_nextKM_${i}" 
+                                    class="form-control" 
+                                    name="tire_nextKMs[]" 
+                                    placeholder=""
+                                    value="${oldNextKM}"
+                                    step="1"
+                                    min="0"
+                                    required>
+                            </div>
+                        </div>
+                    `;
+                    tireFieldsContainer.appendChild(tireCard);
+                }
+
+                // Initialize integer validation for new number fields
+                document.querySelectorAll('#tireFieldsContainer input[type="number"][step="1"]').forEach(function(el) {
+                    el.addEventListener('input', function(e) {
+                        if (this.value && this.value.includes('.')) {
+                            this.value = Math.floor(parseFloat(this.value)).toString();
+                        }
+                    });
+                });
+            }
+
+            // Generate tire fields on page load if no existing tires
+            if (!hasExistingTires && numOfTiresInput) {
+                generateTireFields();
+            }
+
+            // Regenerate tire fields when number of tires changes (only if no existing tires)
+            if (!hasExistingTires && numOfTiresInput) {
+                numOfTiresInput.addEventListener('change', generateTireFields);
+                numOfTiresInput.addEventListener('input', generateTireFields);
+            }
+
+            // Auto-calculate next KM for change based on current KM + threshold
+            if (tireFieldsContainer && kmActuelInput) {
+                tireFieldsContainer.addEventListener('input', function(e) {
+                    if (e.target.name === 'tire_thresholds[]') {
+                        const index = Array.from(document.querySelectorAll('input[name="tire_thresholds[]"]')).indexOf(e.target);
+                        const threshold = parseInt(e.target.value) || 0;
+                        const currentKm = parseInt(kmActuelInput.value) || 0;
+                        const nextKmInput = document.querySelectorAll('input[name="tire_nextKMs[]"]')[index];
+                        
+                        if (nextKmInput && currentKm > 0 && threshold > 0) {
+                            const nextKm = currentKm + threshold;
+                            nextKmInput.value = nextKm.toString();
+                        }
                     }
                 });
             }

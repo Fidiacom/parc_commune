@@ -85,13 +85,13 @@ class VehiculeManager
         if (isset($vehiculeData['threshold_vidange']) && isset($vehiculeData['km_actuel'])) {
             $vidange = new Vidange;
             $vidange->car_id = $vehicule->getId();
-            $vidange->threshold_km = intval(str_replace('.', '', $vehiculeData['threshold_vidange']));
+            $vidange->threshold_km = intval(preg_replace('/[^0-9]/', '', $vehiculeData['threshold_vidange']));
             $vidange->save();
 
             $vidangeHistorique = new VidangeHistorique;
             $vidangeHistorique->vidange_id = $vidange->id;
-            $vidangeHistorique->current_km = intval(str_replace('.', '', $vehiculeData['km_actuel']));
-            $vidangeHistorique->next_km_for_drain = intval(str_replace('.', '', $vehiculeData['km_actuel'])) + intval(str_replace('.', '', $vehiculeData['threshold_vidange']));
+            $vidangeHistorique->current_km = intval(preg_replace('/[^0-9]/', '', $vehiculeData['km_actuel']));
+            $vidangeHistorique->next_km_for_drain = intval(preg_replace('/[^0-9]/', '', $vehiculeData['km_actuel'])) + intval(preg_replace('/[^0-9]/', '', $vehiculeData['threshold_vidange']));
             $vidangeHistorique->save();
         }
 
@@ -99,13 +99,13 @@ class VehiculeManager
         if (isset($vehiculeData['threshold_timing_chaine']) && isset($vehiculeData['km_actuel'])) {
             $timingChaine = new TimingChaine;
             $timingChaine->car_id = $vehicule->getId();
-            $timingChaine->threshold_km = intval(str_replace('.', '', $vehiculeData['threshold_timing_chaine']));
+            $timingChaine->threshold_km = intval(preg_replace('/[^0-9]/', '', $vehiculeData['threshold_timing_chaine']));
             $timingChaine->save();
 
             $timingChaineHistorique = new TimingChaineHistorique;
             $timingChaineHistorique->chaine_id = $timingChaine->id;
-            $timingChaineHistorique->current_km = intval(str_replace('.', '', $vehiculeData['km_actuel']));
-            $timingChaineHistorique->next_km_for_change = intval(str_replace('.', '', $vehiculeData['km_actuel'])) + intval(str_replace('.', '', $vehiculeData['threshold_timing_chaine']));
+            $timingChaineHistorique->current_km = intval(preg_replace('/[^0-9]/', '', $vehiculeData['km_actuel']));
+            $timingChaineHistorique->next_km_for_change = intval(preg_replace('/[^0-9]/', '', $vehiculeData['km_actuel'])) + intval(preg_replace('/[^0-9]/', '', $vehiculeData['threshold_timing_chaine']));
             $timingChaineHistorique->save();
         }
 
@@ -116,14 +116,14 @@ class VehiculeManager
                 if (isset($tireData['positions'][$num]) && isset($tireData['thresholds'][$num]) && isset($tireData['nextKMs'][$num])) {
                     $pneu = new pneu;
                     $pneu->car_id = $vehicule->getId();
-                    $pneu->threshold_km = intval(str_replace('.', '', $tireData['thresholds'][$num]));
+                    $pneu->threshold_km = intval(preg_replace('/[^0-9]/', '', $tireData['thresholds'][$num]));
                     $pneu->tire_position = $tireData['positions'][$num];
                     $pneu->save();
 
                     $historique = new PneuHistorique;
                     $historique->pneu_id = $pneu->id;
-                    $historique->current_km = intval(str_replace('.', '', $vehiculeData['km_actuel']));
-                    $historique->next_km_for_change = intval(str_replace('.', '', $tireData['nextKMs'][$num]));
+                    $historique->current_km = intval(preg_replace('/[^0-9]/', '', $vehiculeData['km_actuel']));
+                    $historique->next_km_for_change = intval(preg_replace('/[^0-9]/', '', $tireData['nextKMs'][$num]));
                     $historique->save();
                 }
             }
@@ -144,7 +144,7 @@ class VehiculeManager
     /**
      * Update tires for a vehicule.
      */
-    public function updateTires(Vehicule $vehicule, array $tireData): void
+    public function updateTires(Vehicule $vehicule, array $tireData, int $currentKm): void
     {
         if (!isset($tireData['tire_ids']) || !is_array($tireData['tire_ids'])) {
             return;
@@ -153,14 +153,25 @@ class VehiculeManager
         $tireIds = $tireData['tire_ids'];
         $positions = $tireData['positions'] ?? [];
         $thresholds = $tireData['thresholds'] ?? [];
+        $nextKMs = $tireData['nextKMs'] ?? [];
 
         foreach ($tireIds as $index => $tireId) {
             if (isset($positions[$index]) && isset($thresholds[$index])) {
                 $pneu = pneu::find($tireId);
                 if ($pneu && $pneu->getCarId() == $vehicule->getId()) {
                     $pneu->tire_position = $positions[$index];
-                    $pneu->threshold_km = intval(str_replace(['.', ','], '', $thresholds[$index]));
+                    $pneu->threshold_km = intval(preg_replace('/[^0-9]/', '', $thresholds[$index]));
                     $pneu->save();
+                    
+                    // Update or create historique entry with next KM
+                    if (isset($nextKMs[$index]) && $nextKMs[$index]) {
+                        $nextKm = intval(preg_replace('/[^0-9]/', '', $nextKMs[$index]));
+                        $historique = new PneuHistorique();
+                        $historique->pneu_id = $pneu->getId();
+                        $historique->current_km = $currentKm;
+                        $historique->next_km_for_change = $nextKm;
+                        $historique->save();
+                    }
                 }
             }
         }
@@ -178,8 +189,17 @@ class VehiculeManager
         $pneu = new pneu();
         $pneu->car_id = $vehicule->getId();
         $pneu->tire_position = $tireData['position'];
-        $pneu->threshold_km = intval(str_replace(['.', ','], '', $tireData['threshold']));
+        $pneu->threshold_km = intval(preg_replace('/[^0-9]/', '', $tireData['threshold']));
         $pneu->save();
+        
+        // Create historique entry if nextKm and currentKm are provided
+        if (isset($tireData['nextKm']) && isset($tireData['currentKm'])) {
+            $historique = new PneuHistorique();
+            $historique->pneu_id = $pneu->getId();
+            $historique->current_km = $tireData['currentKm'];
+            $historique->next_km_for_change = intval(preg_replace('/[^0-9]/', '', $tireData['nextKm']));
+            $historique->save();
+        }
     }
 
     /**

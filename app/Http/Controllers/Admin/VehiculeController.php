@@ -264,7 +264,7 @@ class VehiculeController extends Controller
     public function edit($id)
     {
         try {
-            $vehicule = $this->vehiculeService->getVehiculeById($id, ['images', 'attachments', 'pneu', 'vidange', 'timing_chaine']);
+            $vehicule = $this->vehiculeService->getVehiculeById($id, ['images', 'attachments', 'pneu.pneu_historique', 'vidange', 'timing_chaine']);
         } catch (\Throwable $th) {
             return view('admin.vehicule.404');
         }

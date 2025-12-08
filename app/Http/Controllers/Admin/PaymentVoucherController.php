@@ -210,8 +210,10 @@ class PaymentVoucherController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'voucher_number' => 'nullable|string|max:255|unique:payment_vouchers,voucher_number',
+            'voucher_date' => 'nullable|date',
             'invoice_number' => 'nullable|string|max:255',
-            'invoice_date' => 'required|date',
+            'invoice_date' => 'nullable|date',
             'amount' => 'required|numeric|min:0',
             'vehicule_id' => 'required|exists:vehicules,id',
             'vehicle_km' => 'required|integer|min:0',
@@ -391,8 +393,10 @@ class PaymentVoucherController extends Controller
         }
 
         $validated = $request->validate([
+            'voucher_number' => 'nullable|string|max:255|unique:payment_vouchers,voucher_number,' . $voucher->getId(),
+            'voucher_date' => 'nullable|date',
             'invoice_number' => 'nullable|string|max:255',
-            'invoice_date' => 'required|date',
+            'invoice_date' => 'nullable|date',
             'amount' => 'required|numeric|min:0',
             'vehicule_id' => 'required|exists:vehicules,id',
             'vehicle_km' => 'required|integer|min:0',

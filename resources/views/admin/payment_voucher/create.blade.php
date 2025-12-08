@@ -69,7 +69,7 @@
 
                             <!-- Vehicle KM -->
                             <div class="form-group">
-                                <label class="font-weight-semibold">{{ __('KM du véhicule') }} <span class="text-danger">*</span></label>
+                                <label class="font-weight-semibold">{{ __('KM du bon') }} <span class="text-danger">*</span></label>
                                 <input type="text" name="vehicle_km" id="vehicle_km" class="form-control @error('vehicle_km') is-invalid @enderror" 
                                        value="{{ old('vehicle_km') }}" required placeholder="{{ __('Entrer le kilométrage') }}">
                                 @error('vehicle_km')
@@ -79,10 +79,30 @@
 
                             <!-- Vehicle Hours -->
                             <div class="form-group">
-                                <label class="font-weight-semibold">{{ __('Heures du véhicule') }}</label>
+                                <label class="font-weight-semibold">{{ __('Heures du bon') }}</label>
                                 <input type="text" name="vehicle_hours" class="form-control @error('vehicle_hours') is-invalid @enderror" 
                                        value="{{ old('vehicle_hours') }}" placeholder="{{ __('Entrer les heures (pour véhicules avec compteur d\'heures)') }}">
                                 @error('vehicle_hours')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Voucher Number -->
+                            <div class="form-group">
+                                <label class="font-weight-semibold">{{ __('Numéro de bon') }}</label>
+                                <input type="text" name="voucher_number" class="form-control @error('voucher_number') is-invalid @enderror" 
+                                       value="{{ old('voucher_number') }}" placeholder="{{ __('Laisser vide pour générer automatiquement') }}">
+                                @error('voucher_number')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Voucher Date -->
+                            <div class="form-group">
+                                <label class="font-weight-semibold">{{ __('Date du bon') }}</label>
+                                <input type="date" name="voucher_date" class="form-control @error('voucher_date') is-invalid @enderror" 
+                                       value="{{ old('voucher_date') }}">
+                                @error('voucher_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -99,9 +119,9 @@
 
                             <!-- Invoice Date -->
                             <div class="form-group">
-                                <label class="font-weight-semibold">{{ __('Date de facture') }} <span class="text-danger">*</span></label>
+                                <label class="font-weight-semibold">{{ __('Date de facture') }}</label>
                                 <input type="date" name="invoice_date" class="form-control @error('invoice_date') is-invalid @enderror" 
-                                       value="{{ old('invoice_date', date('Y-m-d')) }}" required>
+                                       value="{{ old('invoice_date') }}">
                                 @error('invoice_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

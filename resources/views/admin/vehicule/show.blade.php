@@ -360,6 +360,7 @@
                                     <tr>
                                         <th>{{ __('Numéro de bon') }}</th>
                                         <th>{{ __('Catégorie') }}</th>
+                                        <th>{{ __('Date du bon') }}</th>
                                         <th>{{ __('Date de facture') }}</th>
                                         <th>{{ __('Montant') }}</th>
                                         <th>{{ __('KM') }}</th>
@@ -389,7 +390,14 @@
                                         <td>
                                             <span class="badge badge-info">{{ $categoryLabels[$voucher->getCategory()] ?? $voucher->getCategory() }}</span>
                                         </td>
-                                        <td>{{ \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('d/m/Y') }}</td>
+                                        <td>{{ $voucher->getVoucherDate() ? \Carbon\Carbon::parse($voucher->getVoucherDate())->format('d/m/Y') : '-' }}</td>
+                                        <td>
+                                            @if($voucher->getInvoiceDate())
+                                                {{ \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('d/m/Y') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                         <td class="font-weight-semibold">{{ number_format($voucher->getAmount(), 2, ',', ' ') }} {{ __('DH') }}</td>
                                         <td>{{ number_format($voucher->getVehicleKm(), 0, ',', ' ') }} {{ __('KM') }}</td>
                                         <td>{{ $voucher->getSupplier() ?? '-' }}</td>

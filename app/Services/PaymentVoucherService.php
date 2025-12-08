@@ -68,6 +68,7 @@ class PaymentVoucherService
     public function createPaymentVoucher(Request $request): PaymentVoucher
     {
         $data = [
+            PaymentVoucher::VOUCHER_DATE_COLUMN => $request->voucher_date ?? $request->invoice_date,
             PaymentVoucher::INVOICE_NUMBER_COLUMN => $request->invoice_number,
             PaymentVoucher::INVOICE_DATE_COLUMN => $request->invoice_date,
             PaymentVoucher::AMOUNT_COLUMN => floatval(str_replace(['.', ','], '', $request->amount)),
@@ -77,6 +78,10 @@ class PaymentVoucherService
             PaymentVoucher::SUPPLIER_COLUMN => $request->supplier,
             PaymentVoucher::CATEGORY_COLUMN => $request->category,
         ];
+
+        if ($request->filled('voucher_number')) {
+            $data[PaymentVoucher::VOUCHER_NUMBER_COLUMN] = $request->voucher_number;
+        }
 
         // Handle denominations
         if ($request->has('denominations') && is_array($request->denominations)) {
@@ -192,6 +197,7 @@ class PaymentVoucherService
     public function updatePaymentVoucher(PaymentVoucher $voucher, Request $request): PaymentVoucher
     {
         $data = [
+            PaymentVoucher::VOUCHER_DATE_COLUMN => $request->voucher_date ?? $request->invoice_date,
             PaymentVoucher::INVOICE_NUMBER_COLUMN => $request->invoice_number,
             PaymentVoucher::INVOICE_DATE_COLUMN => $request->invoice_date,
             PaymentVoucher::AMOUNT_COLUMN => floatval(str_replace(['.', ','], '', $request->amount)),
@@ -201,6 +207,10 @@ class PaymentVoucherService
             PaymentVoucher::SUPPLIER_COLUMN => $request->supplier,
             PaymentVoucher::CATEGORY_COLUMN => $request->category,
         ];
+
+        if ($request->filled('voucher_number')) {
+            $data[PaymentVoucher::VOUCHER_NUMBER_COLUMN] = $request->voucher_number;
+        }
 
         // Handle denominations
         if ($request->has('denominations') && is_array($request->denominations)) {

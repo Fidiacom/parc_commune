@@ -95,6 +95,7 @@
                                 <thead>
                                     <tr>
                                         <th>{{ __('Num de bon') }}</th>
+                                        <th>{{ __('Date du bon') }}</th>
                                         <th>{{ __('Num de facture') }}</th>
                                         <th>{{ __('Date de facture') }}</th>
                                         <th>{{ __('Montant') }}</th>
@@ -111,8 +112,15 @@
                                         <td>
                                             <strong>{{ $voucher->getVoucherNumber() }}</strong>
                                         </td>
+                                        <td>{{ $voucher->getVoucherDate() ? \Carbon\Carbon::parse($voucher->getVoucherDate())->format('d/m/Y') : '-' }}</td>
                                         <td>{{ $voucher->getInvoiceNumber() ?? '-' }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('d/m/Y') }}</td>
+                                        <td>
+                                            @if($voucher->getInvoiceDate())
+                                                {{ \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('d/m/Y') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                         <td>
                                             <strong class="text-success">{{ number_format($voucher->getAmount(), 2, ',', ' ') }} {{ __('DH') }}</strong>
                                         </td>

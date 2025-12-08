@@ -50,6 +50,7 @@ class PaymentVoucherSeeder extends Seeder
                 
                 PaymentVoucher::create([
                     'voucher_number' => 'BP-' . $voucherNumber++,
+                    'voucher_date' => $invoiceDate->format('Y-m-d'),
                     'invoice_number' => 'FAC-' . rand(1000, 9999),
                     'invoice_date' => $invoiceDate->format('Y-m-d'),
                     'amount' => $amount,
@@ -67,6 +68,7 @@ class PaymentVoucherSeeder extends Seeder
             $insuranceDate = Carbon::now()->subMonths(rand(1, 6));
             PaymentVoucher::create([
                 'voucher_number' => 'BP-' . $voucherNumber++,
+                'voucher_date' => $insuranceDate->format('Y-m-d'),
                 'invoice_number' => 'ASS-' . rand(1000, 9999),
                 'invoice_date' => $insuranceDate->format('Y-m-d'),
                 'amount' => rand(5000, 12000),
@@ -82,6 +84,7 @@ class PaymentVoucherSeeder extends Seeder
             $techVisitDate = Carbon::now()->subMonths(rand(2, 8));
             PaymentVoucher::create([
                 'voucher_number' => 'BP-' . $voucherNumber++,
+                'voucher_date' => $techVisitDate->format('Y-m-d'),
                 'invoice_number' => 'VT-' . rand(1000, 9999),
                 'invoice_date' => $techVisitDate->format('Y-m-d'),
                 'amount' => rand(300, 800),
@@ -139,6 +142,7 @@ class PaymentVoucherSeeder extends Seeder
                 
                 $voucherData = [
                     'voucher_number' => 'BP-' . $voucherNumber++,
+                    'voucher_date' => $voucherDate->format('Y-m-d'),
                     'invoice_number' => 'FAC-' . rand(1000, 9999),
                     'invoice_date' => $voucherDate->format('Y-m-d'),
                     'amount' => rand(200, 2000),

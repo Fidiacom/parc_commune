@@ -12,6 +12,7 @@ class PaymentVoucher extends Model
     public const TABLE = 'payment_vouchers';
     public const ID_COLUMN = 'id';
     public const VOUCHER_NUMBER_COLUMN = 'voucher_number';
+    public const VOUCHER_DATE_COLUMN = 'voucher_date';
     public const INVOICE_NUMBER_COLUMN = 'invoice_number';
     public const INVOICE_DATE_COLUMN = 'invoice_date';
     public const AMOUNT_COLUMN = 'amount';
@@ -36,6 +37,7 @@ class PaymentVoucher extends Model
 
     protected $fillable = [
         self::VOUCHER_NUMBER_COLUMN,
+        self::VOUCHER_DATE_COLUMN,
         self::INVOICE_NUMBER_COLUMN,
         self::INVOICE_DATE_COLUMN,
         self::AMOUNT_COLUMN,
@@ -65,12 +67,17 @@ class PaymentVoucher extends Model
         return $this->getAttribute(self::VOUCHER_NUMBER_COLUMN);
     }
 
+    public function getVoucherDate(): ?string
+    {
+        return $this->getAttribute(self::VOUCHER_DATE_COLUMN);
+    }
+
     public function getInvoiceNumber(): ?string
     {
         return $this->getAttribute(self::INVOICE_NUMBER_COLUMN);
     }
 
-    public function getInvoiceDate(): string
+    public function getInvoiceDate(): ?string
     {
         return $this->getAttribute(self::INVOICE_DATE_COLUMN);
     }

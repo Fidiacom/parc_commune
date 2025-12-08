@@ -90,6 +90,26 @@
                                 @enderror
                             </div>
 
+                            <!-- Voucher Number -->
+                            <div class="form-group">
+                                <label class="font-weight-semibold">{{ __('Numéro de bon') }}</label>
+                                <input type="text" name="voucher_number" class="form-control @error('voucher_number') is-invalid @enderror" 
+                                       value="{{ old('voucher_number', $voucher->getVoucherNumber()) }}" placeholder="{{ __('Laisser vide pour générer automatiquement') }}">
+                                @error('voucher_number')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Voucher Date -->
+                            <div class="form-group">
+                                <label class="font-weight-semibold">{{ __('Date du bon') }}</label>
+                                <input type="date" name="voucher_date" class="form-control @error('voucher_date') is-invalid @enderror" 
+                                       value="{{ old('voucher_date', $voucher->getVoucherDate() ?? $voucher->getInvoiceDate()) }}">
+                                @error('voucher_date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <!-- Invoice Number -->
                             <div class="form-group">
                                 <label class="font-weight-semibold">{{ __('Numéro de facture') }}</label>
@@ -102,9 +122,9 @@
 
                             <!-- Invoice Date -->
                             <div class="form-group">
-                                <label class="font-weight-semibold">{{ __('Date de facture') }} <span class="text-danger">*</span></label>
+                                <label class="font-weight-semibold">{{ __('Date de facture') }}</label>
                                 <input type="date" name="invoice_date" class="form-control @error('invoice_date') is-invalid @enderror" 
-                                       value="{{ old('invoice_date', $voucher->getInvoiceDate()) }}" required>
+                                       value="{{ old('invoice_date', $voucher->getInvoiceDate()) }}">
                                 @error('invoice_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

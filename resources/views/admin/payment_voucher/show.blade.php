@@ -38,12 +38,22 @@
                                         <td><strong class="text-primary">{{ $voucher->getVoucherNumber() }}</strong></td>
                                     </tr>
                                     <tr>
+                                        <td class="font-weight-semibold">{{ __('Date du bon') }}:</td>
+                                        <td>{{ $voucher->getVoucherDate() ? \Carbon\Carbon::parse($voucher->getVoucherDate())->format('d/m/Y') : '-' }}</td>
+                                    </tr>
+                                    <tr>
                                         <td class="font-weight-semibold">{{ __('Numéro de facture') }}:</td>
                                         <td>{{ $voucher->getInvoiceNumber() ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-semibold">{{ __('Date de facture') }}:</td>
-                                        <td>{{ \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('d/m/Y') }}</td>
+                                        <td>
+                                            @if($voucher->getInvoiceDate())
+                                                {{ \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('d/m/Y') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-semibold">{{ __('Montant') }}:</td>

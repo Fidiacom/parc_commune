@@ -77,6 +77,9 @@ class PaymentVoucherController extends Controller
      */
     public function create($category = null)
     {
+        // Allow category from route param or query string
+        $category = $category ?? request()->query('category');
+
         $vehicules = $this->vehiculeService->getAllVehicules();
         $categories = [
             'carburant' => __('Bon pour Carburant'),

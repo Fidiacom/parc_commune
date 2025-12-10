@@ -132,7 +132,7 @@
                                 <label class="font-weight-semibold">{{ __('Montant') }} <span class="text-danger">*</span></label>
                                 <input type="text" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" 
                                        value="{{ old('amount') }}" required placeholder="{{ __('Montant en DH') }}" 
-                                       onchange="calculateDenominations(); calculateFuelAmount('amount');" onkeyup="calculateDenominations(); calculateFuelAmount('amount');">
+                                       onchange="calculateDenominations(); calculateFuelAmount('amount'); enforceIntegerAmount();" onkeyup="calculateDenominations(); calculateFuelAmount('amount'); enforceIntegerAmount();">
                                 @error('amount')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -193,9 +193,9 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="font-weight-semibold">{{ __('Litres de carburant') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="fuel_liters" id="fuel_liters" class="form-control @error('fuel_liters') is-invalid @enderror" 
+                                        <input type="text" readonly name="fuel_liters" id="fuel_liters" class="form-control @error('fuel_liters') is-invalid @enderror" 
                                                value="{{ old('fuel_liters') }}" placeholder="{{ __('Quantité en litres') }}"
-                                               onchange="calculateFuelAmount('fuel_liters')" onkeyup="calculateFuelAmount('fuel_liters')">
+                                                onkeyup="calculateFuelAmount('fuel_liters')">
                                         @error('fuel_liters')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -508,6 +508,13 @@
                 if (additionalInfoGroup) additionalInfoGroup.style.display = 'block';
                 if (amountGroup) amountGroup.style.display = 'block';
             }
+        }
+
+        function enforceIntegerAmount() {
+            const amountInput = document.getElementById('amount');
+            if (!amountInput) return;
+            const val = parseFloat(amountInput.value.toString().replace(/[, ]/g, '.')) || 0;
+            amountInput.value = Math.round(val);
         }
 
         function loadNextInsuranceExpirationDate(vehiculeId) {
@@ -949,6 +956,9 @@
             fuelLiters = parseFloat(fuelLiters) || 0;
             pricePerLiter = parseFloat(pricePerLiter) || 0;
             amount = parseFloat(amount) || 0;
+            // Always enforce integer amount
+            amount = Math.round(amount);
+            amountInput.value = amount || '';
             
             // Need price per liter for any calculation
             if (pricePerLiter <= 0) {
@@ -976,14 +986,14 @@
             // (Only if liters was just edited, or amount is empty/zero)
             else if (lastEditedField === 'fuel_liters' && fuelLiters > 0 && pricePerLiter > 0) {
                 const calculatedAmount = fuelLiters * pricePerLiter;
-                amountInput.value = calculatedAmount.toFixed(2);
+                amountInput.value = Math.round(calculatedAmount);
                 
                 // Show calculation info
                 if (calculationInfo) {
                     calculationInfo.style.display = 'block';
                 }
                 if (calculatedAmountSpan) {
-                    calculatedAmountSpan.textContent = calculatedAmount.toFixed(2) + ' {{ __("MAD") }}';
+                    calculatedAmountSpan.textContent = Math.round(calculatedAmount) + ' {{ __("MAD") }}';
                 }
                 
                 // Trigger denominations calculation
@@ -994,7 +1004,7 @@
                 if (fuelLiters > 0) {
                     // Calculate amount from liters
                     const calculatedAmount = fuelLiters * pricePerLiter;
-                    amountInput.value = calculatedAmount.toFixed(2);
+                    amountInput.value = Math.round(calculatedAmount);
                     
                     if (calculationInfo) {
                         calculationInfo.style.display = 'block';

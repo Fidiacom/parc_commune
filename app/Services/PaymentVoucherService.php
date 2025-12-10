@@ -124,7 +124,11 @@ class PaymentVoucherService
         // Handle category-specific fields
         if ($request->category === 'carburant' && $request->has('price_per_liter')) {
             $pricePerLiter = floatval($request->price_per_liter);
-            $data[PaymentVoucher::FUEL_LITERS_COLUMN] = round($request->amount / $pricePerLiter, 2);
+            if($pricePerLiter > 0) {
+                $data[PaymentVoucher::FUEL_LITERS_COLUMN] = round($request->amount / $pricePerLiter, 2);
+            } else {
+                $data[PaymentVoucher::FUEL_LITERS_COLUMN] = null;
+            }
         }
 
         if ($request->category === 'rechange_pneu') {
@@ -250,7 +254,11 @@ class PaymentVoucherService
 
         if ($request->category === 'carburant' && $request->has('price_per_liter')) {
             $pricePerLiter = floatval($request->price_per_liter);
-            $data[PaymentVoucher::FUEL_LITERS_COLUMN] = round($request->amount / $pricePerLiter, 2);
+            if($pricePerLiter > 0) {
+                $data[PaymentVoucher::FUEL_LITERS_COLUMN] = round($request->amount / $pricePerLiter, 2);
+            } else {
+                $data[PaymentVoucher::FUEL_LITERS_COLUMN] = null;
+            }
         }
 
         if ($request->category === 'rechange_pneu') {

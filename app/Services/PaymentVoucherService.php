@@ -248,11 +248,9 @@ class PaymentVoucherService
             $data[PaymentVoucher::TECHNICAL_VISIT_EXPIRATION_DATE_COLUMN] = null;
         }
 
-        // Handle category-specific fields
-        if ($request->category === 'carburant' && $request->has('fuel_liters')) {
-            $data[PaymentVoucher::FUEL_LITERS_COLUMN] = $this->normalizeInteger($request->fuel_liters);
-        } else {
-            $data[PaymentVoucher::FUEL_LITERS_COLUMN] = null;
+        if ($request->category === 'carburant' && $request->has('price_per_liter')) {
+            $pricePerLiter = floatval($request->price_per_liter);
+            $data[PaymentVoucher::FUEL_LITERS_COLUMN] = round($request->amount / $pricePerLiter, 2);
         }
 
         if ($request->category === 'rechange_pneu') {

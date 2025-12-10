@@ -228,7 +228,6 @@ class PaymentVoucherController extends Controller
             'invoice_files.*' => 'nullable|file|max:51200',
             'vignette_files.*' => 'nullable|file|max:51200',
             'other_files.*' => 'nullable|file|max:51200',
-            'fuel_liters' => 'nullable|required_if:category,carburant|numeric|min:0',
             'tire_id' => 'nullable|exists:pneus,id',
             'tire_ids' => 'nullable|required_if:category,rechange_pneu|array',
             'tire_ids.*' => 'required|exists:pneus,id',
@@ -239,13 +238,13 @@ class PaymentVoucherController extends Controller
             'timing_chaine_id' => 'nullable|exists:timing_chaines,id',
             'insurance_expiration_date' => 'nullable|required_if:category,insurance|date',
             'technical_visit_expiration_date' => 'nullable|required_if:category,visite_technique|date',
+            'price_per_liter' => 'nullable',
         ], [
             'invoice_date.required' => __('La date de facture est requise'),
             'amount.required' => __('Le montant est requis'),
             'vehicule_id.required' => __('Le véhicule est requis'),
             'vehicle_km.required' => __('Le kilométrage du véhicule est requis'),
             'category.required' => __('La catégorie est requise'),
-            'fuel_liters.required_if' => __('Les litres de carburant sont requis pour les bons de carburant'),
             'tire_id.required_if' => __('Le pneu est requis pour les changements de pneu'),
             'tire_ids.required_if' => __('Au moins un pneu doit être sélectionné pour les changements de pneu'),
             'tire_ids.*.required' => __('Tous les pneus sélectionnés doivent être valides'),
@@ -272,6 +271,13 @@ class PaymentVoucherController extends Controller
             
             Alert::success(__('Succès'), __('Bon de paiement créé avec succès'));
             return redirect()->route('admin.payment_voucher.show', $voucher->getId());
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($this->isDuplicateVoucherNumber($e)) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['voucher_number' => __('Ce numéro de bon existe déjà.')]);
+            }
+            Alert::error(__('Erreur'), __('Échec de la création du bon de paiement: ') . $e->getMessage());
         } catch (\Exception $e) {
             Alert::error(__('Erreur'), __('Échec de la création du bon de paiement: ') . $e->getMessage());
         }
@@ -411,7 +417,7 @@ class PaymentVoucherController extends Controller
             'invoice_files.*' => 'nullable|file|max:51200',
             'vignette_files.*' => 'nullable|file|max:51200',
             'other_files.*' => 'nullable|file|max:51200',
-            'fuel_liters' => 'nullable|required_if:category,carburant|numeric|min:0',
+            'price_per_liter' => 'nullable',
             'tire_id' => 'nullable|exists:pneus,id',
             'tire_ids' => 'nullable|required_if:category,rechange_pneu|array',
             'tire_ids.*' => 'required|exists:pneus,id',
@@ -428,7 +434,6 @@ class PaymentVoucherController extends Controller
             'vehicule_id.required' => __('Le véhicule est requis'),
             'vehicle_km.required' => __('Le kilométrage du véhicule est requis'),
             'category.required' => __('La catégorie est requise'),
-            'fuel_liters.required_if' => __('Les litres de carburant sont requis pour les bons de carburant'),
             'tire_id.required_if' => __('Le pneu est requis pour les changements de pneu'),
             'tire_ids.required_if' => __('Au moins un pneu doit être sélectionné pour les changements de pneu'),
             'tire_ids.*.required' => __('Tous les pneus sélectionnés doivent être valides'),
@@ -681,5 +686,15 @@ class PaymentVoucherController extends Controller
         }
         
         return back();
+    }
+
+    /**
+     * Detect duplicate voucher number SQL error.
+     */
+    private function isDuplicateVoucherNumber(\Illuminate\Database\QueryException $e): bool
+    {
+        $sqlState = $e->errorInfo[0] ?? null;
+        $errorCode = $e->errorInfo[1] ?? null;
+        return $sqlState === '23000' && $errorCode === 1062;
     }
 }

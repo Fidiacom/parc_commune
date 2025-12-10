@@ -71,7 +71,7 @@ class PaymentVoucherService
             PaymentVoucher::VOUCHER_DATE_COLUMN => $request->voucher_date ?? $request->invoice_date,
             PaymentVoucher::INVOICE_NUMBER_COLUMN => $request->invoice_number,
             PaymentVoucher::INVOICE_DATE_COLUMN => $request->invoice_date,
-            PaymentVoucher::AMOUNT_COLUMN => floatval(str_replace(['.', ','], '', $request->amount)),
+            PaymentVoucher::AMOUNT_COLUMN => $this->normalizeInteger($request->amount),
             PaymentVoucher::VEHICULE_ID_COLUMN => $request->vehicule_id,
             PaymentVoucher::VEHICLE_KM_COLUMN => intval(str_replace(['.', ','], '', $request->vehicle_km)),
             PaymentVoucher::ADDITIONAL_INFO_COLUMN => $request->additional_info,
@@ -122,8 +122,9 @@ class PaymentVoucherService
         }
 
         // Handle category-specific fields
-        if ($request->category === 'carburant' && $request->has('fuel_liters')) {
-            $data[PaymentVoucher::FUEL_LITERS_COLUMN] = floatval(str_replace(['.', ','], '', $request->fuel_liters));
+        if ($request->category === 'carburant' && $request->has('price_per_liter')) {
+            $pricePerLiter = floatval($request->price_per_liter);
+            $data[PaymentVoucher::FUEL_LITERS_COLUMN] = round($request->amount / $pricePerLiter, 2);
         }
 
         if ($request->category === 'rechange_pneu') {
@@ -200,7 +201,7 @@ class PaymentVoucherService
             PaymentVoucher::VOUCHER_DATE_COLUMN => $request->voucher_date ?? $request->invoice_date,
             PaymentVoucher::INVOICE_NUMBER_COLUMN => $request->invoice_number,
             PaymentVoucher::INVOICE_DATE_COLUMN => $request->invoice_date,
-            PaymentVoucher::AMOUNT_COLUMN => floatval(str_replace(['.', ','], '', $request->amount)),
+            PaymentVoucher::AMOUNT_COLUMN => $this->normalizeInteger($request->amount),
             PaymentVoucher::VEHICULE_ID_COLUMN => $request->vehicule_id,
             PaymentVoucher::VEHICLE_KM_COLUMN => intval(str_replace(['.', ','], '', $request->vehicle_km)),
             PaymentVoucher::ADDITIONAL_INFO_COLUMN => $request->additional_info,
@@ -249,7 +250,7 @@ class PaymentVoucherService
 
         // Handle category-specific fields
         if ($request->category === 'carburant' && $request->has('fuel_liters')) {
-            $data[PaymentVoucher::FUEL_LITERS_COLUMN] = floatval(str_replace(['.', ','], '', $request->fuel_liters));
+            $data[PaymentVoucher::FUEL_LITERS_COLUMN] = $this->normalizeInteger($request->fuel_liters);
         } else {
             $data[PaymentVoucher::FUEL_LITERS_COLUMN] = null;
         }
@@ -311,6 +312,37 @@ class PaymentVoucherService
         $document = $request->hasFile('document') ? $request->file('document') : null;
 
         return $this->manager->updatePaymentVoucher($voucher, $data, $document);
+    }
+
+    /**
+     * Normalize a decimal string by removing thousand separators and
+     * converting the decimal separator to a dot before casting.
+     *
+     * Handles:
+     * - "1,234.56" (US) -> 1234.56
+     * - "1.234,56" (EU) -> 1234.56
+     * - "1234,56" -> 1234.56
+     */
+    private function normalizeInteger($value): int
+    {
+        $number = str_replace(["\xC2\xA0", ' '], '', (string) $value); // remove spaces/non‑breaking spaces
+
+        $hasComma = str_contains($number, ',');
+        $hasDot = str_contains($number, '.');
+
+        if ($hasComma && $hasDot) {
+            // Assume dot is thousands separator and comma is decimal separator
+            $number = str_replace('.', '', $number);
+            $number = str_replace(',', '.', $number);
+        } elseif ($hasComma && !$hasDot) {
+            // Only comma present, treat it as decimal separator
+            $number = str_replace(',', '.', $number);
+        } else {
+            // Only dot or plain number: strip stray commas if any
+            $number = str_replace(',', '', $number);
+        }
+
+        return (int) round(floatval($number));
     }
 
     /**

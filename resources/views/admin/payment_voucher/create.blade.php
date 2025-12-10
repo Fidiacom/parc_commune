@@ -130,12 +130,22 @@
                             <!-- Amount -->
                             <div class="form-group">
                                 <label class="font-weight-semibold">{{ __('Montant') }} <span class="text-danger">*</span></label>
-                                <input type="text" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" 
+                                <input type="number" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" 
                                        value="{{ old('amount') }}" required placeholder="{{ __('Montant en DH') }}" 
-                                       onchange="calculateDenominations(); calculateFuelAmount('amount'); enforceIntegerAmount();" onkeyup="calculateDenominations(); calculateFuelAmount('amount'); enforceIntegerAmount();">
+                                       onchange="calculateDenominations(); calculateFuelAmount();" onkeyup="calculateDenominations();">
                                 @error('amount')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div>
+
+                            <div class="form-group" id="fuel_liters_group" style="display: none;">
+                                <label class="font-weight-semibold d-block">{{ __('Prix par litre (DH)') }}</label>
+                                <input type="decimal" name="price_per_liter" id="price_per_liter" class="form-control mb-2" 
+                                       value="{{ old('price_per_liter') }}" placeholder="{{ __('Prix par litre') }}"
+                                       onchange="calculateFuelAmount()" >
+                                <label class="font-weight-semibold d-block mb-0">
+                                    {{ __('Litres de carburant') }}: <span id="fuel_liters_value"></span>
+                                </label>
                             </div>
 
                             <!-- Denominations -->
@@ -148,70 +158,46 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-semibold">{{ __('20 DH') }}</label>
-                                            <input type="number" name="denominations[20]" id="denomination_20" class="form-control" 
-                                                   value="{{ old('denominations.20', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                        <input type="number" name="denominations[20]" id="denomination_20" class="form-control" 
+                               value="{{ old('denominations.20', 0) }}" min="0">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-semibold">{{ __('50 DH') }}</label>
-                                            <input type="number" name="denominations[50]" id="denomination_50" class="form-control" 
-                                                   value="{{ old('denominations.50', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                        <input type="number" name="denominations[50]" id="denomination_50" class="form-control" 
+                               value="{{ old('denominations.50', 0) }}" min="0">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-semibold">{{ __('100 DH') }}</label>
-                                            <input type="number" name="denominations[100]" id="denomination_100" class="form-control" 
-                                                   value="{{ old('denominations.100', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                        <input type="number" name="denominations[100]" id="denomination_100" class="form-control" 
+                               value="{{ old('denominations.100', 0) }}" min="0">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-semibold">{{ __('200 DH') }}</label>
-                                            <input type="number" name="denominations[200]" id="denomination_200" class="form-control" 
-                                                   value="{{ old('denominations.200', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                        <input type="number" name="denominations[200]" id="denomination_200" class="form-control" 
+                               value="{{ old('denominations.200', 0) }}" min="0">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-semibold">{{ __('300 DH') }}</label>
-                                            <input type="number" name="denominations[300]" id="denomination_300" class="form-control" 
-                                                   value="{{ old('denominations.300', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                        <input type="number" name="denominations[300]" id="denomination_300" class="form-control" 
+                               value="{{ old('denominations.300', 0) }}" min="0">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-semibold">{{ __('400 DH') }}</label>
-                                            <input type="number" name="denominations[400]" id="denomination_400" class="form-control" 
-                                                   value="{{ old('denominations.400', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                        <input type="number" name="denominations[400]" id="denomination_400" class="form-control" 
+                               value="{{ old('denominations.400', 0) }}" min="0">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-semibold">{{ __('500 DH') }}</label>
-                                            <input type="number" name="denominations[500]" id="denomination_500" class="form-control" 
-                                                   value="{{ old('denominations.500', 0) }}" min="0" onchange="updateTotal()" onkeyup="updateTotal()">
+                        <input type="number" name="denominations[500]" id="denomination_500" class="form-control" 
+                               value="{{ old('denominations.500', 0) }}" min="0">
                                         </div>
                                     </div>
-                                    <div class="alert alert-info mt-3">
-                                        <strong>{{ __('Total calculé') }}:</strong> <span id="calculated_total">0</span> DH
-                                    </div>
+
                                 </div>
                             </div>
 
                             <!-- Fuel Liters (for carburant) -->
-                            <div class="form-group" id="fuel_liters_group" style="display: none;">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label class="font-weight-semibold">{{ __('Litres de carburant') }} <span class="text-danger">*</span></label>
-                                        <input type="text" readonly name="fuel_liters" id="fuel_liters" class="form-control @error('fuel_liters') is-invalid @enderror" 
-                                               value="{{ old('fuel_liters') }}" placeholder="{{ __('Quantité en litres') }}"
-                                                onkeyup="calculateFuelAmount('fuel_liters')">
-                                        @error('fuel_liters')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="font-weight-semibold">{{ __('Prix par litre (DH)') }}</label>
-                                        <input type="text" name="price_per_liter" id="price_per_liter" class="form-control" 
-                                               value="{{ old('price_per_liter') }}" placeholder="{{ __('Prix par litre') }}"
-                                               onchange="calculateFuelAmount('price_per_liter')" onkeyup="calculateFuelAmount('price_per_liter')">
-                                        <small class="form-text text-muted">{{ __('Le montant total sera calculé automatiquement') }}</small>
-                                    </div>
-                                </div>
-                                <div class="alert alert-info mt-2" id="fuel_calculation_info" style="display: none;">
-                                    <strong>{{ __('Résultat') }}:</strong> <span id="calculated_fuel_amount">0</span>
-                                </div>
-                            </div>
+                            
 
                             <!-- Tire Selection (for rechange_pneu) -->
                             <div class="form-group" id="tire_group" style="display: none;">
@@ -232,45 +218,6 @@
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            <!-- Maintenance Type (for entretien) -->
-                            <!-- <div class="form-group" id="maintenance_group" style="display: none;">
-                                <label class="font-weight-semibold">{{ __('Type d\'entretien') }}</label>
-                                
-                                @if(count($vidanges) > 0)
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" name="maintenance_type[]" value="vidange" id="maintenance_vidange" onchange="toggleMaintenanceFields()">
-                                    <label class="form-check-label" for="maintenance_vidange">
-                                        {{ __('Vidange') }}
-                                    </label>
-                                </div>
-                                <div class="form-group ml-4" id="vidange_group" style="display: none;">
-                                    <select name="vidange_id" id="vidange_id" class="form-control">
-                                        <option value="">{{ __('Sélectionner') }}</option>
-                                        @foreach($vidanges as $vidange)
-                                        <option value="{{ $vidange->getId() }}">{{ __('Vidange') }} (Seuil: {{ number_format($vidange->getThresholdKm(), 0, ',', ' ') }} KM)</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                @endif
-
-                                @if(count($timingChaines) > 0)
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" name="maintenance_type[]" value="timing_chaine" id="maintenance_timing" onchange="toggleMaintenanceFields()">
-                                    <label class="form-check-label" for="maintenance_timing">
-                                        {{ __('Chaîne de distribution') }}
-                                    </label>
-                                </div>
-                                <div class="form-group ml-4" id="timing_chaine_group" style="display: none;">
-                                    <select name="timing_chaine_id" id="timing_chaine_id" class="form-control">
-                                        <option value="">{{ __('Sélectionner') }}</option>
-                                        @foreach($timingChaines as $timingChaine)
-                                        <option value="{{ $timingChaine->getId() }}">{{ __('Chaîne de distribution') }} (Seuil: {{ number_format($timingChaine->getThresholdKm(), 0, ',', ' ') }} KM)</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                @endif
-                            </div> -->
 
                             <!-- Supplier -->
                             <div class="form-group">
@@ -327,21 +274,6 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            <!-- Document Upload -->
-                            <!-- <div class="form-group">
-                                <label class="font-weight-semibold">{{ __('Document (Bon ou Facture)') }}</label>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="document" id="document" accept="image/*,application/pdf">
-                                    <label class="custom-file-label" for="document">
-                                        <i class="fas fa-cloud-upload-alt mr-2"></i>{{ __('Choisir un fichier (Image ou PDF, max 50MB)') }}
-                                    </label>
-                                </div>
-                                <small class="form-text text-muted">{{ __('Vous pouvez scanner ou télécharger le bon ou la facture') }}</small>
-                                @error('document')
-                                <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div> -->
 
                             {{-- Documents Section in Main Form --}}
                             <div class="card mt-3 mb-3">
@@ -508,13 +440,6 @@
                 if (additionalInfoGroup) additionalInfoGroup.style.display = 'block';
                 if (amountGroup) amountGroup.style.display = 'block';
             }
-        }
-
-        function enforceIntegerAmount() {
-            const amountInput = document.getElementById('amount');
-            if (!amountInput) return;
-            const val = parseFloat(amountInput.value.toString().replace(/[, ]/g, '.')) || 0;
-            amountInput.value = Math.round(val);
         }
 
         function loadNextInsuranceExpirationDate(vehiculeId) {
@@ -861,33 +786,8 @@
             }
 
             // Initialize denominations calculation
-            updateTotal();
+            calculateDenominations();
         });
-
-        // Calculate total from denominations
-        function updateTotal() {
-            const denominations = [20, 50, 100, 200, 300, 400, 500];
-            let total = 0;
-            
-            denominations.forEach(denom => {
-                const input = document.getElementById('denomination_' + denom);
-                if (input) {
-                    const quantity = parseInt(input.value) || 0;
-                    total += denom * quantity;
-                }
-            });
-            
-            const totalElement = document.getElementById('calculated_total');
-            if (totalElement) {
-                totalElement.textContent = total.toLocaleString('fr-FR');
-            }
-            
-            // Update amount field if it's empty or user wants to sync
-            const amountField = document.getElementById('amount');
-            if (amountField && !amountField.value) {
-                amountField.value = total;
-            }
-        }
 
         // Calculate denominations from total amount
         function calculateDenominations() {
@@ -901,7 +801,6 @@
                     const input = document.getElementById('denomination_' + denom);
                     if (input) input.value = 0;
                 });
-                updateTotal();
                 return;
             }
             
@@ -924,112 +823,19 @@
                 }
             });
             
-            updateTotal();
         }
 
         // Track which field triggered the calculation
         let lastEditedField = null;
 
         // Calculate fuel amount or liters based on what's entered
-        function calculateFuelAmount(triggeredBy = null) {
-            const fuelLitersInput = document.getElementById('fuel_liters');
-            const pricePerLiterInput = document.getElementById('price_per_liter');
-            const amountInput = document.getElementById('amount');
-            const calculationInfo = document.getElementById('fuel_calculation_info');
-            const calculatedAmountSpan = document.getElementById('calculated_fuel_amount');
-            
-            if (!fuelLitersInput || !pricePerLiterInput || !amountInput) {
-                return;
-            }
-            
-            // Track which field was last edited
-            if (triggeredBy) {
-                lastEditedField = triggeredBy;
-            }
-            
-            // Get values and clean them (remove spaces, commas)
-            let fuelLiters = fuelLitersInput.value.toString().replace(/[\s,]/g, '').replace(',', '.');
-            let pricePerLiter = pricePerLiterInput.value.toString().replace(/[\s,]/g, '').replace(',', '.');
-            let amount = amountInput.value.toString().replace(/[\s,]/g, '').replace(',', '.');
-            
-            // Convert to numbers
-            fuelLiters = parseFloat(fuelLiters) || 0;
-            pricePerLiter = parseFloat(pricePerLiter) || 0;
-            amount = parseFloat(amount) || 0;
-            // Always enforce integer amount
-            amount = Math.round(amount);
-            amountInput.value = amount || '';
-            
-            // Need price per liter for any calculation
-            if (pricePerLiter <= 0) {
-                if (calculationInfo) {
-                    calculationInfo.style.display = 'none';
-                }
-                return;
-            }
-            
-            // Case 1: If Amount and Price per Liter are entered, calculate Liters
-            // (Only if amount was just edited, or liters is empty)
-            if (lastEditedField === 'amount' && amount > 0 && pricePerLiter > 0) {
-                const calculatedLiters = amount / pricePerLiter;
-                fuelLitersInput.value = calculatedLiters.toFixed(2);
-                
-                // Show calculation info
-                if (calculationInfo) {
-                    calculationInfo.style.display = 'block';
-                }
-                if (calculatedAmountSpan) {
-                    calculatedAmountSpan.textContent = calculatedLiters.toFixed(2) + ' {{ __("litres") }}';
-                }
-            }
-            // Case 2: If Liters and Price per Liter are entered, calculate Amount
-            // (Only if liters was just edited, or amount is empty/zero)
-            else if (lastEditedField === 'fuel_liters' && fuelLiters > 0 && pricePerLiter > 0) {
-                const calculatedAmount = fuelLiters * pricePerLiter;
-                amountInput.value = Math.round(calculatedAmount);
-                
-                // Show calculation info
-                if (calculationInfo) {
-                    calculationInfo.style.display = 'block';
-                }
-                if (calculatedAmountSpan) {
-                    calculatedAmountSpan.textContent = Math.round(calculatedAmount) + ' {{ __("MAD") }}';
-                }
-                
-                // Trigger denominations calculation
-                calculateDenominations();
-            }
-            // Case 3: If price per liter was edited, calculate based on what's available
-            else if (lastEditedField === 'price_per_liter' && pricePerLiter > 0) {
-                if (fuelLiters > 0) {
-                    // Calculate amount from liters
-                    const calculatedAmount = fuelLiters * pricePerLiter;
-                    amountInput.value = Math.round(calculatedAmount);
-                    
-                    if (calculationInfo) {
-                        calculationInfo.style.display = 'block';
-                    }
-                    if (calculatedAmountSpan) {
-                        calculatedAmountSpan.textContent = calculatedAmount.toFixed(2) + ' {{ __("MAD") }}';
-                    }
-                    calculateDenominations();
-                } else if (amount > 0) {
-                    // Calculate liters from amount
-                    const calculatedLiters = amount / pricePerLiter;
-                    fuelLitersInput.value = calculatedLiters.toFixed(2);
-                    
-                    if (calculationInfo) {
-                        calculationInfo.style.display = 'block';
-                    }
-                    if (calculatedAmountSpan) {
-                        calculatedAmountSpan.textContent = calculatedLiters.toFixed(2) + ' {{ __("litres") }}';
-                    }
-                }
-            } else {
-                // Hide calculation info if values are not valid
-                if (calculationInfo) {
-                    calculationInfo.style.display = 'none';
-                }
+        function calculateFuelAmount() {
+            const pricePerLiter = document.getElementById('price_per_liter').value;
+            const amount = document.getElementById('amount').value;
+
+            if (pricePerLiter && amount) {
+                const calculatedAmount = Math.round(amount / pricePerLiter * 100) / 100;
+                document.getElementById('fuel_liters_value').textContent = calculatedAmount;
             }
         }
     </script>

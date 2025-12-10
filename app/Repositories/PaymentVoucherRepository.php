@@ -123,15 +123,19 @@ class PaymentVoucherRepository
     public function generateNextVoucherNumber(): string
     {
         $lastVoucher = PaymentVoucher::orderBy('id', 'desc')->first();
-        
-        if ($lastVoucher) {
-            $lastNumber = intval(substr($lastVoucher->getVoucherNumber(), 4));
-            $nextNumber = $lastNumber + 1;
-        } else {
-            $nextNumber = 1;
-        }
-        
-        return 'BON-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+        $nextNumber = $lastVoucher
+            ? intval(substr($lastVoucher->getVoucherNumber(), 4)) + 1
+            : 1;
+
+        // Ensure uniqueness even under concurrency or manual inserts
+        do {
+            $candidate = 'BON-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+            $exists = PaymentVoucher::where(PaymentVoucher::VOUCHER_NUMBER_COLUMN, $candidate)->exists();
+            if (!$exists) {
+                return $candidate;
+            }
+            $nextNumber++;
+        } while (true);
     }
 
     /**

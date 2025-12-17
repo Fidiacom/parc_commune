@@ -20,6 +20,7 @@ class NotificationMiddleware
     {
         $stocks = Stock::all();
 
+        dd($stocks);
         $stockNotif = collect();
         foreach ($stocks as $stock)
         {
@@ -207,17 +208,14 @@ class NotificationMiddleware
 
     public function handle(Request $request, Closure $next): Response
     {
-
-        
-        $stockNotifications = $this->stock();
         $chargeNotifications = $this->chargeNotifications();
         $missionOrderNotifications = $this->missionOrder();
 
-        $numberOfNotification = $stockNotifications->count() + $chargeNotifications->count() + $missionOrderNotifications->count();
+        $numberOfNotification =  $chargeNotifications->count() + $missionOrderNotifications->count();
 
         View::share([
             'chargeNotification'    =>  $chargeNotifications,
-            'stockNotification'     =>  $stockNotifications,
+            'stockNotification'     =>  [],
             'numberOfNotification'  =>  $numberOfNotification,
             'missionOrders'         =>  $missionOrderNotifications
         ]);

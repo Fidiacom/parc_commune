@@ -41,7 +41,8 @@ class PaymentVoucherService
         ?string $category = null,
         ?string $dateFrom = null,
         ?string $dateTo = null,
-        ?string $sortDirection = null
+        ?string $sortDirection = null,
+        ?string $search = null
     ) {
         $repository = $this->manager->getRepository();
 
@@ -49,7 +50,8 @@ class PaymentVoucherService
             $category,
             $dateFrom,
             $dateTo,
-            $sortDirection ?? 'desc'
+            $sortDirection ?? 'desc',
+            $search
         );
     }
 

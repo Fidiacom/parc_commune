@@ -34,6 +34,7 @@ class PaymentVoucherController extends Controller
         $dateFrom = $request->query('date_from');
         $dateTo = $request->query('date_to');
         $sortDirection = $request->query('sort', 'desc');
+        $search = $request->query('search');
 
         $categories = [
             'carburant' => __('Bon pour Carburant'),
@@ -59,7 +60,8 @@ class PaymentVoucherController extends Controller
             $category,
             $dateFrom,
             $dateTo,
-            $sortDirection
+            $sortDirection,
+            $search
         );
 
         return view('admin.payment_voucher.index', [
@@ -69,6 +71,7 @@ class PaymentVoucherController extends Controller
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
             'sortDirection' => $sortDirection,
+            'search' => $search,
         ]);
     }
 

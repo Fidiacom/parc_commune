@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\PaymentVoucher;
+use App\Models\Vehicule;
 
 class PaymentVoucherRepository
 {
@@ -43,7 +44,8 @@ class PaymentVoucherRepository
         ?string $category = null,
         ?string $dateFrom = null,
         ?string $dateTo = null,
-        string $sortDirection = 'desc'
+        string $sortDirection = 'desc',
+        ?string $search = null
     ) {
         $query = PaymentVoucher::with(['vehicule', 'tire', 'vidange', 'timingChaine']);
 
@@ -57,6 +59,18 @@ class PaymentVoucherRepository
 
         if ($dateTo) {
             $query->whereDate(PaymentVoucher::INVOICE_DATE_COLUMN, '<=', $dateTo);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where(PaymentVoucher::VOUCHER_NUMBER_COLUMN, 'like', '%' . $search . '%')
+                  ->orWhere(PaymentVoucher::INVOICE_NUMBER_COLUMN, 'like', '%' . $search . '%')
+                  ->orWhereHas('vehicule', function ($vehiculeQuery) use ($search) {
+                      $vehiculeQuery->where(Vehicule::BRAND_COLUMN, 'like', '%' . $search . '%')
+                                    ->orWhere(Vehicule::MODEL_COLUMN, 'like', '%' . $search . '%')
+                                    ->orWhere(Vehicule::MATRICULE_COLUMN, 'like', '%' . $search . '%');
+                  });
+            });
         }
 
         $direction = strtolower($sortDirection) === 'asc' ? 'asc' : 'desc';

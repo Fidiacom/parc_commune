@@ -98,7 +98,7 @@ class PaymentVoucher extends Model
         return $this->getAttribute(self::VEHICULE_ID_COLUMN);
     }
 
-    public function getVehicleKm(): int
+    public function getVehicleKm(): ?int
     {
         return $this->getAttribute(self::VEHICLE_KM_COLUMN);
     }

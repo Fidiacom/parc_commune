@@ -69,9 +69,9 @@
 
                             <!-- Vehicle KM -->
                             <div class="form-group">
-                                <label class="font-weight-semibold">{{ __('KM du bon') }} <span class="text-danger">*</span></label>
+                                <label class="font-weight-semibold">{{ __('KM du bon') }}</label>
                                 <input type="text" name="vehicle_km" id="vehicle_km" class="form-control @error('vehicle_km') is-invalid @enderror" 
-                                       value="{{ old('vehicle_km') }}" required placeholder="{{ __('Entrer le kilométrage') }}">
+                                       value="{{ old('vehicle_km') }}" placeholder="{{ __('Entrer le kilométrage') }}">
                                 @error('vehicle_km')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

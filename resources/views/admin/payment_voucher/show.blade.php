@@ -123,10 +123,12 @@
                                             @endif
                                         </td>
                                     </tr>
+                                    @if($voucher->getVehicleKm())
                                     <tr>
                                         <td class="font-weight-semibold">{{ __('KM du véhicule') }}:</td>
                                         <td>{{ number_format($voucher->getVehicleKm(), 0, ',', ' ') }} {{ __('KM') }}</td>
                                     </tr>
+                                    @endif
                                     @if($voucher->getVehicleHours())
                                     <tr>
                                         <td class="font-weight-semibold">{{ __('Heures du véhicule') }}:</td>

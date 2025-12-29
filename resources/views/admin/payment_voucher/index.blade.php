@@ -133,7 +133,7 @@
                                                 -
                                             @endif
                                         </td>
-                                        <td>{{ number_format($voucher->getVehicleKm(), 0, ',', ' ') }} {{ __('KM') }}</td>
+                                        <td>{{ $voucher->getVehicleKm() ? number_format($voucher->getVehicleKm(), 0, ',', ' ') . ' ' . __('KM') : '-' }}</td>
                                         <td>{{ $voucher->getSupplier() ?? '-' }}</td>
                                         <td>
                                             <span class="badge badge-info">

@@ -399,7 +399,7 @@
                                             @endif
                                         </td>
                                         <td class="font-weight-semibold">{{ number_format($voucher->getAmount(), 2, ',', ' ') }} {{ __('DH') }}</td>
-                                        <td>{{ number_format($voucher->getVehicleKm(), 0, ',', ' ') }} {{ __('KM') }}</td>
+                                        <td>{{ $voucher->getVehicleKm() ? number_format($voucher->getVehicleKm(), 0, ',', ' ') . ' ' . __('KM') : '-' }}</td>
                                         <td>{{ $voucher->getSupplier() ?? '-' }}</td>
                                         <td>
                                             <a href="{{ route('admin.payment_voucher.show', $voucher->getId()) }}" class="btn btn-sm btn-info" title="{{ __('Voir') }}">
@@ -430,7 +430,7 @@
                 {
                     date: '{{ \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('Y-m-d') }}',
                     consumption: {{ $voucher->getFuelLiters() ? $voucher->getFuelLiters() : 0 }},
-                    km: {{ $voucher->getVehicleKm() }},
+                    km: {{ $voucher->getVehicleKm() ?? 0 }},
                     amount: {{ $voucher->getAmount() }}
                 }@if(!$loop->last),@endif
                 @endforeach

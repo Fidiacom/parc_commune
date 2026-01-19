@@ -181,10 +181,10 @@
         <table class="form-row">
             <tr>
                 <td class="form-label-fr">
-                    Il est prescrit à: Mr <span class="form-value">{{ ($missionOrder->getDriver()->getFirstNameFr() ?: '') . ' ' . ($missionOrder->getDriver()->getLastNameFr() ?: '') }}</span>
+                    Il est prescrit à: Mr <span class="form-value">{{ $subject['name_fr'] !== '' ? $subject['name_fr'] : '.......................' }}</span>
                 </td>
                 <td class="form-label-ar">
-                    يعطى امر للسيد :<span class="form-value-arabic">{{ ($missionOrder->getDriver()->getFirstNameAr() ?: '') . ' ' . ($missionOrder->getDriver()->getLastNameAr() ?: '') }}</span>
+                    يعطى امر للسيد :<span class="form-value-arabic">{{ $subject['name_ar'] !== '' ? $subject['name_ar'] : '.......................' }}</span>
                 </td>
             </tr>
         </table>
@@ -192,11 +192,11 @@
         <table class="form-row">
             <tr>
                 <td class="form-label-fr">
-                    Qualité : <span class="form-value">{{ $missionOrder->getDriver()->getRoleFr() ?? '................................' }}</span>
+                    Qualité : <span class="form-value">{{ $subject['role_fr'] ?? '................................' }}</span>
                 </td>
                 <td class="form-label-ar">
                     <span>صفته :</span>
-                    <span class="form-value">{{ $missionOrder->getDriver()->getRoleAr() ?? '................................' }}</span>
+                    <span class="form-value">{{ $subject['role_ar'] ?? '................................' }}</span>
                 </td>
             </tr>
         </table>
@@ -221,27 +221,6 @@
                 <td class="form-label-ar">
                     <span>للقيام بمهمــــة :</span>
                     <span class="form-value">{{ $missionOrder->getMissionAr() ?? '.......................' }}</span>
-                </td>
-            </tr>
-        </table>
-
-        @php
-            $companions = $missionOrder->getCompanions() ?? collect();
-            $companionsFr = $companions->map(function ($companion) {
-                return $companion->getFullNameFr() ?: $companion->getFullNameAr() ?: $companion->getCin();
-            })->filter()->implode(', ');
-            $companionsAr = $companions->map(function ($companion) {
-                return $companion->getFullNameAr() ?: $companion->getFullNameFr() ?: $companion->getCin();
-            })->filter()->implode('، ');
-        @endphp
-        <table class="form-row">
-            <tr>
-                <td class="form-label-fr">
-                    Accompagnants : <span class="form-value">{{ $companionsFr !== '' ? $companionsFr : '.......................' }}</span>
-                </td>
-                <td class="form-label-ar">
-                    <span>المرافقون :</span>
-                    <span class="form-value">{{ $companionsAr !== '' ? $companionsAr : '.......................' }}</span>
                 </td>
             </tr>
         </table>

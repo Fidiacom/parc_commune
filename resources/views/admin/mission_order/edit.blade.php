@@ -216,6 +216,34 @@
                 @method('DELETE')
             </form>
         </div><!-- end col-->
+        <div class="col-12">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h4 class="card-title">{{ __('Print Order de Mission') }}</h4>
+                    @php
+                        $driverName = trim(
+                            ($missionOrder->getDriver()->getFirstNameFr() ?: $missionOrder->getDriver()->getFirstNameAr() ?: '') .
+                            ' ' .
+                            ($missionOrder->getDriver()->getLastNameFr() ?: $missionOrder->getDriver()->getLastNameAr() ?: '')
+                        );
+                    @endphp
+                    <div class="d-flex flex-wrap">
+                        <a href="{{ route('admin.mission_order.print', $missionOrder->getId()) }}?person_type=driver"
+                           target="_blank"
+                           class="btn btn-sm btn-info mr-2 mb-2">
+                            <i class="mdi mdi-printer"></i> {{ __('Print') }} {{ $driverName !== '' ? $driverName : '' }}
+                        </a>
+                        @foreach ($missionOrder->getCompanions() ?? collect() as $companion)
+                            <a href="{{ route('admin.mission_order.print', $missionOrder->getId()) }}?person_type=companion&person_id={{ $companion->getId() }}"
+                               target="_blank"
+                               class="btn btn-sm btn-secondary mr-2 mb-2">
+                                <i class="mdi mdi-printer"></i> {{ __('Print') }} {{ $companion->getDisplayName() }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="{{ asset('assets/js/mission_order/mission_order.js') }}"></script>
     </div>
     <script>

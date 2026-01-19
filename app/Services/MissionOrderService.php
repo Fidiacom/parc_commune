@@ -3,8 +3,12 @@
 namespace App\Services;
 
 use App\Managers\MissionOrderManager;
+use App\Models\Driver;
+use App\Models\MissionCompanion;
 use App\Models\MissionOrder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
+use Mpdf\Mpdf;
 
 class MissionOrderService
 {
@@ -113,6 +117,140 @@ class MissionOrderService
     public function deleteMissionOrder(MissionOrder $missionOrder): bool
     {
         return $this->manager->deleteMissionOrder($missionOrder);
+    }
+
+    public function getPrintableMissionOrder(int $id, string $personType = 'driver', ?int $personId = null): array
+    {
+        $missionOrder = $this->getMissionOrderById($id, ['driver', 'vehicule', 'companions']);
+        if (!$missionOrder) {
+            return ['missionOrder' => null, 'subject' => null];
+        }
+
+        $personType = strtolower($personType);
+        if ($personType !== 'companion') {
+            $personType = 'driver';
+        }
+
+        if ($personType === 'driver') {
+            $driver = $missionOrder->getDriver();
+            if (!$driver) {
+                return ['missionOrder' => $missionOrder, 'subject' => null];
+            }
+
+            return ['missionOrder' => $missionOrder, 'subject' => $this->buildDriverSubject($driver)];
+        }
+
+        if (!$personId) {
+            return ['missionOrder' => $missionOrder, 'subject' => null];
+        }
+
+        $companion = $missionOrder->getCompanions()
+            ->firstWhere(MissionCompanion::ID_COLUMN, $personId);
+        if (!$companion) {
+            return ['missionOrder' => $missionOrder, 'subject' => null];
+        }
+
+        return ['missionOrder' => $missionOrder, 'subject' => $this->buildCompanionSubject($companion)];
+    }
+
+    private function buildDriverSubject(Driver $driver): array
+    {
+        return [
+            'name_fr' => $this->buildName(
+                $driver->getFirstNameFr(),
+                $driver->getLastNameFr(),
+                $driver->getFirstNameAr(),
+                $driver->getLastNameAr()
+            ),
+            'name_ar' => $this->buildName(
+                $driver->getFirstNameAr(),
+                $driver->getLastNameAr(),
+                $driver->getFirstNameFr(),
+                $driver->getLastNameFr()
+            ),
+            'role_fr' => $driver->getRoleFr(),
+            'role_ar' => $driver->getRoleAr(),
+        ];
+    }
+
+    private function buildCompanionSubject(MissionCompanion $companion): array
+    {
+        $fallback = $companion->getCin() ?? '';
+
+        return [
+            'name_fr' => $this->buildName(
+                $companion->getFirstNameFr(),
+                $companion->getLastNameFr(),
+                $companion->getFirstNameAr(),
+                $companion->getLastNameAr(),
+                $fallback
+            ),
+            'name_ar' => $this->buildName(
+                $companion->getFirstNameAr(),
+                $companion->getLastNameAr(),
+                $companion->getFirstNameFr(),
+                $companion->getLastNameFr(),
+                $fallback
+            ),
+            'role_fr' => null,
+            'role_ar' => null,
+        ];
+    }
+
+    private function buildName(
+        ?string $firstNamePrimary,
+        ?string $lastNamePrimary,
+        ?string $firstNameFallback,
+        ?string $lastNameFallback,
+        string $fallback = ''
+    ): string
+    {
+        $primary = trim(($firstNamePrimary ?? '') . ' ' . ($lastNamePrimary ?? ''));
+        if ($primary !== '') {
+            return $primary;
+        }
+
+        $secondary = trim(($firstNameFallback ?? '') . ' ' . ($lastNameFallback ?? ''));
+        if ($secondary !== '') {
+            return $secondary;
+        }
+
+        return $fallback;
+    }
+
+    public function generateMissionOrderPdf(MissionOrder $missionOrder, array $subject, $settings): array
+    {
+        $viewName = $missionOrder->isPermanent()
+            ? 'admin.mission_order.print_permanent'
+            : 'admin.mission_order.print_single';
+
+        $html = View::make($viewName, [
+            'missionOrder' => $missionOrder,
+            'settings' => $settings,
+            'subject' => $subject,
+        ])->render();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'orientation' => 'P',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 0,
+            'margin_bottom' => 15,
+            'margin_header' => 0,
+            'margin_footer' => 9,
+            'tempDir' => storage_path('app/temp'),
+        ]);
+
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+        $mpdf->WriteHTML($html);
+
+        return [
+            'content' => $mpdf->Output('', 'S'),
+            'filename' => 'order_de_mission_' . $missionOrder->getId() . '.pdf',
+        ];
     }
 }
 

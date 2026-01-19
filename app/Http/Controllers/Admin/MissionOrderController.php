@@ -10,8 +10,6 @@ use App\Models\Driver;
 use App\Models\MissionOrder;
 use App\Services\SettingService;
 use RealRashid\SweetAlert\Facades\Alert;
-use Mpdf\Mpdf;
-use Illuminate\Support\Facades\View;
 use App\Services\DriverService;
 use App\Services\VehiculeService;
 use App\Services\MissionOrderService;
@@ -194,12 +192,19 @@ class MissionOrderController extends Controller
         return back();
     }
 
-    public function print($id)
+    public function print(Request $request, $id)
     {
         try {
-            $missionOrder = $this->missionOrderService->getMissionOrderById($id, ['driver', 'vehicule', 'companions']);
-            
-            if (!$missionOrder) {
+            $printData = $this->missionOrderService->getPrintableMissionOrder(
+                $id,
+                (string) $request->query('person_type', 'driver'),
+                $request->filled('person_id') ? (int) $request->query('person_id') : null
+            );
+
+            $missionOrder = $printData['missionOrder'];
+            $subject = $printData['subject'];
+
+            if (!$missionOrder || !$subject) {
                 Alert::error('Error', 'Mission order not found');
                 return back();
             }
@@ -209,43 +214,11 @@ class MissionOrderController extends Controller
         }
 
         $settings = $this->settingService->getSettings();
-        
-        // Determine which view to use
-        $viewName = $missionOrder->isPermanent() 
-            ? 'admin.mission_order.print_permanent' 
-            : 'admin.mission_order.print_single';
-        
-        // Render the view to HTML
-        $html = View::make($viewName, [
-            'missionOrder' => $missionOrder,
-            'settings' => $settings
-        ])->render();
-        
-        // Configure mPDF for Arabic support
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'orientation' => 'P',
-            'margin_left' => 15,
-            'margin_right' => 15,
-            'margin_top' => 0,
-            'margin_bottom' => 15,
-            'margin_header' => 0,
-            'margin_footer' => 9,
-            'tempDir' => storage_path('app/temp'),
-        ]);
-        
-        // Set default font for Arabic support
-        $mpdf->autoScriptToLang = true;
-        $mpdf->autoLangToFont = true;
-        
-        // Write HTML content
-        $mpdf->WriteHTML($html);
-        
-        // Output the PDF as a response
-        return response()->make($mpdf->Output('', 'S'), 200, [
+        $pdf = $this->missionOrderService->generateMissionOrderPdf($missionOrder, $subject, $settings);
+
+        return response()->make($pdf['content'], 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="order_de_mission_' . $missionOrder->getId() . '.pdf"',
+            'Content-Disposition' => 'inline; filename="' . $pdf['filename'] . '"',
         ]);
     }
 }

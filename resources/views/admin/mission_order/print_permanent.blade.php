@@ -130,7 +130,7 @@
             Article unique :
         </div>
         <div class="article-content">
-            Il est prescrit à Mr : <strong>{{ ($missionOrder->getDriver()->getFirstNameFr() ?: $missionOrder->getDriver()->getFirstNameAr() ?: '') . ' ' . ($missionOrder->getDriver()->getLastNameFr() ?: $missionOrder->getDriver()->getLastNameAr() ?: '') }}</strong>, de se rendre à toutes les directions moyennant la voiture de service <strong>{{ $missionOrder->getVehicule()->getBrand() ?? 'N/A' }}</strong> immatriculée sous N° <strong>{{ $missionOrder->getVehicule()->getMatricule() ?? 'N/A' }}</strong>.
+            Il est prescrit à Mr : <strong>{{ $subject['name_fr'] !== '' ? $subject['name_fr'] : 'N/A' }}</strong>, de se rendre à toutes les directions moyennant la voiture de service <strong>{{ $missionOrder->getVehicule()->getBrand() ?? 'N/A' }}</strong> immatriculée sous N° <strong>{{ $missionOrder->getVehicule()->getMatricule() ?? 'N/A' }}</strong>.
         </div>
         @if($missionOrder->getRegistrationDatetime())
         <div class="article-content" style="margin-top: 15px;">

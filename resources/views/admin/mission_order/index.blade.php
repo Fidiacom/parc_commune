@@ -22,7 +22,7 @@
                                 <th>{{ __('From - To') }}</th>
                                 <th>{{ __('Done at') }}</th>
                                 <th>{{ __('Cree le') }}</th>
-                                <th>{{ __('Actions') }}</th>
+                                <!-- <th>{{ __('Actions') }}</th> -->
                             </tr>
                         </thead>
 
@@ -45,14 +45,14 @@
                                 <td>
                                     {{ $missionOrder->getCreatedAt() }}
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <a href="{{ route('admin.mission_order.print', $missionOrder->getId()) }}" 
                                        target="_blank" 
                                        class="btn btn-sm btn-info" 
                                        title="{{ __('Print Order de Mission') }}">
                                         <i class="mdi mdi-printer"></i> {{ __('Print') }}
                                     </a>
-                                </td>
+                                </td> -->
                             </tr>
                             @endforeach
                         </tbody>

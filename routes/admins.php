@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\VehiculeUpdateController;
 use App\Http\Controllers\Admin\CategoriePermiController;
 use App\Http\Controllers\Admin\ReformeController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\MissionCompanionController;
 use App\Http\Controllers\LanguageController;
 
 Route::middleware(['auth'])->group(function () {
@@ -76,6 +77,14 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/mission-order/destroy/{id}',[MissionOrderController::class, 'destroy'])->name('admin.mission_order.delete');
         Route::post('/mission-order/return/{id}', [MissionOrderController::class, 'returnFromMissionOrder'])->name('admin.mission_order.return');
         Route::get('/mission-order/print/{id}', [MissionOrderController::class, 'print'])->name('admin.mission_order.print');
+
+        //Mission Companions
+        Route::get('/mission-companions', [MissionCompanionController::class, 'index'])->name('admin.mission_companions.index');
+        Route::get('/mission-companions/create', [MissionCompanionController::class, 'create'])->name('admin.mission_companions.create');
+        Route::post('/mission-companions/store', [MissionCompanionController::class, 'store'])->name('admin.mission_companions.store');
+        Route::get('/mission-companions/{id}', [MissionCompanionController::class, 'edit'])->name('admin.mission_companions.edit');
+        Route::put('/mission-companions/update/{id}', [MissionCompanionController::class, 'update'])->name('admin.mission_companions.update');
+        Route::delete('/mission-companions/delete/{id}', [MissionCompanionController::class, 'destroy'])->name('admin.mission_companions.delete');
 
 
         //Stock

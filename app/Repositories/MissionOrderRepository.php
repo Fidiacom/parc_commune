@@ -55,6 +55,14 @@ class MissionOrderRepository
     }
 
     /**
+     * Sync companions for a mission order.
+     */
+    public function syncCompanions(MissionOrder $missionOrder, array $companionIds): void
+    {
+        $missionOrder->companions()->sync($companionIds);
+    }
+
+    /**
      * Delete a mission order (soft delete if enabled).
      */
     public function delete(MissionOrder $missionOrder): bool

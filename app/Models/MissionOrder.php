@@ -126,6 +126,21 @@ class MissionOrder extends Model
         return $this->vehicule;
     }
 
+    public function companions()
+    {
+        return $this->belongsToMany(
+            MissionCompanion::class,
+            'mission_order_companion',
+            'mission_order_id',
+            'mission_companion_id'
+        );
+    }
+
+    public function getCompanions()
+    {
+        return $this->companions;
+    }
+
     public function getCreatedAt(): string
     {
         return $this->getAttribute(self::CREATED_AT_COLUMN);

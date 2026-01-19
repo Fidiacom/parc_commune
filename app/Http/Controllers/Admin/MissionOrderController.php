@@ -15,19 +15,22 @@ use Illuminate\Support\Facades\View;
 use App\Services\DriverService;
 use App\Services\VehiculeService;
 use App\Services\MissionOrderService;
+use App\Services\MissionCompanionService;
 class MissionOrderController extends Controller
 {
     protected DriverService $driverService;
     protected VehiculeService $vehiculeService;
     protected MissionOrderService $missionOrderService;
     protected SettingService $settingService;
+    protected MissionCompanionService $missionCompanionService;
     
-    public function __construct(DriverService $driverService, VehiculeService $vehiculeService, MissionOrderService $missionOrderService, SettingService $settingService)
+    public function __construct(DriverService $driverService, VehiculeService $vehiculeService, MissionOrderService $missionOrderService, SettingService $settingService, MissionCompanionService $missionCompanionService)
     {
         $this->driverService = $driverService;
         $this->vehiculeService = $vehiculeService;
         $this->missionOrderService = $missionOrderService;
         $this->settingService = $settingService;
+        $this->missionCompanionService = $missionCompanionService;
     }
 
     public function index()
@@ -43,6 +46,7 @@ class MissionOrderController extends Controller
     {
         $vehicules = $this->vehiculeService->getAllVehicules();
         $drivers   = $this->driverService->getAllDrivers();
+        $companions = $this->missionCompanionService->getAllMissionCompanions();
 
         // Get pre-filled values from query parameters
         $selectedDriverId = $request->query('driver_id');
@@ -52,6 +56,7 @@ class MissionOrderController extends Controller
         return view('admin.mission_order.create', [
             'drivers'   => $drivers,
             'vehicules' => $vehicules,
+            'companions' => $companions,
             'selectedDriverId' => $selectedDriverId,
             'selectedStartDate' => $selectedStartDate,
             'selectedEndDate' => $selectedEndDate,
@@ -61,7 +66,7 @@ class MissionOrderController extends Controller
     public function edit($id)
     {
         try {
-            $missionOrder = $this->missionOrderService->getMissionOrderById($id);
+            $missionOrder = $this->missionOrderService->getMissionOrderById($id, ['driver', 'vehicule', 'companions']);
             
             if (!$missionOrder) {
                 Alert::error('Error', 'Mission order not found');
@@ -74,11 +79,13 @@ class MissionOrderController extends Controller
         
         $vehicules = $this->vehiculeService->getAllVehicules();
         $drivers   = $this->driverService->getAllDrivers();
+        $companions = $this->missionCompanionService->getAllMissionCompanions();
 
         return view('admin.mission_order.edit', [
             'missionOrder'  =>   $missionOrder,
             'drivers'   =>  $drivers,
             'vehicules' =>  $vehicules,
+            'companions' => $companions,
         ]);
     }
 
@@ -94,6 +101,8 @@ class MissionOrderController extends Controller
             'registration_datetime' =>  'nullable|date',
             'place_togo_fr'         =>  'nullable|string',
             'place_togo_ar'         =>  'nullable|string',
+            'companions'            =>  'nullable|array',
+            'companions.*'          =>  'exists:mission_companions,id',
         ]);
 
         try {
@@ -119,6 +128,8 @@ class MissionOrderController extends Controller
             'registration_datetime' =>  'nullable|date',
             'place_togo_fr'         =>  'nullable|string',
             'place_togo_ar'         =>  'nullable|string',
+            'companions'            =>  'nullable|array',
+            'companions.*'          =>  'exists:mission_companions,id',
         ]);
 
         try {
@@ -186,7 +197,7 @@ class MissionOrderController extends Controller
     public function print($id)
     {
         try {
-            $missionOrder = $this->missionOrderService->getMissionOrderById($id, ['driver', 'vehicule']);
+            $missionOrder = $this->missionOrderService->getMissionOrderById($id, ['driver', 'vehicule', 'companions']);
             
             if (!$missionOrder) {
                 Alert::error('Error', 'Mission order not found');

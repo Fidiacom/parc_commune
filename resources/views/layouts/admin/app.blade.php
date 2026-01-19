@@ -504,6 +504,13 @@
                         </li>
 
                         <li>
+                            <a href="{{ route('admin.mission_companions.index') }}" class="wwaves-effect"><i
+                                    class="mdi mdi-account-multiple"></i>
+                                    <span>{{ __('Accompagnants') }}</span>
+                            </a>
+                        </li>
+
+                        <li>
                             <a href="{{ route('admin.reforme') }}" class="wwaves-effect"><i
                                     class="mdi mdi-recycle"></i>
                                     <span>{{ __('Réforme') }}</span>

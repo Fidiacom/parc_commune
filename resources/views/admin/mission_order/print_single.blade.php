@@ -225,6 +225,27 @@
             </tr>
         </table>
 
+        @php
+            $companions = $missionOrder->getCompanions() ?? collect();
+            $companionsFr = $companions->map(function ($companion) {
+                return $companion->getFullNameFr() ?: $companion->getFullNameAr() ?: $companion->getCin();
+            })->filter()->implode(', ');
+            $companionsAr = $companions->map(function ($companion) {
+                return $companion->getFullNameAr() ?: $companion->getFullNameFr() ?: $companion->getCin();
+            })->filter()->implode('، ');
+        @endphp
+        <table class="form-row">
+            <tr>
+                <td class="form-label-fr">
+                    Accompagnants : <span class="form-value">{{ $companionsFr !== '' ? $companionsFr : '.......................' }}</span>
+                </td>
+                <td class="form-label-ar">
+                    <span>المرافقون :</span>
+                    <span class="form-value">{{ $companionsAr !== '' ? $companionsAr : '.......................' }}</span>
+                </td>
+            </tr>
+        </table>
+
         <table class="form-row">
             <tr>
                 <td class="form-label-fr">

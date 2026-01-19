@@ -32,7 +32,7 @@ class MissionOrderManager
     /**
      * Create a mission order with validation.
      */
-    public function createMissionOrder(array $missionOrderData): MissionOrder
+    public function createMissionOrder(array $missionOrderData, array $companionIds = []): MissionOrder
     {
         // Validate driver has required permis
         $driver = Driver::with('permis')->find($missionOrderData[MissionOrder::DRIVER_ID_COLUMN]);
@@ -47,13 +47,16 @@ class MissionOrderManager
             throw new \Exception('Driver should have: Permis ' . $vehicule->label);
         }
 
-        return $this->repository->create($missionOrderData);
+        $missionOrder = $this->repository->create($missionOrderData);
+        $this->repository->syncCompanions($missionOrder, $companionIds);
+
+        return $missionOrder->fresh(['companions']);
     }
 
     /**
      * Update a mission order with validation.
      */
-    public function updateMissionOrder(MissionOrder $missionOrder, array $missionOrderData): MissionOrder
+    public function updateMissionOrder(MissionOrder $missionOrder, array $missionOrderData, array $companionIds = []): MissionOrder
     {
         // Validate driver has required permis if driver or vehicule changed
         if (isset($missionOrderData[MissionOrder::DRIVER_ID_COLUMN]) || isset($missionOrderData[MissionOrder::VEHICULE_ID_COLUMN])) {
@@ -74,7 +77,9 @@ class MissionOrderManager
         }
 
         $this->repository->update($missionOrder, $missionOrderData);
-        return $missionOrder->fresh();
+        $this->repository->syncCompanions($missionOrder, $companionIds);
+
+        return $missionOrder->fresh(['companions']);
     }
 
     /**

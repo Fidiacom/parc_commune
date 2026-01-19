@@ -39,6 +39,7 @@ class MissionOrderService
     public function createMissionOrder(Request $request): MissionOrder
     {
         $isPermanent = isset($request->mission_order_type);
+        $companionIds = $isPermanent ? [] : (array) $request->input('companions', []);
         
         $missionOrderData = [
             MissionOrder::DRIVER_ID_COLUMN => $request->driver,
@@ -57,7 +58,7 @@ class MissionOrderService
             $missionOrderData[MissionOrder::PLACE_TOGO_AR_COLUMN] = $request->place_togo_ar ?? null;
         }
 
-        return $this->manager->createMissionOrder($missionOrderData);
+        return $this->manager->createMissionOrder($missionOrderData, $companionIds);
     }
 
     /**
@@ -66,6 +67,7 @@ class MissionOrderService
     public function updateMissionOrder(MissionOrder $missionOrder, Request $request): MissionOrder
     {
         $isPermanent = isset($request->mission_order_type);
+        $companionIds = $isPermanent ? [] : (array) $request->input('companions', []);
         
         $missionOrderData = [
             MissionOrder::DRIVER_ID_COLUMN => $request->driver,
@@ -90,7 +92,7 @@ class MissionOrderService
             $missionOrderData[MissionOrder::PLACE_TOGO_AR_COLUMN] = $request->place_togo_ar ?? null;
         }
 
-        return $this->manager->updateMissionOrder($missionOrder, $missionOrderData);
+        return $this->manager->updateMissionOrder($missionOrder, $missionOrderData, $companionIds);
     }
 
     /**

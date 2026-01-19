@@ -177,6 +177,33 @@
                             </div>
                         </div>
 
+                        {{-- Companions Section (Only shown if NOT permanent) --}}
+                        <div class="card mb-3" id="companions_section">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">{{ __('Accompagnants') }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="companions">{{ __('Select Companions') }}</label>
+                                    <select class="form-control @error('companions') is-invalid @enderror" data-toggle="select2" style="width: 100%" name="companions[]" id="companions" multiple>
+                                        @php
+                                            $selectedCompanions = $missionOrder->getCompanions() ? $missionOrder->getCompanions()->pluck('id')->all() : [];
+                                        @endphp
+                                        @foreach ($companions as $companion)
+                                            <option value="{{ $companion->getId() }}" @selected(in_array($companion->getId(), old('companions', $selectedCompanions)))>
+                                                {{ $companion->getDisplayName() }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('companions')
+                                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group d-flex">
                             <button type="submit" class="btn btn-primary waves-effect waves-light">{{ __('Sauvgarder') }}</button>
                             <button type="button" class="btn btn-danger waves-effect waves-light ml-2" onclick="deleteMissionOrder()">{{ __('Supprimer') }}</button>
@@ -205,20 +232,29 @@
             const endDateGroup = document.getElementById('end_date_group');
             const missionSection = document.getElementById('mission_section');
             const placeTogoSection = document.getElementById('place_togo_section');
+            const companionsSection = document.getElementById('companions_section');
+            const companionsSelect = document.getElementById('companions');
             
             if (isPermanent) {
                 endDateGroup.style.display = 'none';
                 missionSection.style.display = 'none';
                 placeTogoSection.style.display = 'none';
+                companionsSection.style.display = 'none';
                 document.getElementById('end_date').value = '';
                 document.getElementById('mission_fr').value = '';
                 document.getElementById('mission_ar').value = '';
                 document.getElementById('place_togo_fr').value = '';
                 document.getElementById('place_togo_ar').value = '';
+                if (companionsSelect) {
+                    Array.from(companionsSelect.options).forEach((option) => {
+                        option.selected = false;
+                    });
+                }
             } else {
                 endDateGroup.style.display = 'block';
                 missionSection.style.display = 'block';
                 placeTogoSection.style.display = 'block';
+                companionsSection.style.display = 'block';
             }
         }
         

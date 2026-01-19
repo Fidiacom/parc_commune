@@ -107,6 +107,8 @@ Route::middleware(['auth'])->group(function () {
         //Payment Vouchers (Bons de paiement)
         Route::get('/payment-voucher', [PaymentVoucherController::class, 'index'])->name('admin.payment_voucher.index');
         Route::get('/payment-voucher/category/{category}', [PaymentVoucherController::class, 'index'])->name('admin.payment_voucher.index.category');
+        Route::get('/payment-voucher/report', [PaymentVoucherController::class, 'report'])->name('admin.payment_voucher.report');
+        Route::get('/payment-voucher/report/pdf', [PaymentVoucherController::class, 'reportPdf'])->name('admin.payment_voucher.report.pdf');
         Route::get('/payment-voucher/create', [PaymentVoucherController::class, 'create'])->name('admin.payment_voucher.create');
         Route::get('/payment-voucher/create/{category}', [PaymentVoucherController::class, 'create'])->name('admin.payment_voucher.create.category');
         Route::get('/payment-voucher/get-insurance-expiration/{vehiculeId}', [PaymentVoucherController::class, 'getInsuranceExpiration'])->name('admin.payment_voucher.get_insurance_expiration');

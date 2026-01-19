@@ -12,6 +12,7 @@ use App\Models\Vidange;
 use App\Models\TimingChaine;
 use App\Models\PaymentVoucher;
 use RealRashid\SweetAlert\Facades\Alert;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PaymentVoucherController extends Controller
 {
@@ -73,6 +74,115 @@ class PaymentVoucherController extends Controller
             'sortDirection' => $sortDirection,
             'search' => $search,
         ]);
+    }
+
+    /**
+     * Display payment voucher report with filters.
+     */
+    public function report(Request $request)
+    {
+        $vehiculeId = $request->query('vehicule_id');
+        $category = $request->query('category');
+        $dateFrom = $request->query('date_from');
+        $dateTo = $request->query('date_to');
+
+        $categories = [
+            'carburant' => __('Bon pour Carburant'),
+            'entretien' => __('Entretien'),
+            'vidange' => __('Vidange'),
+            'lavage' => __('Lavage'),
+            'lubrifiant' => __('Lubrifiant'),
+            'reparation' => __('Reparation'),
+            'achat_pieces_recharges' => __('Achat pieces de recharges'),
+            'rechange_pneu' => __('Rechange pneu'),
+            'frais_immatriculation' => __('Frais d\'immatriculation'),
+            'visite_technique' => __('Visite technique'),
+            'insurance' => __('Assurance'),
+            'other' => __('Autre'),
+        ];
+
+        if (!$category || !isset($categories[$category])) {
+            $category = null;
+        }
+
+        $vehicules = $this->vehiculeService->getAllVehicules();
+        $selectedVehicule = $vehiculeId ? $this->vehiculeService->getVehiculeById((int) $vehiculeId) : null;
+
+        $vouchers = $this->paymentVoucherService->getPaymentVouchersForReport(
+            $vehiculeId ? (int) $vehiculeId : null,
+            $category,
+            $dateFrom,
+            $dateTo
+        );
+
+        $reportQuery = array_filter([
+            'vehicule_id' => $vehiculeId,
+            'category' => $category,
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+        ], static fn ($value) => $value !== null && $value !== '');
+
+        return view('admin.payment_voucher.report', [
+            'vouchers' => $vouchers,
+            'categories' => $categories,
+            'vehicules' => $vehicules,
+            'selectedVehicule' => $selectedVehicule,
+            'selectedVehiculeId' => $vehiculeId,
+            'selectedCategory' => $category,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+            'reportQuery' => $reportQuery,
+        ]);
+    }
+
+    /**
+     * Download payment voucher report as PDF.
+     */
+    public function reportPdf(Request $request)
+    {
+        $vehiculeId = $request->query('vehicule_id');
+        $category = $request->query('category');
+        $dateFrom = $request->query('date_from');
+        $dateTo = $request->query('date_to');
+
+        $categories = [
+            'carburant' => __('Bon pour Carburant'),
+            'entretien' => __('Entretien'),
+            'vidange' => __('Vidange'),
+            'lavage' => __('Lavage'),
+            'lubrifiant' => __('Lubrifiant'),
+            'reparation' => __('Reparation'),
+            'achat_pieces_recharges' => __('Achat pieces de recharges'),
+            'rechange_pneu' => __('Rechange pneu'),
+            'frais_immatriculation' => __('Frais d\'immatriculation'),
+            'visite_technique' => __('Visite technique'),
+            'insurance' => __('Assurance'),
+            'other' => __('Autre'),
+        ];
+
+        if (!$category || !isset($categories[$category])) {
+            $category = null;
+        }
+
+        $selectedVehicule = $vehiculeId ? $this->vehiculeService->getVehiculeById((int) $vehiculeId) : null;
+
+        $vouchers = $this->paymentVoucherService->getPaymentVouchersForReport(
+            $vehiculeId ? (int) $vehiculeId : null,
+            $category,
+            $dateFrom,
+            $dateTo
+        );
+
+        $pdf = Pdf::loadView('admin.payment_voucher.report_pdf', [
+            'vouchers' => $vouchers,
+            'categories' => $categories,
+            'selectedVehicule' => $selectedVehicule,
+            'selectedCategory' => $category,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('rapport-bons-de-paiement.pdf');
     }
 
     /**

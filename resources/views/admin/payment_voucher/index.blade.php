@@ -8,6 +8,9 @@
                         <i class="mdi mdi-receipt mr-2"></i>{{ __('Bons de paiement') }}
                     </h4>
                     <div class="page-title-right">
+                        <a href="{{ route('admin.payment_voucher.report') }}" class="btn btn-outline-secondary waves-effect waves-light mr-2">
+                            <i class="mdi mdi-file-document-outline mr-2"></i>{{ __('Rapport') }}
+                        </a>
                         <a href="{{ route('admin.payment_voucher.create', ['category' => $currentCategory]) }}" class="btn btn-primary waves-effect waves-light">
                             <i class="fas fa-plus-circle mr-2"></i>{{ __('Nouveau bon') }}
                         </a>

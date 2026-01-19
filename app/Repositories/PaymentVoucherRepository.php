@@ -81,6 +81,36 @@ class PaymentVoucherRepository
     }
 
     /**
+     * Get payment vouchers for report filters.
+     */
+    public function getReportByFilters(
+        ?int $vehiculeId = null,
+        ?string $category = null,
+        ?string $dateFrom = null,
+        ?string $dateTo = null
+    ) {
+        $query = PaymentVoucher::with(['vehicule', 'tire', 'vidange', 'timingChaine']);
+
+        if ($vehiculeId) {
+            $query->where(PaymentVoucher::VEHICULE_ID_COLUMN, $vehiculeId);
+        }
+
+        if ($category !== null) {
+            $query->where(PaymentVoucher::CATEGORY_COLUMN, $category);
+        }
+
+        if ($dateFrom) {
+            $query->whereDate(PaymentVoucher::INVOICE_DATE_COLUMN, '>=', $dateFrom);
+        }
+
+        if ($dateTo) {
+            $query->whereDate(PaymentVoucher::INVOICE_DATE_COLUMN, '<=', $dateTo);
+        }
+
+        return $query->orderBy(PaymentVoucher::INVOICE_DATE_COLUMN, 'asc')->get();
+    }
+
+    /**
      * Get payment vouchers by vehicule.
      */
     public function getByVehicule(int $vehiculeId)

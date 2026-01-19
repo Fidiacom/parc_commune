@@ -56,6 +56,25 @@ class PaymentVoucherService
     }
 
     /**
+     * Get payment vouchers for report filters.
+     */
+    public function getPaymentVouchersForReport(
+        ?int $vehiculeId = null,
+        ?string $category = null,
+        ?string $dateFrom = null,
+        ?string $dateTo = null
+    ) {
+        $repository = $this->manager->getRepository();
+
+        return $repository->getReportByFilters(
+            $vehiculeId,
+            $category,
+            $dateFrom,
+            $dateTo
+        );
+    }
+
+    /**
      * Get payment voucher by ID.
      */
     public function getPaymentVoucherById(int $id): ?PaymentVoucher

@@ -561,7 +561,7 @@
                                 @endif
                             </ul>
                         </li>
-
+                        <li><a href="{{ route('admin.payment_voucher.report') }}">{{ __('Rapport') }}</a></li>
                     </ul>
                 </div>
                 <!-- Sidebar -->

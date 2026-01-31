@@ -326,7 +326,7 @@ class PaymentVoucherController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'voucher_number' => 'nullable|string|max:255|unique:payment_vouchers,voucher_number',
+            'voucher_number' => 'nullable|string|max:255',
             'voucher_date' => 'nullable|date',
             'invoice_number' => 'nullable|string|max:255',
             'invoice_date' => 'nullable|date',
@@ -384,11 +384,6 @@ class PaymentVoucherController extends Controller
             Alert::success(__('Succès'), __('Bon de paiement créé avec succès'));
             return redirect()->route('admin.payment_voucher.show', $voucher->getId());
         } catch (\Illuminate\Database\QueryException $e) {
-            if ($this->isDuplicateVoucherNumber($e)) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['voucher_number' => __('Ce numéro de bon existe déjà.')]);
-            }
             Alert::error(__('Erreur'), __('Échec de la création du bon de paiement: ') . $e->getMessage());
         } catch (\Exception $e) {
             Alert::error(__('Erreur'), __('Échec de la création du bon de paiement: ') . $e->getMessage());
@@ -514,7 +509,7 @@ class PaymentVoucherController extends Controller
         }
 
         $validated = $request->validate([
-            'voucher_number' => 'nullable|string|max:255|unique:payment_vouchers,voucher_number,' . $voucher->getId(),
+            'voucher_number' => 'nullable|string|max:255',
             'voucher_date' => 'nullable|date',
             'invoice_number' => 'nullable|string|max:255',
             'invoice_date' => 'nullable|date',
@@ -797,15 +792,5 @@ class PaymentVoucherController extends Controller
         }
         
         return back();
-    }
-
-    /**
-     * Detect duplicate voucher number SQL error.
-     */
-    private function isDuplicateVoucherNumber(\Illuminate\Database\QueryException $e): bool
-    {
-        $sqlState = $e->errorInfo[0] ?? null;
-        $errorCode = $e->errorInfo[1] ?? null;
-        return $sqlState === '23000' && $errorCode === 1062;
     }
 }

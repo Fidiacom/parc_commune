@@ -125,17 +125,36 @@ class PaymentVoucherManager
     }
 
     /**
+     * Move the vehicle's odometer / hour counter forward to the voucher's reading.
+     * Never moves them back (back-dated voucher, typo) and ignores empty readings.
+     */
+    protected function updateVehicleCounters(Vehicule $vehicule, PaymentVoucher $voucher): void
+    {
+        $updateData = [];
+
+        $km = $voucher->getVehicleKm();
+        if ($km !== null && $km > (int) $vehicule->getTotalKm()) {
+            $updateData[Vehicule::TOTAL_KM_COLUMN] = $km;
+        }
+
+        $hours = $voucher->getVehicleHours();
+        if ($hours !== null && $hours > (float) $vehicule->getTotalHours()) {
+            $updateData[Vehicule::TOTAL_HOURS_COLUMN] = $hours;
+        }
+
+        if ($updateData) {
+            $vehicule->update($updateData);
+        }
+    }
+
+    /**
      * Handle tire change logic.
      */
     protected function handleTireChange(PaymentVoucher $voucher, Vehicule $vehicule, array $data): void
     {
         // Update vehicle KM and Hours (only once, regardless of number of tires)
         $vehicleKm = $voucher->getVehicleKm();
-        $updateData = [Vehicule::TOTAL_KM_COLUMN => $vehicleKm];
-        if ($voucher->getVehicleHours() !== null) {
-            $updateData[Vehicule::TOTAL_HOURS_COLUMN] = $voucher->getVehicleHours();
-        }
-        $vehicule->update($updateData);
+        $this->updateVehicleCounters($vehicule, $voucher);
 
         // Handle multiple tire changes
         if (isset($data['tire_ids']) && is_array($data['tire_ids']) && count($data['tire_ids']) > 0) {
@@ -191,11 +210,7 @@ class PaymentVoucherManager
         $vehicleKm = $voucher->getVehicleKm();
 
         // Update vehicle KM and Hours
-        $updateData = [Vehicule::TOTAL_KM_COLUMN => $vehicleKm];
-        if ($voucher->getVehicleHours() !== null) {
-            $updateData[Vehicule::TOTAL_HOURS_COLUMN] = $voucher->getVehicleHours();
-        }
-        $vehicule->update($updateData);
+        $this->updateVehicleCounters($vehicule, $voucher);
 
         // Handle Vidange if specified
         if (isset($data[PaymentVoucher::VIDANGE_ID_COLUMN]) && $data[PaymentVoucher::VIDANGE_ID_COLUMN]) {
@@ -234,11 +249,7 @@ class PaymentVoucherManager
         $vehicleKm = $voucher->getVehicleKm();
 
         // Update vehicle KM and Hours
-        $updateData = [Vehicule::TOTAL_KM_COLUMN => $vehicleKm];
-        if ($voucher->getVehicleHours() !== null) {
-            $updateData[Vehicule::TOTAL_HOURS_COLUMN] = $voucher->getVehicleHours();
-        }
-        $vehicule->update($updateData);
+        $this->updateVehicleCounters($vehicule, $voucher);
 
         // If vidange_id is set, create a vidange history record
         if (isset($data[PaymentVoucher::VIDANGE_ID_COLUMN]) && $data[PaymentVoucher::VIDANGE_ID_COLUMN]) {
@@ -268,18 +279,8 @@ class PaymentVoucherManager
      */
     protected function handleFuel(PaymentVoucher $voucher, Vehicule $vehicule, array $data): void
     {
-        $vehicleKm = $voucher->getVehicleKm();
-
-        // Update vehicle KM and Hours
-        $updateData = [Vehicule::TOTAL_KM_COLUMN => $vehicleKm];
-        if ($voucher->getVehicleHours() !== null) {
-            $updateData[Vehicule::TOTAL_HOURS_COLUMN] = $voucher->getVehicleHours();
-        }
-        $vehicule->update($updateData);
-
-        // Fuel consumption calculation can be done in a separate service or here
-        // For now, we just store the data. Consumption can be calculated when needed
-        // by comparing with previous fuel entries.
+        // Update vehicle KM and Hours. Consumption is computed by FuelConsumptionService.
+        $this->updateVehicleCounters($vehicule, $voucher);
     }
 
     /**

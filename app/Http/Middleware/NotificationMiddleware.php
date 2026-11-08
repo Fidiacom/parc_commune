@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Stock;
 use App\Models\MissionOrder;
 use App\Models\Vehicule;
-use App\Models\PaymentVoucher;
+use App\Services\FuelConsumptionService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -20,7 +20,6 @@ class NotificationMiddleware
     {
         $stocks = Stock::all();
 
-        dd($stocks);
         $stockNotif = collect();
         foreach ($stocks as $stock)
         {
@@ -39,8 +38,16 @@ class NotificationMiddleware
     {
         $vehicules = Vehicule::with('vidange.vidange_historique', 'timing_chaine.timingchaine_historique','pneu.pneu_historique')->get();
         $notification = collect();
+
+        // Fuel consumption alerts for all vehicles (latest fill-up, one query)
+        $consumptionAlerts = app(FuelConsumptionService::class)->allAlerts();
+
         foreach ($vehicules as $vehicule)
         {
+            // Consumption Notification
+            if (isset($consumptionAlerts[$vehicule->id])) {
+                $notification->push($this->consumptionNotification($vehicule, $consumptionAlerts[$vehicule->id]));
+            }
 
             // Vidange Notification
             $vidangeHistorique = optional($vehicule->vidange)->vidange_historique;
@@ -99,100 +106,58 @@ class NotificationMiddleware
                     }
                 }
             }
-
-            // Consumption Notification
-            $consumptionAlert = $this->checkConsumptionAlert($vehicule);
-            if ($consumptionAlert) {
-                $notification->push($consumptionAlert);
-            }
         }
 
         return $notification;
     }
 
     /**
-     * Check if vehicle consumption exceeds limits (both km and hour based).
+     * Bell notification for a fuel consumption alert (see FuelConsumptionService::alert()).
      */
-    protected function checkConsumptionAlert($vehicule)
+    protected function consumptionNotification($vehicule, array $alert): array
     {
-        // Get fuel vouchers for consumption calculation
-        $fuelVouchers = PaymentVoucher::where('vehicule_id', $vehicule->getId())
-            ->where('category', 'carburant')
-            ->whereNotNull('fuel_liters')
-            ->orderBy('invoice_date', 'asc')
-            ->get();
-
-        if ($fuelVouchers->count() < 2) {
-            return null;
-        }
-
-        $firstVoucher = $fuelVouchers->first();
-        $lastVoucher = $fuelVouchers->last();
-        $totalKm = $lastVoucher->getVehicleKm() - $firstVoucher->getVehicleKm();
-        $totalHours = null;
-        if ($lastVoucher->getVehicleHours() && $firstVoucher->getVehicleHours()) {
-            $totalHours = $lastVoucher->getVehicleHours() - $firstVoucher->getVehicleHours();
-        }
-        $totalFuelLiters = $fuelVouchers->sum(function($v) { return $v->getFuelLiters() ?? 0; });
-
+        $fmt = fn ($value) => number_format((float) $value, 2, ',', ' ');
         $messages = [];
-        $alertType = null;
 
-        // Check km-based consumption
-        if ($totalKm > 0 && $totalFuelLiters > 0) {
-            $averageConsumptionKm = ($totalFuelLiters / $totalKm) * 100;
-            
-            if ($vehicule->getMaxFuelConsumption100km() && $averageConsumptionKm > $vehicule->getMaxFuelConsumption100km()) {
-                $excess = $averageConsumptionKm - $vehicule->getMaxFuelConsumption100km();
-                $messages[] = __('High consumption (KM): :avg L/100km (max: :max L/100km, excess: :excess L/100km)', [
-                    'avg' => number_format($averageConsumptionKm, 2, ',', ' '),
-                    'max' => number_format($vehicule->getMaxFuelConsumption100km(), 2, ',', ' '),
-                    'excess' => number_format($excess, 2, ',', ' ')
-                ]);
-                $alertType = 'consumption_km';
-            }
+        if ($alert['exceeds_km']) {
+            $messages[] = __('High consumption (KM): :avg L/100km (max: :max L/100km, excess: :excess L/100km)', [
+                'avg' => $fmt($alert['average_consumption_km']),
+                'max' => $fmt($alert['max_consumption_km']),
+                'excess' => $fmt($alert['excess_km']),
+            ]);
         }
 
-        // Check hour-based consumption
-        if ($totalHours > 0 && $totalFuelLiters > 0) {
-            $averageConsumptionHour = $totalFuelLiters / $totalHours;
-            
-            if ($vehicule->getMaxFuelConsumptionHour() && $averageConsumptionHour > $vehicule->getMaxFuelConsumptionHour()) {
-                $excess = $averageConsumptionHour - $vehicule->getMaxFuelConsumptionHour();
-                $messages[] = __('High consumption (Hours): :avg L/H (max: :max L/H, excess: :excess L/H)', [
-                    'avg' => number_format($averageConsumptionHour, 2, ',', ' '),
-                    'max' => number_format($vehicule->getMaxFuelConsumptionHour(), 2, ',', ' '),
-                    'excess' => number_format($excess, 2, ',', ' ')
-                ]);
-                $alertType = $alertType ? 'consumption_both' : 'consumption_hour';
-            }
-
-            // Check if below min hour consumption
-            if ($vehicule->getMinFuelConsumptionHour() && $averageConsumptionHour < $vehicule->getMinFuelConsumptionHour()) {
-                $deficit = $vehicule->getMinFuelConsumptionHour() - $averageConsumptionHour;
-                $messages[] = __('Low consumption (Hours): :avg L/H (min: :min L/H, deficit: :deficit L/H)', [
-                    'avg' => number_format($averageConsumptionHour, 2, ',', ' '),
-                    'min' => number_format($vehicule->getMinFuelConsumptionHour(), 2, ',', ' '),
-                    'deficit' => number_format($deficit, 2, ',', ' ')
-                ]);
-                $alertType = $alertType ? 'consumption_both' : 'consumption_hour_low';
-            }
+        if ($alert['below_km']) {
+            $messages[] = __('Low consumption (KM): :avg L/100km (min: :min L/100km, deficit: :deficit L/100km)', [
+                'avg' => $fmt($alert['average_consumption_km']),
+                'min' => $fmt($alert['min_consumption_km']),
+                'deficit' => $fmt($alert['deficit_km']),
+            ]);
         }
 
-        if (!empty($messages)) {
-            return [
-                'vehicule_id'   => $vehicule->id,
-                'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
-                'notif'         => __('Consommation'),
-                'message'       => implode(' | ', $messages),
-            ];
+        if ($alert['exceeds_hour']) {
+            $messages[] = __('High consumption (Hours): :avg L/H (max: :max L/H, excess: :excess L/H)', [
+                'avg' => $fmt($alert['average_consumption_hour']),
+                'max' => $fmt($alert['max_consumption_hour']),
+                'excess' => $fmt($alert['excess_hour']),
+            ]);
         }
 
-        return null;
+        if ($alert['below_hour']) {
+            $messages[] = __('Low consumption (Hours): :avg L/H (min: :min L/H, deficit: :deficit L/H)', [
+                'avg' => $fmt($alert['average_consumption_hour']),
+                'min' => $fmt($alert['min_consumption_hour']),
+                'deficit' => $fmt($alert['deficit_hour']),
+            ]);
+        }
+
+        return [
+            'vehicule_id'   => $vehicule->id,
+            'vehicule'      => $vehicule->brand.' '.$vehicule->model.'| ('.$vehicule->matricule.')',
+            'notif'         => __('Consommation'),
+            'message'       => implode(' | ', $messages),
+        ];
     }
-
-
-
 
     //Mission Orders
     public function missionOrder()

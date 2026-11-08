@@ -1,115 +1,119 @@
+@php
+    $lang = ($lang ?? 'fr') === 'ar' ? 'ar' : 'fr';
+    $isAr = $lang === 'ar';
+    $start = $isAr ? 'right' : 'left';
+    $end = $isAr ? 'left' : 'right';
+    $total = $vouchers->sum(fn ($voucher) => (float) $voucher->getAmount());
+    // Keeps numbers, dates and Latin names in left-to-right order inside Arabic text
+    $ltr = fn ($value) => $isAr ? '<bdo dir="ltr">' . e($value) . '</bdo>' : e($value);
+    $date = fn ($value) => $value ? $ltr(\Carbon\Carbon::parse($value)->format('d/m/Y')) : '-';
+    $money = fn ($value) => $ltr(number_format((float) $value, 2, ',', ' ')) . ' ' . e(__('DH'));
+@endphp
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ $lang }}" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
-    <title>{{ __('Gestion de parc-auto') }}</title>
+    <title>{{ __('Rapport des bons de paiement') }}</title>
     <style>
         body {
-            font-family: DejaVu Sans, Arial, sans-serif;
-            font-size: 12px;
+            font-family: {{ $isAr ? 'xbriyaz, dejavusans' : 'dejavusans' }};
+            font-size: {{ $isAr ? '12pt' : '10pt' }};
             color: #1f2937;
+            text-align: {{ $start }};
         }
-        .header {
+        .title {
             text-align: center;
-            margin-bottom: 16px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 18px;
+            margin: 14px 0 16px;
+            font-size: {{ $isAr ? '17pt' : '15pt' }};
+            font-weight: bold;
+            text-decoration: underline;
         }
         .meta {
             margin-bottom: 12px;
-            font-size: 12px;
         }
-        .meta strong {
-            font-weight: 600;
+        .meta div {
+            margin-bottom: 2px;
         }
-        table {
+        table.data {
             width: 100%;
             border-collapse: collapse;
         }
-        th, td {
-            border: 1px solid #e5e7eb;
-            padding: 6px 8px;
+        table.data th, table.data td {
+            border: 1px solid #9ca3af;
+            padding: 5px 7px;
             vertical-align: top;
+            text-align: {{ $start }};
         }
-        th {
+        table.data th {
             background: #f3f4f6;
-            text-align: left;
         }
         .amount {
-            text-align: right;
+            text-align: {{ $end }} !important;
             white-space: nowrap;
+        }
+        .total td {
+            font-weight: bold;
+            background: #f9fafb;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>{{ __('Gestion de parc-auto') }}</h1>
-    </div>
+    @include('pdf.partials.header', ['mode' => $lang])
+
+    <div class="title">{{ __('Rapport des bons de paiement') }}</div>
 
     <div class="meta">
         <div>
-            {{ __('Véhicule') }}:
+            {{ __('Véhicule') }} :
             <strong>
-                {{ $selectedVehicule ? $selectedVehicule->getBrand() . ' - ' . $selectedVehicule->getModel() . ' (' . $selectedVehicule->getMatricule() . ')' : __('Tous') }}
+                {!! $selectedVehicule ? $ltr($selectedVehicule->getBrand() . ' - ' . $selectedVehicule->getModel() . ' (' . $selectedVehicule->getMatricule() . ')') : e(__('Tous')) !!}
             </strong>
         </div>
         <div>
-            {{ __('Catégorie') }}:
-            <strong>
-                {{ $selectedCategory ? ($categories[$selectedCategory] ?? $selectedCategory) : __('Toutes') }}
-            </strong>
+            {{ __('Catégorie') }} :
+            <strong>{{ $selectedCategory ? __($categories[$selectedCategory] ?? $selectedCategory) : __('Toutes') }}</strong>
         </div>
         <div>
-            {{ __('Période') }}:
+            {{ __('Période') }} :
             <strong>
-                {{ $dateFrom ? \Carbon\Carbon::parse($dateFrom)->format('d/m/Y') : '-' }}
+                {!! $date($dateFrom) !!}
                 {{ __('au') }}
-                {{ $dateTo ? \Carbon\Carbon::parse($dateTo)->format('d/m/Y') : '-' }}
+                {!! $date($dateTo) !!}
             </strong>
         </div>
     </div>
 
-    <table>
+    <table class="data">
         <thead>
             <tr>
                 <th>{{ __('Num de bon') }}</th>
                 <th>{{ __('Date du bon') }}</th>
-                <!-- <th>{{ __('Num de facture') }}</th>
-                <th>{{ __('Date de facture') }}</th> -->
                 <th>{{ __('Montant') }}</th>
-                <!-- <th>{{ __('Véhicule') }}</th> -->
                 <th>{{ __('KM') }}</th>
                 <th>{{ __('Fournisseur') }}</th>
-                <!-- <th>{{ __('Catégorie') }}</th> -->
             </tr>
         </thead>
         <tbody>
             @forelse($vouchers as $voucher)
                 <tr>
-                    <td>{{ $voucher->getVoucherNumber() }}</td>
-                    <td>{{ $voucher->getVoucherDate() ? \Carbon\Carbon::parse($voucher->getVoucherDate())->format('d/m/Y') : '-' }}</td>
-                    <!-- <td>{{ $voucher->getInvoiceNumber() ?? '-' }}</td>
-                    <td>{{ $voucher->getInvoiceDate() ? \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('d/m/Y') : '-' }}</td> -->
-                    <td class="amount">{{ number_format($voucher->getAmount(), 2, ',', ' ') }} {{ __('DH') }}</td>
-                    <!-- <td>
-                        @if($voucher->vehicule)
-                            {{ $voucher->vehicule->getBrand() }} - {{ $voucher->vehicule->getModel() }}
-                            ({{ $voucher->vehicule->getMatricule() }})
-                        @else
-                            -
-                        @endif
-                    </td> -->
-                    <td>{{ $voucher->getVehicleKm() ? number_format($voucher->getVehicleKm(), 0, ',', ' ') : '-' }}</td>
+                    <td>{!! $ltr($voucher->getVoucherNumber()) !!}</td>
+                    <td>{!! $date($voucher->getVoucherDate()) !!}</td>
+                    <td class="amount">{!! $money($voucher->getAmount()) !!}</td>
+                    <td>{!! $voucher->getVehicleKm() ? $ltr(number_format($voucher->getVehicleKm(), 0, ',', ' ')) : '-' !!}</td>
                     <td>{{ $voucher->getSupplier() ?? '-' }}</td>
-                    <!-- <td>{{ $categories[$voucher->getCategory()] ?? $voucher->getCategory() }}</td> -->
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" style="text-align: center;">{{ __('Aucun résultat trouvé') }}</td>
+                    <td colspan="5" style="text-align: center;">{{ __('Aucun résultat trouvé') }}</td>
                 </tr>
             @endforelse
+            @if($vouchers->count() > 0)
+                <tr class="total">
+                    <td colspan="2">{{ __('Total') }}</td>
+                    <td class="amount">{!! $money($total) !!}</td>
+                    <td colspan="2"></td>
+                </tr>
+            @endif
         </tbody>
     </table>
 </body>

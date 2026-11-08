@@ -192,13 +192,18 @@
                             <div class="col-md-3 mb-3">
                                 <div class="text-center">
                                     <h6 class="text-muted mb-1">{{ __('Consommation moyenne') }}</h6>
-                                    <h4 class="mb-0 {{ $consumptionStats['exceeds_max_consumption'] ? 'text-danger' : 'text-success' }}">
+                                    <h4 class="mb-0 {{ $consumptionStats['average_consumption_100km'] && $vehicule->getMaxFuelConsumption100km() && $consumptionStats['average_consumption_100km'] > $vehicule->getMaxFuelConsumption100km() ? 'text-danger' : 'text-success' }}">
                                         {{ $consumptionStats['average_consumption_100km'] ? number_format($consumptionStats['average_consumption_100km'], 2, ',', ' ') : '-' }} L/100km
                                     </h4>
                                     @if($vehicule->getMinFuelConsumption100km() && $vehicule->getMaxFuelConsumption100km())
                                         <small class="text-muted">
                                             {{ __('Normale') }}: {{ $vehicule->getMinFuelConsumption100km() }} - {{ $vehicule->getMaxFuelConsumption100km() }} L/100km
                                         </small>
+                                    @endif
+                                    @if($consumptionStats['latest_consumption_100km'])
+                                        <div class="mt-1 {{ $consumptionStats['exceeds_max_consumption_km'] || $consumptionStats['below_min_consumption_km'] ? 'text-danger font-weight-bold' : 'text-success' }}">
+                                            <small>{{ __('Dernier plein') }} : {{ number_format($consumptionStats['latest_consumption_100km'], 2, ',', ' ') }} L/100km ({{ number_format($consumptionStats['latest_interval_km'], 0, ',', ' ') }} km)</small>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -428,7 +433,7 @@
             var consumptionData = [
                 @foreach($fuelVouchers as $voucher)
                 {
-                    date: '{{ \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('Y-m-d') }}',
+                    date: '{{ \Carbon\Carbon::parse($voucher->getVoucherDate() ?? $voucher->getInvoiceDate() ?? $voucher->created_at)->format('Y-m-d') }}',
                     consumption: {{ $voucher->getFuelLiters() ? $voucher->getFuelLiters() : 0 }},
                     km: {{ $voucher->getVehicleKm() ?? 0 }},
                     amount: {{ $voucher->getAmount() }}

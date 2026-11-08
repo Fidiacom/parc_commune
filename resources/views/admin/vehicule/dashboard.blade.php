@@ -253,7 +253,7 @@
                                         <td>{{ $voucher->getVoucherNumber() }}</td>
                                         <td><span class="badge badge-info">{{ ucfirst($voucher->getCategory()) }}</span></td>
                                         <td>{{ number_format($voucher->getAmount(), 2, ',', ' ') }} {{ __('MAD') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($voucher->getInvoiceDate())->format('d/m/Y') }}</td>
+                                        <td>{{ ($voucher->getVoucherDate() ?? $voucher->getInvoiceDate()) ? \Carbon\Carbon::parse($voucher->getVoucherDate() ?? $voucher->getInvoiceDate())->format('d/m/Y') : '-' }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

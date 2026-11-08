@@ -38,9 +38,9 @@ class SettingManager
      */
     public function getLogoUrl(): ?string
     {
-        $setting = $this->repository->getFirst();
-        
-        if($setting->getLogo()) {
+        $setting = $this->repository->getFirstOrCreate();
+
+        if ($setting->getLogo()) {
             return asset($setting->getLogo());
         }
         
@@ -49,12 +49,13 @@ class SettingManager
 
     /**
      * Get the commune name based on current locale.
+     * Falls back to the PDF_COMMUNE_* values from .env when not set.
      */
     public function getCommuneName(?string $locale = null): string
     {
-        $setting = $this->repository->getFirst();
-        
-        return $setting ? $setting->getCommuneNameByLocale($locale) : '';
+        $locale = $locale ?? app()->getLocale();
+
+        return $locale === 'ar' ? $this->getCommuneNameAr() : $this->getCommuneNameFr();
     }
 
     /**
@@ -62,9 +63,7 @@ class SettingManager
      */
     public function getCommuneNameFr(): string
     {
-        $setting = $this->repository->getFirst();
-        
-        return $setting ? ($setting->getCommuneNameFr() ?? '') : '';
+        return \App\Support\PdfHeader::communeName('fr');
     }
 
     /**
@@ -72,9 +71,7 @@ class SettingManager
      */
     public function getCommuneNameAr(): string
     {
-        $setting = $this->repository->getFirst();
-        
-        return $setting ? ($setting->getCommuneNameAr() ?? '') : '';
+        return \App\Support\PdfHeader::communeName('ar');
     }
 
     /**

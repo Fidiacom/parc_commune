@@ -214,7 +214,8 @@ class MissionOrderController extends Controller
         }
 
         $settings = $this->settingService->getSettings();
-        $pdf = $this->missionOrderService->generateMissionOrderPdf($missionOrder, $subject, $settings);
+        $lang = $request->query('lang') === 'ar' ? 'ar' : 'fr';
+        $pdf = $this->missionOrderService->generateMissionOrderPdf($missionOrder, $subject, $settings, $lang);
 
         return response()->make($pdf['content'], 200, [
             'Content-Type' => 'application/pdf',

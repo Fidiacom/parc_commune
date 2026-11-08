@@ -63,7 +63,7 @@ class DriverSeeder extends Seeder
         ];
 
         foreach ($drivers as $driver) {
-            Driver::create($driver);
+            Driver::firstOrCreate(['cin' => $driver['cin']], $driver);
         }
     }
 }

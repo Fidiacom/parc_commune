@@ -28,7 +28,7 @@
                             id="commune_name_fr" 
                             name="commune_name_fr" 
                             placeholder="{{ __('Enter commune name in French') }}"
-                            value="{{ old('commune_name_fr', $setting->getCommuneNameFr()) }}"
+                            value="{{ old('commune_name_fr', \App\Support\PdfHeader::communeName('fr')) }}"
                             required>
                         @error('commune_name_fr')
                             <div class="invalid-feedback">
@@ -45,13 +45,14 @@
                             id="commune_name_ar" 
                             name="commune_name_ar" 
                             placeholder="{{ __('Enter commune name in Arabic') }}"
-                            value="{{ old('commune_name_ar', $setting->getCommuneNameAr()) }}"
+                            value="{{ old('commune_name_ar', \App\Support\PdfHeader::communeName('ar')) }}"
                             required dir="rtl">
                         @error('commune_name_ar')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
                         @enderror
+                        <small class="form-text text-muted">{{ __('Utilisé dans l\'en-tête des PDF. Les autres lignes de l\'en-tête se règlent dans le fichier .env (PDF_*).') }}</small>
                     </div>
 
                     <div class="form-group">

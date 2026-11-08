@@ -15,7 +15,8 @@ class MissionOrderSeeder extends Seeder
         $drivers = Driver::all();
         $vehicules = Vehicule::all();
 
-        if ($drivers->isEmpty() || $vehicules->isEmpty()) {
+        // Demo missions are only created once
+        if ($drivers->isEmpty() || $vehicules->isEmpty() || MissionOrder::query()->exists()) {
             return;
         }
 
@@ -68,7 +69,7 @@ class MissionOrderSeeder extends Seeder
             MissionOrder::create([
                 'driver_id' => $drivers->random()->getId(),
                 'vehicule_id' => $vehicules->random()->getId(),
-                'permanent' => rand(0, 1) === 0,
+                'permanent' => false,
                 'start' => $startDate->format('Y-m-d H:i:s'),
                 'end' => $endDate->format('Y-m-d H:i:s'),
                 'done_at' => $doneAt->format('Y-m-d H:i:s'),

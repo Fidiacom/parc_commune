@@ -11,41 +11,36 @@ class DriverHasPermiSeeder extends Seeder
 {
     public function run(): void
     {
-        $drivers = Driver::all();
         $categories = CategoriePermi::all();
 
-        if ($drivers->isEmpty() || $categories->isEmpty()) {
+        if ($categories->isEmpty()) {
             return;
         }
 
-        // Assign permis categories to drivers
-        // Driver 1: B, C
-        // Driver 2: B
-        // Driver 3: B, C, D (Principal driver)
-        // Driver 4: B, C
-        // Driver 5: B
-        
+        // Licence categories per driver, matched by CIN (see DriverSeeder)
         $driverPermis = [
-            1 => ['B', 'C'],  // Mohamed Alaoui
-            2 => ['B'],       // Ahmed Bennani
-            3 => ['B', 'C', 'D'], // Ali Seddiki (Principal)
-            4 => ['B', 'C'],  // Youssef El Maghribi
-            5 => ['B'],       // Hassan Zahrani
+            'AB123456' => ['B', 'C'],      // Mohamed Alaoui
+            'CD789012' => ['B'],           // Ahmed Bennani
+            'EF345678' => ['B', 'C', 'D'], // Ali Seddiki (Principal)
+            'GH901234' => ['B', 'C'],      // Youssef El Maghribi
+            'IJ567890' => ['B'],           // Hassan Zahrani
         ];
 
-        foreach ($drivers as $index => $driver) {
-            $driverIndex = $index + 1;
-            if (isset($driverPermis[$driverIndex])) {
-                foreach ($driverPermis[$driverIndex] as $permisLabel) {
-                    $category = $categories->firstWhere('label', $permisLabel);
-                    if ($category) {
-                        DB::table('driver_has_permis')->insert([
-                            'driver_id' => $driver->getId(),
-                            'permi_id' => $category->getId(),
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
-                    }
+        foreach ($driverPermis as $cin => $labels) {
+            $driver = Driver::where('cin', $cin)->first();
+            if (!$driver) {
+                continue;
+            }
+
+            foreach ($labels as $label) {
+                $category = $categories->firstWhere('label', $label);
+                if (!$category) {
+                    continue;
+                }
+
+                $pair = ['driver_id' => $driver->getId(), 'permi_id' => $category->getId()];
+                if (!DB::table('driver_has_permis')->where($pair)->exists()) {
+                    DB::table('driver_has_permis')->insert($pair + ['created_at' => now(), 'updated_at' => now()]);
                 }
             }
         }

@@ -18,7 +18,7 @@ class UnitieSeeder extends Seeder
         ];
 
         foreach ($unities as $unity) {
-            Unitie::create($unity);
+            Unitie::firstOrCreate($unity);
         }
     }
 }

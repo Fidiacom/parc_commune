@@ -233,12 +233,26 @@
                            class="btn btn-sm btn-info mr-2 mb-2">
                             <i class="mdi mdi-printer"></i> {{ __('Print') }} {{ $driverName !== '' ? $driverName : '' }}
                         </a>
+                        @if($missionOrder->isPermanent())
+                            <a href="{{ route('admin.mission_order.print', $missionOrder->getId()) }}?person_type=driver&lang=ar"
+                               target="_blank"
+                               class="btn btn-sm btn-outline-info mr-2 mb-2">
+                                <i class="mdi mdi-printer"></i> {{ __('Imprimer (AR)') }} {{ $driverName !== '' ? $driverName : '' }}
+                            </a>
+                        @endif
                         @foreach ($missionOrder->getCompanions() ?? collect() as $companion)
                             <a href="{{ route('admin.mission_order.print', $missionOrder->getId()) }}?person_type=companion&person_id={{ $companion->getId() }}"
                                target="_blank"
                                class="btn btn-sm btn-secondary mr-2 mb-2">
                                 <i class="mdi mdi-printer"></i> {{ __('Print') }} {{ $companion->getDisplayName() }}
                             </a>
+                            @if($missionOrder->isPermanent())
+                                <a href="{{ route('admin.mission_order.print', $missionOrder->getId()) }}?person_type=companion&person_id={{ $companion->getId() }}&lang=ar"
+                                   target="_blank"
+                                   class="btn btn-sm btn-outline-secondary mr-2 mb-2">
+                                    <i class="mdi mdi-printer"></i> {{ __('Imprimer (AR)') }} {{ $companion->getDisplayName() }}
+                                </a>
+                            @endif
                         @endforeach
                     </div>
                 </div>

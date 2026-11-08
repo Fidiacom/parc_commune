@@ -14,12 +14,10 @@ class VidangeSeeder extends Seeder
 
         foreach ($vehicules as $vehicule) {
             // Create vidange with threshold based on vehicle's current KM
-            $thresholdKm = $vehicule->getTotalKm() + rand(5000, 15000);
-            
-            Vidange::create([
-                'car_id' => $vehicule->getId(),
-                'threshold_km' => $thresholdKm,
-            ]);
+            Vidange::firstOrCreate(
+                ['car_id' => $vehicule->getId()],
+                ['threshold_km' => $vehicule->getTotalKm() + rand(5000, 15000)]
+            );
         }
     }
 }

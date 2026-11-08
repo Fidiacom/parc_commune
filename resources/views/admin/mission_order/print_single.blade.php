@@ -22,36 +22,6 @@
             font-size: 12pt;
             line-height: 1.6;
         }
-        .header {
-            margin-bottom: 40px;
-            width: 100%;
-        }
-        .header-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .header-table td {
-            padding: 2px 0;
-            vertical-align: middle;
-        }
-        .header-left {
-            text-align: left;
-            font-size: 9pt;
-            line-height: 1.4;
-            font-family: 'Arial', 'Tahoma', 'DejaVu Sans', 'Liberation Sans', sans-serif;
-            width: 50%;
-        }
-        .header-right {
-            text-align: right;
-            font-size: 10pt;
-            line-height: 1.4;
-            direction: rtl;
-            font-family: 'Tahoma', 'Arial Unicode MS', 'Segoe UI', 'DejaVu Sans', 'Lucida Grande', sans-serif;
-            unicode-bidi: embed;
-            font-feature-settings: "kern" 1;
-            text-rendering: optimizeLegibility;
-            width: 50%;
-        }
         .title-section {
             text-align: center;
             margin: 40px 0;
@@ -145,32 +115,7 @@
     </style>
 </head>
 <body>
-    <table class="header-table">
-        <tr>
-            <td class="header-left">{{ config('settings.royaume_fr') }}</td>
-            <td class="header-right">{{ config('settings.royaume_ar') }}</td>
-        </tr>
-        <tr>
-            <td class="header-left">{{ config('settings.ministre_fr') }}</td>
-            <td class="header-right">{{ config('settings.ministre_ar') }}</td>
-        </tr>
-        <tr>
-            <td class="header-left">{{ config('settings.wilaya_fr') }}</td>
-            <td class="header-right">{{ config('settings.wilaya_ar') }}</td>
-        </tr>
-        <tr>
-            <td class="header-left">{{ config('settings.province_name_fr') }}</td>
-            <td class="header-right">{{ config('settings.province_name_ar') }}</td>
-        </tr>
-        <tr>
-            <td class="header-left">{{ config('settings.pachalike_name_fr') }}</td>
-            <td class="header-right">{{ config('settings.pachalike_name_ar') }}</td>
-        </tr>
-        <tr>
-            <td class="header-left">{{ config('settings.commune_name_fr') }}</td>
-            <td class="header-right">{{ config('settings.commune_name_ar') }}</td>
-        </tr>
-    </table>
+    @include('pdf.partials.header', ['mode' => 'bilingual'])
 
     <div class="title-section">
         <div class="title-arabic">أمر بالقيام بمهمة</div>
@@ -232,7 +177,7 @@
                 </td>
                 <td class="form-label-ar">
                     <span>بوسيلة التنقل :</span>
-                    <span class="form-value-arabic">{{ $missionOrder->getVehicule()->getBrand() ?? '.........' }}</span> - <span class="form-value-arabic">{{ $missionOrder->getVehicule()->getMatricule() ?? '.........' }}</span>
+                    <bdo dir="ltr"><span class="form-value-arabic">{{ $missionOrder->getVehicule()->getBrand() ?? '.........' }}</span> - <span class="form-value-arabic">{{ $missionOrder->getVehicule()->getMatricule() ?? '.........' }}</span></bdo>
                 </td>
             </tr>
         </table>
@@ -240,10 +185,10 @@
         <table class="form-row">
             <tr>
                 <td class="form-label-fr">
-                    Fait à sidi yahia du Gharb : <span class="form-value">................</span>
+                    Fait à {{ \App\Support\PdfHeader::city('fr') }} : <span class="form-value">................</span>
                 </td>
                 <td class="form-label-ar">
-                    <span>حرر بسيدي يحيى الغرب في :</span>
+                    <span>حرر ب{{ \App\Support\PdfHeader::city('ar') }} في :</span>
                     <span class="form-value">...........................</span>
                 </td>
             </tr>
@@ -253,14 +198,14 @@
     <table class="time-table">
         <tr>
             <td>
-                <div>Vu au départ de S.Y.G.Le................A.................H</div>
+                <div>Vu au départ de {{ \App\Support\PdfHeader::cityShort() }} Le................A.................H</div>
                 <br>
                 <br>
                 <br>
                 <br>
                 <br>
                 
-                <div>Vu au retour à S.Y.G.Le................A.................H</div>
+                <div>Vu au retour à {{ \App\Support\PdfHeader::cityShort() }} Le................A.................H</div>
             </td>
             <td>
                 <div>Vu à l'arrivé à ................A.................H</div>

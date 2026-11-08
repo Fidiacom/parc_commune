@@ -12,19 +12,48 @@ use App\Models\Vidange;
 use App\Models\TimingChaine;
 use App\Models\PaymentVoucher;
 use RealRashid\SweetAlert\Facades\Alert;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\PdfService;
 
 class PaymentVoucherController extends Controller
 {
     protected PaymentVoucherService $paymentVoucherService;
     protected VehiculeService $vehiculeService;
+    protected PdfService $pdfService;
+
+    /**
+     * Category keys with their French label (translated with __()).
+     */
+    private const CATEGORIES = [
+        'carburant' => 'Bon pour Carburant',
+        'entretien' => 'Entretien',
+        'vidange' => 'Vidange',
+        'lavage' => 'Lavage',
+        'lubrifiant' => 'Lubrifiant',
+        'reparation' => 'Reparation',
+        'achat_pieces_recharges' => 'Achat pieces de recharges',
+        'rechange_pneu' => 'Rechange pneu',
+        'frais_immatriculation' => 'Frais d\'immatriculation',
+        'visite_technique' => 'Visite technique',
+        'insurance' => 'Assurance',
+        'other' => 'Autre',
+    ];
 
     public function __construct(
         PaymentVoucherService $paymentVoucherService,
-        VehiculeService $vehiculeService
+        VehiculeService $vehiculeService,
+        PdfService $pdfService
     ) {
         $this->paymentVoucherService = $paymentVoucherService;
         $this->vehiculeService = $vehiculeService;
+        $this->pdfService = $pdfService;
+    }
+
+    /**
+     * Category labels in the current language.
+     */
+    private function categories(): array
+    {
+        return array_map(static fn (string $label) => __($label), self::CATEGORIES);
     }
 
     /**
@@ -37,20 +66,7 @@ class PaymentVoucherController extends Controller
         $sortDirection = $request->query('sort', 'desc');
         $search = $request->query('search');
 
-        $categories = [
-            'carburant' => __('Bon pour Carburant'),
-            'entretien' => __('Entretien'),
-            'vidange' => __('Vidange'),
-            'lavage' => __('Lavage'),
-            'lubrifiant' => __('Lubrifiant'),
-            'reparation' => __('Reparation'),
-            'achat_pieces_recharges' => __('Achat pieces de recharges'),
-            'rechange_pneu' => __('Rechange pneu'),
-            'frais_immatriculation' => __('Frais d\'immatriculation'),
-            'visite_technique' => __('Visite technique'),
-            'insurance' => __('Assurance'),
-            'other' => __('Autre'),
-        ];
+        $categories = $this->categories();
 
         // If the provided category is invalid, ignore it
         if (!$category || !isset($categories[$category])) {
@@ -86,20 +102,7 @@ class PaymentVoucherController extends Controller
         $dateFrom = $request->query('date_from');
         $dateTo = $request->query('date_to');
 
-        $categories = [
-            'carburant' => __('Bon pour Carburant'),
-            'entretien' => __('Entretien'),
-            'vidange' => __('Vidange'),
-            'lavage' => __('Lavage'),
-            'lubrifiant' => __('Lubrifiant'),
-            'reparation' => __('Reparation'),
-            'achat_pieces_recharges' => __('Achat pieces de recharges'),
-            'rechange_pneu' => __('Rechange pneu'),
-            'frais_immatriculation' => __('Frais d\'immatriculation'),
-            'visite_technique' => __('Visite technique'),
-            'insurance' => __('Assurance'),
-            'other' => __('Autre'),
-        ];
+        $categories = $this->categories();
 
         if (!$category || !isset($categories[$category])) {
             $category = null;
@@ -145,20 +148,7 @@ class PaymentVoucherController extends Controller
         $dateFrom = $request->query('date_from');
         $dateTo = $request->query('date_to');
 
-        $categories = [
-            'carburant' => __('Bon pour Carburant'),
-            'entretien' => __('Entretien'),
-            'vidange' => __('Vidange'),
-            'lavage' => __('Lavage'),
-            'lubrifiant' => __('Lubrifiant'),
-            'reparation' => __('Reparation'),
-            'achat_pieces_recharges' => __('Achat pieces de recharges'),
-            'rechange_pneu' => __('Rechange pneu'),
-            'frais_immatriculation' => __('Frais d\'immatriculation'),
-            'visite_technique' => __('Visite technique'),
-            'insurance' => __('Assurance'),
-            'other' => __('Autre'),
-        ];
+        $categories = $this->categories();
 
         if (!$category || !isset($categories[$category])) {
             $category = null;
@@ -173,16 +163,24 @@ class PaymentVoucherController extends Controller
             $dateTo
         );
 
-        $pdf = Pdf::loadView('admin.payment_voucher.report_pdf', [
+        $lang = $request->query('lang', app()->getLocale()) === 'ar' ? 'ar' : 'fr';
+
+        // Labels are passed untranslated: the view translates them in the PDF language.
+        $content = $this->pdfService->render('admin.payment_voucher.report_pdf', [
             'vouchers' => $vouchers,
-            'categories' => $categories,
+            'categories' => self::CATEGORIES,
             'selectedVehicule' => $selectedVehicule,
             'selectedCategory' => $category,
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
-        ])->setPaper('a4', 'portrait');
+        ], $lang);
 
-        return $pdf->download('rapport-bons-de-paiement.pdf');
+        $filename = $lang === 'ar' ? 'rapport-bons-de-paiement-ar.pdf' : 'rapport-bons-de-paiement.pdf';
+
+        return response($content, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 
     /**
@@ -194,20 +192,7 @@ class PaymentVoucherController extends Controller
         $category = $category ?? request()->query('category');
 
         $vehicules = $this->vehiculeService->getAllVehicules();
-        $categories = [
-            'carburant' => __('Bon pour Carburant'),
-            'entretien' => __('Entretien'),
-            'vidange' => __('Vidange'),
-            'lavage' => __('Lavage'),
-            'lubrifiant' => __('Lubrifiant'),
-            'reparation' => __('Reparation'),
-            'achat_pieces_recharges' => __('Achat pieces de recharges'),
-            'rechange_pneu' => __('Rechange pneu'),
-            'frais_immatriculation' => __('Frais d\'immatriculation'),
-            'visite_technique' => __('Visite technique'),
-            'insurance' => __('Assurance'),
-            'other' => __('Autre'),
-        ];
+        $categories = $this->categories();
 
         $selectedVehicule = null;
         $tires = [];
@@ -460,20 +445,7 @@ class PaymentVoucherController extends Controller
         $voucher->load('attachments');
 
         $vehicules = $this->vehiculeService->getAllVehicules();
-        $categories = [
-            'carburant' => __('Bon pour Carburant'),
-            'entretien' => __('Entretien'),
-            'vidange' => __('Vidange'),
-            'lavage' => __('Lavage'),
-            'lubrifiant' => __('Lubrifiant'),
-            'reparation' => __('Reparation'),
-            'achat_pieces_recharges' => __('Achat pieces de recharges'),
-            'rechange_pneu' => __('Rechange pneu'),
-            'frais_immatriculation' => __('Frais d\'immatriculation'),
-            'visite_technique' => __('Visite technique'),
-            'insurance' => __('Assurance'),
-            'other' => __('Autre'),
-        ];
+        $categories = $this->categories();
 
         $selectedVehicule = Vehicule::with(['pneu', 'vidange', 'timing_chaine'])->find($voucher->getVehiculeId());
         $tires = $selectedVehicule ? $selectedVehicule->pneu : [];

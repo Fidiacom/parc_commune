@@ -18,7 +18,7 @@ class CategoriePermiSeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            CategoriePermi::create($category);
+            CategoriePermi::firstOrCreate($category);
         }
     }
 }

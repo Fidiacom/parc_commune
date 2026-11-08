@@ -23,7 +23,7 @@ class EnsureServiceTechnique
         $user = Auth::user();
         $role = \App\Models\Role::find($user->getRoleId());
 
-        if ($role && ($role->getLabel() !== 'Service Technique' || $role->getLabel() !== 'Administrateur')) {
+        if ($role && in_array($role->getLabel(), ['Service Technique', 'Administrateur'], true)) {
             return $next($request);
         }
 

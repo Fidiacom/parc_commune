@@ -19,13 +19,10 @@ class PneuSeeder extends Seeder
             
             for ($i = 0; $i < $numberOfTires; $i++) {
                 $position = $tirePositions[$i] ?? "Position " . ($i + 1);
-                $thresholdKm = $vehicule->getTotalKm() + rand(10000, 50000);
-                
-                pneu::create([
-                    'car_id' => $vehicule->getId(),
-                    'tire_position' => $position,
-                    'threshold_km' => $thresholdKm,
-                ]);
+                pneu::firstOrCreate(
+                    ['car_id' => $vehicule->getId(), 'tire_position' => $position],
+                    ['threshold_km' => $vehicule->getTotalKm() + rand(10000, 50000)]
+                );
             }
         }
     }

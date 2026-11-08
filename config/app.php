@@ -44,6 +44,9 @@ return [
 
     'debug' => (bool) env('APP_DEBUG', false),
 
+    // Seed demo vehicles, drivers, missions and vouchers with `php artisan db:seed`
+    'seed_demo' => (bool) env('SEED_DEMO', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL

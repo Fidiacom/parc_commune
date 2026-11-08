@@ -128,7 +128,7 @@
                                     <thead>
                                         <tr>
                                             <th>{{ __('Véhicule') }}</th>
-                                            <th>{{ __('Consommation moyenne') }}</th>
+                                            <th>{{ __('Consommation (dernier plein)') }}</th>
                                             <th>{{ __('Consommation max') }}</th>
                                             <th>{{ __('Dépassement') }}</th>
                                             <th>{{ __('Actions') }}</th>
@@ -146,10 +146,12 @@
                                                     <span class="badge badge-danger">
                                                         {{ number_format($item['average_consumption_km'], 2, ',', ' ') }} L/100km
                                                     </span>
+                                                    <br><small class="text-muted">{{ number_format($item['latest_liters'], 2, ',', ' ') }} L / {{ number_format($item['interval_km'], 0, ',', ' ') }} km</small>
                                                 @elseif($item['exceeds_hour'])
                                                     <span class="badge badge-danger">
                                                         {{ number_format($item['average_consumption_hour'], 2, ',', ' ') }} L/H
                                                     </span>
+                                                    <br><small class="text-muted">{{ number_format($item['latest_liters'], 2, ',', ' ') }} L / {{ number_format($item['interval_hours'], 0, ',', ' ') }} h</small>
                                                 @endif
                                             </td>
                                             <td>

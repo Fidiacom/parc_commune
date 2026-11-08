@@ -432,7 +432,7 @@ class VehiculeSeeder extends Seeder
         ];
 
         foreach ($vehicules as $vehicule) {
-            Vehicule::create($vehicule);
+            Vehicule::firstOrCreate(['matricule' => $vehicule['matricule']], $vehicule);
         }
     }
 }

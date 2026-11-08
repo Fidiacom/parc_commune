@@ -7,16 +7,16 @@ use App\Models\Driver;
 use App\Models\MissionCompanion;
 use App\Models\MissionOrder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
-use Mpdf\Mpdf;
 
 class MissionOrderService
 {
     protected MissionOrderManager $manager;
+    protected PdfService $pdfService;
 
-    public function __construct(MissionOrderManager $manager)
+    public function __construct(MissionOrderManager $manager, PdfService $pdfService)
     {
         $this->manager = $manager;
+        $this->pdfService = $pdfService;
     }
 
     /**
@@ -218,38 +218,31 @@ class MissionOrderService
         return $fallback;
     }
 
-    public function generateMissionOrderPdf(MissionOrder $missionOrder, array $subject, $settings): array
+    /**
+     * Single orders are always bilingual (FR + AR side by side).
+     * Permanent orders are printed in one language: "fr" or "ar".
+     */
+    public function generateMissionOrderPdf(MissionOrder $missionOrder, array $subject, $settings, string $lang = 'fr'): array
     {
-        $viewName = $missionOrder->isPermanent()
+        $isPermanent = $missionOrder->isPermanent();
+        $viewName = $isPermanent
             ? 'admin.mission_order.print_permanent'
             : 'admin.mission_order.print_single';
 
-        $html = View::make($viewName, [
+        // The single order mixes both languages, so it is laid out left-to-right.
+        $renderLang = $isPermanent ? $lang : 'fr';
+
+        $content = $this->pdfService->render($viewName, [
             'missionOrder' => $missionOrder,
             'settings' => $settings,
             'subject' => $subject,
-        ])->render();
+        ], $renderLang, ['margin_top' => 8]);
 
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'orientation' => 'P',
-            'margin_left' => 15,
-            'margin_right' => 15,
-            'margin_top' => 0,
-            'margin_bottom' => 15,
-            'margin_header' => 0,
-            'margin_footer' => 9,
-            'tempDir' => storage_path('app/temp'),
-        ]);
-
-        $mpdf->autoScriptToLang = true;
-        $mpdf->autoLangToFont = true;
-        $mpdf->WriteHTML($html);
+        $suffix = $isPermanent && $renderLang === 'ar' ? '_ar' : '';
 
         return [
-            'content' => $mpdf->Output('', 'S'),
-            'filename' => 'order_de_mission_' . $missionOrder->getId() . '.pdf',
+            'content' => $content,
+            'filename' => 'ordre_de_mission_' . $missionOrder->getId() . $suffix . '.pdf',
         ];
     }
 }

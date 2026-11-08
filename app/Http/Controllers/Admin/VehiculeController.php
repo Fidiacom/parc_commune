@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\VehiculeService;
+use App\Services\FuelConsumptionService;
 use App\Models\CategoriePermi;
 use App\Models\pneu;
 use Illuminate\Http\Request;
@@ -13,10 +14,12 @@ use Illuminate\Support\Facades\Log;
 class VehiculeController extends Controller
 {
     protected VehiculeService $vehiculeService;
+    protected FuelConsumptionService $fuelConsumptionService;
 
-    public function __construct(VehiculeService $vehiculeService)
+    public function __construct(VehiculeService $vehiculeService, FuelConsumptionService $fuelConsumptionService)
     {
         $this->vehiculeService = $vehiculeService;
+        $this->fuelConsumptionService = $fuelConsumptionService;
     }
 
     public function index()
@@ -198,32 +201,19 @@ class VehiculeController extends Controller
         // Build query for all payment vouchers
         $allVouchersQuery = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId());
         
-        // Apply date filters if provided
+        // Apply date filters if provided (voucher date, else invoice date)
         if ($startDate) {
-            $allVouchersQuery->where('invoice_date', '>=', $startDate);
+            $allVouchersQuery->whereRaw('COALESCE(voucher_date, invoice_date) >= ?', [$startDate]);
         }
         if ($endDate) {
-            $allVouchersQuery->where('invoice_date', '<=', $endDate);
+            $allVouchersQuery->whereRaw('COALESCE(voucher_date, invoice_date) <= ?', [$endDate]);
         }
-        
-        $allVouchers = $allVouchersQuery->orderBy('invoice_date', 'desc')->get();
 
-        // Get fuel vouchers for consumption statistics with date filter
-        $fuelVouchersQuery = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
-            ->where('category', 'carburant')
-            ->whereNotNull('fuel_liters');
-        
-        if ($startDate) {
-            $fuelVouchersQuery->where('invoice_date', '>=', $startDate);
-        }
-        if ($endDate) {
-            $fuelVouchersQuery->where('invoice_date', '<=', $endDate);
-        }
-        
-        $fuelVouchers = $fuelVouchersQuery->orderBy('invoice_date', 'asc')->get();
+        $allVouchers = $allVouchersQuery->orderByRaw('COALESCE(voucher_date, invoice_date) desc')->get();
 
-        // Calculate consumption statistics
-        $consumptionStats = $this->calculateConsumptionStats($vehicule, $fuelVouchers);
+        // Fuel vouchers and consumption statistics for the same period
+        $fuelVouchers = $this->fuelConsumptionService->fuelVouchers($vehicule, $startDate, $endDate);
+        $consumptionStats = $this->fuelConsumptionService->stats($vehicule, $fuelVouchers);
 
         // Get vouchers by category (filtered)
         $vouchersByCategory = $allVouchers->groupBy('category');
@@ -273,103 +263,15 @@ class VehiculeController extends Controller
             return view('admin.vehicule.404');
         }
 
-        // Get fuel vouchers for consumption statistics
-        $fuelVouchers = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
-            ->where('category', 'carburant')
-            ->whereNotNull('fuel_liters')
-            ->orderBy('invoice_date', 'asc')
-            ->get();
-
-        // Calculate consumption statistics
-        $consumptionStats = $this->calculateConsumptionStats($vehicule, $fuelVouchers);
+        // Fuel vouchers and consumption statistics
+        $fuelVouchers = $this->fuelConsumptionService->fuelVouchers($vehicule);
+        $consumptionStats = $this->fuelConsumptionService->stats($vehicule, $fuelVouchers);
 
         return view('admin.vehicule.edit', [
             'vehicule' => $vehicule,
             'fuelVouchers' => $fuelVouchers,
             'consumptionStats' => $consumptionStats,
         ]);
-    }
-
-    /**
-     * Calculate consumption statistics for a vehicle.
-     */
-    protected function calculateConsumptionStats($vehicule, $fuelVouchers)
-    {
-        $stats = [
-            'total_fuel_liters' => 0,
-            'total_fuel_cost' => 0,
-            'total_km' => 0,
-            'total_hours' => 0,
-            'average_consumption_100km' => null,
-            'average_consumption_hour' => null,
-            'average_price_per_liter' => null,
-            'exceeds_max_consumption' => false,
-            'last_fuel_entry' => null,
-        ];
-
-        if ($fuelVouchers->count() < 2) {
-            return $stats;
-        }
-
-        $firstVoucher = $fuelVouchers->first();
-        $lastVoucher = $fuelVouchers->last();
-        $stats['last_fuel_entry'] = $lastVoucher;
-
-        // Calculate totals
-        foreach ($fuelVouchers as $voucher) {
-            if ($voucher->getFuelLiters()) {
-                $stats['total_fuel_liters'] += $voucher->getFuelLiters();
-                $stats['total_fuel_cost'] += $voucher->getAmount();
-            }
-        }
-
-        // Calculate KM difference
-        $stats['total_km'] = $lastVoucher->getVehicleKm() - $firstVoucher->getVehicleKm();
-        
-        // Calculate hours difference if available
-        if ($lastVoucher->getVehicleHours() && $firstVoucher->getVehicleHours()) {
-            $stats['total_hours'] = $lastVoucher->getVehicleHours() - $firstVoucher->getVehicleHours();
-        }
-
-        // Calculate average consumption per 100km
-        if ($stats['total_km'] > 0 && $stats['total_fuel_liters'] > 0) {
-            $stats['average_consumption_100km'] = ($stats['total_fuel_liters'] / $stats['total_km']) * 100;
-        }
-
-        // Calculate average consumption per hour
-        if ($stats['total_hours'] > 0 && $stats['total_fuel_liters'] > 0) {
-            $stats['average_consumption_hour'] = $stats['total_fuel_liters'] / $stats['total_hours'];
-        }
-
-        // Calculate average price per liter
-        if ($stats['total_fuel_liters'] > 0) {
-            $stats['average_price_per_liter'] = $stats['total_fuel_cost'] / $stats['total_fuel_liters'];
-        }
-
-        // Check if exceeds max consumption (km-based)
-        $exceedsKmConsumption = false;
-        if ($vehicule->getMaxFuelConsumption100km() && $stats['average_consumption_100km']) {
-            $exceedsKmConsumption = $stats['average_consumption_100km'] > $vehicule->getMaxFuelConsumption100km();
-        }
-
-        // Check if exceeds max consumption (hour-based)
-        $exceedsHourConsumption = false;
-        if ($vehicule->getMaxFuelConsumptionHour() && $stats['average_consumption_hour']) {
-            $exceedsHourConsumption = $stats['average_consumption_hour'] > $vehicule->getMaxFuelConsumptionHour();
-        }
-
-        // Check if below min consumption (hour-based)
-        $belowMinHourConsumption = false;
-        if ($vehicule->getMinFuelConsumptionHour() && $stats['average_consumption_hour']) {
-            $belowMinHourConsumption = $stats['average_consumption_hour'] < $vehicule->getMinFuelConsumptionHour();
-        }
-
-        $stats['exceeds_max_consumption'] = $exceedsKmConsumption || $exceedsHourConsumption;
-        $stats['exceeds_max_consumption_km'] = $exceedsKmConsumption;
-        $stats['exceeds_max_consumption_hour'] = $exceedsHourConsumption;
-        $stats['below_min_consumption_hour'] = $belowMinHourConsumption;
-
-        return $stats;
     }
 
     public function update(Request $request, $id)
@@ -592,18 +494,12 @@ class VehiculeController extends Controller
 
         // Get all payment vouchers
         $allVouchers = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
-            ->orderBy('invoice_date', 'desc')
+            ->orderByRaw('COALESCE(voucher_date, invoice_date) desc')
             ->get();
 
-        // Get fuel vouchers for consumption statistics
-        $fuelVouchers = \App\Models\PaymentVoucher::where('vehicule_id', $vehicule->getId())
-            ->where('category', 'carburant')
-            ->whereNotNull('fuel_liters')
-            ->orderBy('invoice_date', 'asc')
-            ->get();
-
-        // Calculate consumption statistics
-        $consumptionStats = $this->calculateConsumptionStats($vehicule, $fuelVouchers);
+        // Fuel vouchers and consumption statistics
+        $fuelVouchers = $this->fuelConsumptionService->fuelVouchers($vehicule);
+        $consumptionStats = $this->fuelConsumptionService->stats($vehicule, $fuelVouchers);
 
         // Get vouchers by category
         $vouchersByCategory = $allVouchers->groupBy('category');

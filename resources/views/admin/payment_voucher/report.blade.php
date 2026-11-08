@@ -7,8 +7,11 @@
                         <i class="mdi mdi-file-document-outline mr-2"></i>{{ __('Rapport des bons de paiement') }}
                     </h4>
                     <div class="page-title-right">
-                        <a href="{{ route('admin.payment_voucher.report.pdf', $reportQuery) }}" class="btn btn-primary waves-effect waves-light">
-                            <i class="mdi mdi-download mr-2"></i>{{ __('Télécharger PDF') }}
+                        <a href="{{ route('admin.payment_voucher.report.pdf', array_merge($reportQuery, ['lang' => 'fr'])) }}" class="btn btn-primary waves-effect waves-light">
+                            <i class="mdi mdi-download mr-2"></i>{{ __('PDF (FR)') }}
+                        </a>
+                        <a href="{{ route('admin.payment_voucher.report.pdf', array_merge($reportQuery, ['lang' => 'ar'])) }}" class="btn btn-outline-primary waves-effect waves-light ml-2">
+                            <i class="mdi mdi-download mr-2"></i>{{ __('PDF (AR)') }}
                         </a>
                     </div>
                 </div>

@@ -14,7 +14,8 @@ class TimingChaineSeeder extends Seeder
 
         foreach ($vehicules as $vehicule) {
             // Only create timing chaine for some vehicles (not all need it)
-            if (rand(1, 3) <= 2) { // 66% chance
+            $exists = TimingChaine::where('car_id', $vehicule->getId())->exists();
+            if (!$exists && rand(1, 3) <= 2) { // 66% chance
                 $thresholdKm = $vehicule->getTotalKm() + rand(50000, 100000);
                 
                 TimingChaine::create([
